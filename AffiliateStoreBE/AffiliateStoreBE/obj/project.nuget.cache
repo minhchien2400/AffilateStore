@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RNBhmRvdmge4TS5W98OX6t+k6Kjo2r5gLvDVvgSAyH3MAXJ9LibgQT80/ZEe4XG+DtAl30haiD8UbcPA6qLJPw==",
+  "dgSpecHash": "QWxiCqYnH+Zzlck+yNLhedsCNa2NOGVRa5JgBfmf6cdYJFSTyBk6zF9g+i4D57rafNgl2I/1LxN/ew5jQ/dJxA==",
   "success": true,
-  "projectFilePath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\WebApplication1.csproj",
+  "projectFilePath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\84981\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

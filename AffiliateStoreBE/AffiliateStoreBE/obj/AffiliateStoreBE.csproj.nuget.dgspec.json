@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\WebApplication1.csproj": {}
+    "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {}
   },
   "projects": {
-    "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\WebApplication1.csproj": {
+    "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\WebApplication1.csproj",
-        "projectName": "WebApplication1",
-        "projectPath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\WebApplication1.csproj",
+        "projectUniqueName": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+        "projectName": "AffiliateStoreBE",
+        "projectPath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
         "packagesPath": "C:\\Users\\84981\\.nuget\\packages\\",
-        "outputPath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\WebApplication1\\obj\\",
+        "outputPath": "D:\\storeweb\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
