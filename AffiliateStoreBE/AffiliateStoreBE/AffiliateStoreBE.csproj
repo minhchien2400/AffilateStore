@@ -13,4 +13,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IServices\" />
+  </ItemGroup>
+
 </Project>

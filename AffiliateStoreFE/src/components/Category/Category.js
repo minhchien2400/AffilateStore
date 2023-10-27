@@ -40,3 +40,8 @@ const Category = ({categories, status}) => {
 }
 
 export default Category
+
+
+// gebruiken om de examendetails te controleren.
+
+// to check the exam details.</value>
