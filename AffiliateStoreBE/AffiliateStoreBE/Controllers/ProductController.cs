@@ -20,11 +20,11 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("getproductsbytype")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByType([FromBody] int type)
+        public async Task<IActionResult> GetProductsByType([FromBody] Guid categoryId)
         {
             try
             {
-                var products = await _storeContext.Set<Product>().Include(a => a.Category).Where(a => ((int)a.Category.Type) == type).Select(a => new ProductModel
+                var products = await _storeContext.Set<Product>().Include(a => a.Category).Where(a => a.Id == categoryId && a.IsActive).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,
@@ -48,7 +48,7 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
-                var profile = await _storeContext.Set<Product>().Where(a => a.Id == productId).Select(a => new ProductModel
+                var profile = await _storeContext.Set<Product>().Where(a => a.Id == productId &&  a.IsActive).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,
@@ -76,7 +76,7 @@ namespace AffiliateStoreBE.Controllers
                 var product = new Product();
                 if (pr.ProductId != Guid.Empty)
                 {
-                    product = await _storeContext.Set<Product>().Where(a => a.Id == pr.ProductId).FirstOrDefaultAsync();
+                    product = await _storeContext.Set<Product>().Where(a => a.Id == pr.ProductId && a.IsActive).FirstOrDefaultAsync();
                     product.Id = pr.ProductId;
                     product.Description = pr.Description != string.Empty ? pr.Description : product.Description;
                     product.Price = pr.Price != 0 ? pr.Price : product.Price;
@@ -118,6 +118,31 @@ namespace AffiliateStoreBE.Controllers
             }
             return Ok(true);
         }
+
+        [HttpDelete("deleteproduct")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> DeleteProduct([FromBody] Guid productId)
+        {
+            try
+            {
+                if (productId != Guid.Empty)
+                {
+                    var deleProduct = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.IsActive).FirstOrDefaultAsync();
+                    if (deleProduct != null)
+                    {
+                        deleProduct.IsActive = false;
+                        await _storeContext.SaveChangesAsync();
+                    }
+
+                }
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+            return Ok(true);
+        }
+
     }
     public class ProductModel : BaseEntity
     {

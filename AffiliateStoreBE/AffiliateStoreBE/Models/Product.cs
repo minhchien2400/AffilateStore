@@ -11,5 +11,6 @@ namespace AffiliateStoreBE.Models
         public string Images { get; set; }
         public Guid CategoryId { get; set; }
         public virtual Category Category { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

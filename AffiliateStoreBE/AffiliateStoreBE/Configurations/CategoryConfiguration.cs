@@ -13,7 +13,6 @@ namespace AffiliateStoreBE.Configurations
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.Name).HasMaxLength(128).IsRequired();
             builder.Property(a => a.Image).IsRequired();
-            builder.Property(a => a.Type).HasMaxLength(128).IsRequired();
         }
     }
 }

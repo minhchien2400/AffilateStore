@@ -22,7 +22,8 @@ namespace AffiliateStoreBE.Controllers
             {
                 category = await _storeDbContext.Set<Category>().Select(a => new CategoryModel
                 {
-                    CategoryName = a.Name,
+                    Id = a.Id,
+                    Name = a.Name,
                     Image = a.Image,
                 }).ToListAsync();
             }
@@ -32,9 +33,66 @@ namespace AffiliateStoreBE.Controllers
             }
             return Ok(new { category, category.Count });
         }
+
+        [HttpPost("createorupdatecategory")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> CreateOrUpdateCategory([FromBody] CategoryModel category)
+        {
+            try
+            {
+                var nowTime = DateTime.UtcNow;
+                if(category.Id != Guid.Empty)
+                {
+                    var oldCategory = await _storeDbContext.Set<Category>().Where(c => c.Id == category.Id).FirstOrDefaultAsync();
+                    oldCategory.Name = category.Name != null ? category.Name : oldCategory.Name;
+                    oldCategory.Image = category.Image != null ? category.Image : oldCategory.Image;
+                    oldCategory.ModifiedTime = nowTime;
+                }
+                else
+                {
+                    var newCategory = new Category()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = category.Name,
+                        Image = category.Image,
+                        CreatedTime = nowTime,
+                        ModifiedTime = new DateTimeOffset()
+                    };
+                    await _storeDbContext.AddRangeAsync(newCategory);
+                }
+                await _storeDbContext.SaveChangesAsync();
+                
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return Ok(true);
+        }
+
+        [HttpDelete("deletecategory")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> DeleteCategory([FromBody] Guid categoryId)
+        {
+            try
+            {
+                var deleteCategory = await _storeDbContext.Set<Category>().Where(a => a.Id == categoryId && !a.IsDeleted).FirstOrDefaultAsync();
+                if(deleteCategory != null)
+                {
+                    deleteCategory.IsDeleted = true;
+                    await _storeDbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return Ok(true);
+        }
         public class CategoryModel
         {
-            public string CategoryName { get; set; }
+            public Guid Id { get; set; }
+            public string Name { get; set; }
             public string Image { get; set; }
         }
     }
