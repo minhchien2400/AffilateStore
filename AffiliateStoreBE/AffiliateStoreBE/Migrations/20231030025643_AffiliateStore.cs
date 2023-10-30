@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AffiliateStoreBE.Migrations
 {
     /// <inheritdoc />
-    public partial class AffiliateStoreData : Migration
+    public partial class AffiliateStore : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

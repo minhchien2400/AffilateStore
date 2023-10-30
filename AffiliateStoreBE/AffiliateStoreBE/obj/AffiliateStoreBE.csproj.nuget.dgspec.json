@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {}
+    "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {}
   },
   "projects": {
-    "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {
+    "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+        "projectUniqueName": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
         "projectName": "AffiliateStoreBE",
-        "projectPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
-        "packagesPath": "C:\\Users\\84981\\.nuget\\packages\\",
-        "outputPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
+        "projectPath": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+        "packagesPath": "C:\\Users\\leon.tran\\.nuget\\packages\\",
+        "outputPath": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\84981\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\leon.tran\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -59,6 +59,12 @@
               "target": "Package",
               "version": "[7.0.13, )"
             },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
@@ -87,7 +93,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

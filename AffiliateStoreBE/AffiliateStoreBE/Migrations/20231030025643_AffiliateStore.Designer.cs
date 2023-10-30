@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AffiliateStoreBE.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20231029142229_AffiliateStoreData")]
-    partial class AffiliateStoreData
+    [Migration("20231030025643_AffiliateStore")]
+    partial class AffiliateStore
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
