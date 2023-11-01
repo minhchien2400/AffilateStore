@@ -20,7 +20,7 @@ namespace AffiliateStoreBE.Controllers
             var category = new List<CategoryModel>();
             try
             {
-                category = await _storeDbContext.Set<Category>().Select(a => new CategoryModel
+                category = await _storeDbContext.Set<Category>().Where(a => !a.IsDeleted).Select(a => new CategoryModel
                 {
                     Id = a.Id,
                     Name = a.Name,
@@ -44,9 +44,16 @@ namespace AffiliateStoreBE.Controllers
                 if(category.Id != Guid.Empty)
                 {
                     var oldCategory = await _storeDbContext.Set<Category>().Where(c => c.Id == category.Id).FirstOrDefaultAsync();
-                    oldCategory.Name = category.Name != null ? category.Name : oldCategory.Name;
-                    oldCategory.Image = category.Image != null ? category.Image : oldCategory.Image;
-                    oldCategory.ModifiedTime = nowTime;
+                    if(oldCategory != null)
+                    {
+                        oldCategory.Name = category.Name != null ? category.Name : oldCategory.Name;
+                        oldCategory.Image = category.Image != null ? category.Image : oldCategory.Image;
+                        oldCategory.ModifiedTime = nowTime;
+                    }
+                    else
+                    {
+                        return Ok(false);
+                    }
                 }
                 else
                 {

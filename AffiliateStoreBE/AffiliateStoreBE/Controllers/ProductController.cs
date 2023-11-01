@@ -31,7 +31,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Price = a.Price,
                     Images = a.Images,
-                    Category = a.Category
+                    CategoryId = a.CategoryId
                 }).ToListAsync();
                 return Ok(products);
             }
@@ -39,7 +39,6 @@ namespace AffiliateStoreBE.Controllers
             {
                 throw;
             }
-            return Ok("Action Failed");
         }
 
         [HttpPost("getproductbyid")]
@@ -55,7 +54,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Price = a.Price,
                     Images = a.Images,
-                    Category = a.Category,
+                    CategoryId = a.CategoryId,
                 }).FirstOrDefaultAsync();
                 return Ok(profile);
             }
@@ -63,7 +62,6 @@ namespace AffiliateStoreBE.Controllers
             {
                 throw;
             }
-            return Ok("Action Failed");
         }
 
         [HttpPost("createorupdateproduct")]
@@ -77,19 +75,18 @@ namespace AffiliateStoreBE.Controllers
                 if (pr.ProductId != Guid.Empty)
                 {
                     product = await _storeContext.Set<Product>().Where(a => a.Id == pr.ProductId && a.IsActive).FirstOrDefaultAsync();
-                    product.Id = pr.ProductId;
-                    product.Description = pr.Description != string.Empty ? pr.Description : product.Description;
-                    product.Price = pr.Price != 0 ? pr.Price : product.Price;
-                    product.Images = pr.Images != null ? pr.Images : product.Images;
-                    product.Category = new Category
+                    if(product != null)
                     {
-                        Id = product.Category.Id,
-                        Name = pr.Category.Name != null ? pr.Category.Name : product.Category.Name,
-                        Image = pr.Category.Image != null ? pr.Category.Image : product.Category.Image,
-                        CreatedTime = product.CreatedTime,
-                        ModifiedTime = timeNow,
-                    };
-                    product.ModifiedTime = timeNow;
+                        product.Description = pr.Description != string.Empty ? pr.Description : product.Description;
+                        product.Price = pr.Price != 0 ? pr.Price : product.Price;
+                        product.Images = pr.Images != null ? pr.Images : product.Images;
+                        product.CategoryId = pr.CategoryId;
+                        product.ModifiedTime = timeNow;
+                    }
+                    else
+                    {
+                        return Ok(false);
+                    }
                 }
                 else
                 {
@@ -98,14 +95,7 @@ namespace AffiliateStoreBE.Controllers
                     product.Description = pr.Description;
                     product.Price = pr.Price;
                     product.Images = pr.Images;
-                    product.Category = new Category
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = pr.Category.Name,
-                        Image = pr.Category.Image,
-                        CreatedTime = timeNow,
-                        ModifiedTime = new DateTimeOffset()
-                    };
+                    product.CategoryId = pr.CategoryId;
                     product.CreatedTime = timeNow;
                     product.ModifiedTime = new DateTimeOffset();
                     await _storeContext.AddAsync(product);
@@ -144,13 +134,13 @@ namespace AffiliateStoreBE.Controllers
         }
 
     }
-    public class ProductModel : BaseEntity
+    public class ProductModel
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public string Description { get; set; }
         public int Price { get; set; }
         public string Images { get; set; }
-        public Category Category { get; set; }
+        public Guid CategoryId { get; set; }
     }
 }

@@ -13,4 +13,18 @@ namespace AffiliateStoreBE.Models
         public virtual Category Category { get; set; }
         public bool IsActive { get; set; } = true;
     }
+
+    public class ImportProductsRequest
+    {
+        public IFormFile ImportFile { get; set; }
+
+        public String Language { get; set; }
+    }
+
+    public class ImportPathInfo
+    {
+        public string FileName { get; set; }
+        public byte[] ImportFileBytes { get; set; }
+        public string Language { get; set; }
+    }
 }
