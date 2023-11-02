@@ -5,10 +5,8 @@ namespace AffiliateStoreBE.Common.Models
 {
     public class ExcelDynamic
     {
-        [ExcelColumn("FeatureCommon_Export_Common_ImportStatus_Entry")]
         public ImportStatus ReportStatus { get; set; } = ImportStatus.NA;
 
-       //[ExcelColumn("FeatureCommon_Export_Common_Comments_Entry", false, true)]
         public string ReportMessage
         {
             get
@@ -35,41 +33,9 @@ namespace AffiliateStoreBE.Common.Models
         public List<string> InvalidMessage { get; set; } = new List<string>();
         public string SkipMessage { get; set; }
         public string SuccessMessage { get; set; }
-
-        //private Dictionary<string, object> fields = new Dictionary<string, object>();
-        //public bool IsMustValidatePass { get; set; } = true;
-        //public bool IsDuplicate { get; set; } = false;
-        //public bool IsScopePass { get; set; } = true;
-        //public bool HasPermission { get; set; } = true;
-        //public bool IsStatusPass { get; set; } = true;
         public bool HasChanged { get; set; } = false;
 
-        //public bool IsInvalid { get; set; } = false;
         public int RowIndex { get; set; } = -1;
-
-        //public void SetProperty(string name, object value)
-        //{
-        //    if (fields.ContainsKey(name))
-        //    {
-        //        fields.Remove(name);
-        //    }
-        //    fields.Add(name, value);
-        //}
-
-        //public object GetProperty(string name)
-        //{
-        //    return fields.ContainsKey(name) ? fields[name] : null;
-        //}
-
-        //public Dictionary<string, object> GetAllProperties()
-        //{
-        //    return fields;
-        //}
-
-        //public bool IsExist(string name)
-        //{
-        //    return fields.ContainsKey(name);
-        //}
     }
     public class DynamicExcelModel
     {
@@ -94,5 +60,11 @@ namespace AffiliateStoreBE.Common.Models
 
         [Description("")]
         Ignore = 4,
+    }
+    public enum ImportType
+    {
+        ImportProducts = 0,
+        ImportImages = 1,
+        ImportCategorys = 2,
     }
 }

@@ -834,34 +834,6 @@ namespace AffiliateStoreBE.Common.Models
             Load(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks));
         }
 
-        //
-        // Summary:
-        //     Loads an HTML document from a stream.
-        //
-        // Parameters:
-        //   stream:
-        //     The input stream.
-        //
-        //   encoding:
-        //     The character encoding to use.
-        //
-        //   detectEncodingFromByteOrderMarks:
-        //     Indicates whether to look for byte order marks at the beginning of the stream.
-        //
-        //   buffersize:
-        //     The minimum buffer size.
-        public void Load(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int buffersize)
-        {
-            Load(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks, buffersize));
-        }
-
-        //
-        // Summary:
-        //     Loads the HTML document from the specified TextReader.
-        //
-        // Parameters:
-        //   reader:
-        //     The TextReader used to feed the HTML data into the document. May not be null.
         public void Load(TextReader reader)
         {
             if (reader == null)
