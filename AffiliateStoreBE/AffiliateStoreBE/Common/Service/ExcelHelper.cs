@@ -20,13 +20,13 @@ namespace AffiliateStoreBE.Common.Service
 {
     public class ExcelHelper
     {
-        public static List<T> ReadExcel<T>(Stream stream, string sheetName, int firstDataIndex = 1) where T : ExcelDynamic
+        public static List<Dictionary<string, string>> ReadExcel<T>(Stream stream, string sheetName, int firstDataIndex = 1)
         {
             var result = new List<T>();
             var datas = new List<Dictionary<string, string>>();
             if (firstDataIndex < 1)
             {
-                return result;
+                return new List<Dictionary<string, string>>();
             }
             stream.Seek(0, SeekOrigin.Begin);
             using (Workbook workbook = new Workbook())
@@ -43,7 +43,7 @@ namespace AffiliateStoreBE.Common.Service
                 }
                 if (worksheet == null)
                 {
-                    return null;
+                    return new List<Dictionary<string, string>>();
                 }
                 var columnIndexMapping = new Dictionary<int, string>();
                 var cells = worksheet.Cells;
@@ -75,7 +75,7 @@ namespace AffiliateStoreBE.Common.Service
                         if (columnIndexMapping.ContainsKey(columnIndex))
                         {
                             var cellName = columnIndexMapping[columnIndex].TrimStart('*');
-                            var cellValue = cells[rowIndex, columnIndex].StringValue + "^~`" + cells[rowIndex, columnIndex].HtmlString;
+                            var cellValue = cells[rowIndex, columnIndex].StringValue;
                             if (!string.IsNullOrEmpty(cellValue))
                             {
                                 allEmpty = false;
@@ -92,35 +92,35 @@ namespace AffiliateStoreBE.Common.Service
                     datas.Add(cellValueMapping);
                 }
             }
-            return result;
+            return datas;
         }
-        private List<T> UpdateValue<T>(ImportType type, List<Dictionary<string, string>> excelDatas)
-        {
-            if(type == ImportType.ImportProducts)
-            {
-                var product = new ProductSheetModel();
-                var products = new List<ProductSheetModel>();
-                foreach(var item in excelDatas)
-                {
-                    product.ProductName = item["Name"];
-                    product.Description = item["Description"];
-                    product.Price = int.Parse(item["Price"]);
-                    product.CategoryName = item["Category name"];
-                    products.Add(product);
-                }
-                return products;
-            }
-            else if (type == ImportType.ImportImages)
-            {
-                var image = new ImageSheetModel();
-                var images = new List<ImageSheetModel>();
-                foreach(var item in excelDatas)
-                {
-                    image.ProductName = item["Product name"];
-                    image.Image = item["Image link"];
-                    images.Add(image);
-                }
-            }
-        }
+        //private List<T> UpdateValue<T>(ImportType type, List<Dictionary<string, string>> excelDatas)
+        //{
+        //    if(type == ImportType.ImportProducts)
+        //    {
+        //        var product = new ProductSheetModel();
+        //        var products = new List<ProductSheetModel>();
+        //        foreach(var item in excelDatas)
+        //        {
+        //            product.ProductName = item["Name"];
+        //            product.Description = item["Description"];
+        //            product.Price = int.Parse(item["Price"]);
+        //            product.CategoryName = item["Category name"];
+        //            products.Add(product);
+        //        }
+        //        return products;
+        //    }
+        //    else if (type == ImportType.ImportImages)
+        //    {
+        //        var image = new ImageSheetModel();
+        //        var images = new List<ImageSheetModel>();
+        //        foreach(var item in excelDatas)
+        //        {
+        //            image.ProductName = item["Product name"];
+        //            image.Image = item["Image link"];
+        //            images.Add(image);
+        //        }
+        //    }
+        //}
     }
 }
