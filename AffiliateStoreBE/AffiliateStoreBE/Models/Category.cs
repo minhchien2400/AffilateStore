@@ -7,6 +7,6 @@ namespace AffiliateStoreBE.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
-        public bool IsDeleted { get; set; } = false;
+        public Status Status { get; set; } = 0;
     }
 }

@@ -1,4 +1,5 @@
 using AffiliateStoreBE.DbConnect;
+using AffiliateStoreBE.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ImportProductsService>();
+builder.Services.AddScoped<ImportCategoryService>();
+builder.Services.AddScoped<ICategoryService, CategorysService>();
 
 builder.Services.AddDbContext<StoreDbContext>(option =>
 {

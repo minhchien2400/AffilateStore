@@ -1,4 +1,6 @@
-﻿namespace AffiliateStoreBE.Common.Service
+﻿using static AffiliateStoreBE.Common.Service.SystemSettingEntity;
+
+namespace AffiliateStoreBE.Common.Service
 {
     public class UploaderHelper
     {

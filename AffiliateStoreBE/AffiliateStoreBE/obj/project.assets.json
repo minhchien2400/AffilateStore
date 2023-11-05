@@ -832,22 +832,6 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
-      "Microsoft.Graph/5.32.0": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Graph.Core": "3.1.0"
-        },
-        "compile": {
-          "lib/net5.0/Microsoft.Graph.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net5.0/Microsoft.Graph.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Graph.Core/3.1.0": {
         "type": "package",
         "dependencies": {
@@ -2307,19 +2291,6 @@
           }
         }
       },
-      "Validation/2.5.51": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Validation.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Validation.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Volo.Abp.Core/7.4.1": {
         "type": "package",
         "dependencies": {
@@ -3709,25 +3680,6 @@
         "microsoft.extensions.primitives.7.0.0.nupkg.sha512",
         "microsoft.extensions.primitives.nuspec",
         "useSharedDesignerContext.txt"
-      ]
-    },
-    "Microsoft.Graph/5.32.0": {
-      "sha512": "U9q/FsePoLwHcSdVN5Vo5mqnkhZAA8KKCRuN4/8CXauS8yvz567xiqDxcWXN3grW+4kKX1nCV6sS/iWYmRtoCw==",
-      "type": "package",
-      "path": "microsoft.graph/5.32.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.txt",
-        "README.md",
-        "lib/net5.0/Microsoft.Graph.dll",
-        "lib/net5.0/Microsoft.Graph.xml",
-        "lib/netstandard2.0/Microsoft.Graph.dll",
-        "lib/netstandard2.0/Microsoft.Graph.xml",
-        "lib/netstandard2.1/Microsoft.Graph.dll",
-        "lib/netstandard2.1/Microsoft.Graph.xml",
-        "microsoft.graph.5.32.0.nupkg.sha512",
-        "microsoft.graph.nuspec"
       ]
     },
     "Microsoft.Graph.Core/3.1.0": {
@@ -7169,23 +7121,6 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Validation/2.5.51": {
-      "sha512": "g/Aug7PVWaenlJ0QUyt/mEetngkQNsMCuNeRVXbcJED1nZS7JcK+GTU4kz3jcQ7bFuKfi8PF4ExXH7XSFNuSLQ==",
-      "type": "package",
-      "path": "validation/2.5.51",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "3rdPartyNotices.txt",
-        "README.md",
-        "lib/net45/Validation.dll",
-        "lib/net45/Validation.xml",
-        "lib/netstandard2.0/Validation.dll",
-        "lib/netstandard2.0/Validation.xml",
-        "validation.2.5.51.nupkg.sha512",
-        "validation.nuspec"
-      ]
-    },
     "Volo.Abp.Core/7.4.1": {
       "sha512": "PPAUOmRKqmyDCBkt+mBq3AD2jdtAVJkUmXO1bh2RQQDx1vndzHbR5NKEAvQSGFMvtLQuYMZSP9Q/w2MQvJb/1g==",
       "type": "package",
@@ -7220,32 +7155,30 @@
       "Microsoft.EntityFrameworkCore.Design >= 7.0.13",
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.13",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.13",
-      "Microsoft.Graph >= 5.32.0",
       "Microsoft.Graph.Core >= 3.1.0",
       "Swashbuckle.AspNetCore >= 6.5.0",
       "Swashbuckle.AspNetCore.Annotations >= 6.5.0",
-      "Validation >= 2.5.51",
       "Volo.Abp.Core >= 7.4.1"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\leon.tran\\.nuget\\packages\\": {},
+    "C:\\Users\\84981\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+      "projectUniqueName": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
       "projectName": "AffiliateStoreBE",
-      "projectPath": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
-      "packagesPath": "C:\\Users\\leon.tran\\.nuget\\packages\\",
-      "outputPath": "D:\\AffiliateStore\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
+      "projectPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+      "packagesPath": "C:\\Users\\84981\\.nuget\\packages\\",
+      "outputPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\leon.tran\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\84981\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -7309,10 +7242,6 @@
             "target": "Package",
             "version": "[7.0.13, )"
           },
-          "Microsoft.Graph": {
-            "target": "Package",
-            "version": "[5.32.0, )"
-          },
           "Microsoft.Graph.Core": {
             "target": "Package",
             "version": "[3.1.0, )"
@@ -7324,10 +7253,6 @@
           "Swashbuckle.AspNetCore.Annotations": {
             "target": "Package",
             "version": "[6.5.0, )"
-          },
-          "Validation": {
-            "target": "Package",
-            "version": "[2.5.51, )"
           },
           "Volo.Abp.Core": {
             "target": "Package",
@@ -7353,7 +7278,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   },

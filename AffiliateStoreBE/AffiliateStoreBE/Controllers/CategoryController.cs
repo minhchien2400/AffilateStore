@@ -1,4 +1,5 @@
-﻿using AffiliateStoreBE.DbConnect;
+﻿using AffiliateStoreBE.Common.Models;
+using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace AffiliateStoreBE.Controllers
             var category = new List<CategoryModel>();
             try
             {
-                category = await _storeDbContext.Set<Category>().Where(a => !a.IsDeleted).Select(a => new CategoryModel
+                category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active).Select(a => new CategoryModel
                 {
                     Id = a.Id,
                     Name = a.Name,

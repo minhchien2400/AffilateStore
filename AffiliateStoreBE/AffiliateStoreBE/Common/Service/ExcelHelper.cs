@@ -1,20 +1,5 @@
-﻿using AffiliateStoreBE.Common.Models;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.ComponentModel;
-using System.Text;
-using System.Xml;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Aspose.Cells;
-using Workbook = Aspose.Cells.Workbook;
+﻿using Workbook = Aspose.Cells.Workbook;
 using Worksheet = Aspose.Cells.Worksheet;
-using Cell = Aspose.Cells.Cell;
-using AffiliateStoreBE.Service;
 
 namespace AffiliateStoreBE.Common.Service
 {

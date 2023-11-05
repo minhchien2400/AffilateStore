@@ -13,7 +13,7 @@ namespace AffiliateStoreBE.Service
         }
         public async Task<List<Category>> GetCategoryByName(List<string> categoryNames)
         {
-            var category = await _storeDbContext.Set<Category>().Where(a => categoryNames.Select(c => c.ToLower()).ToList().Contains(a.Name.ToLower())).ToListAsync();
+            var category = await _storeDbContext.Set<Category>().Where(a => !a.IsDeleted && categoryNames.Select(c => c.ToLower()).ToList().Contains(a.Name.ToLower())).ToListAsync();
             if (category == null)
             {
                 return new List<Category>();

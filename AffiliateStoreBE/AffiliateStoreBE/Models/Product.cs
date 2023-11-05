@@ -7,14 +7,17 @@ namespace AffiliateStoreBE.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Price { get; set; }
+        public double Cost { get; set; }
+        public double Price { get; set; }
         public string Images { get; set; }
         public Guid CategoryId { get; set; }
+        public int Stars { get; set; }
+        public string AffLink { get; set; }
         public virtual Category Category { get; set; }
-        public bool IsActive { get; set; } = true;
+        public Status Status { get; set; } = 0;
     }
 
-    public class ImportProductsRequest
+    public class ImportRequest
     {
         public IFormFile ImportFile { get; set; }
 

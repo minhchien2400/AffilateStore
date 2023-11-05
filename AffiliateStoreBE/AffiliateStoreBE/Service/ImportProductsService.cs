@@ -6,36 +6,24 @@ using AffiliateStoreBE.DbConnect;
 using Microsoft.EntityFrameworkCore;
 using AffiliateStoreBE.Controllers;
 using static AffiliateStoreBE.Service.ImportProductsService;
+using LinqToExcel.Extensions;
 
 namespace AffiliateStoreBE.Service
 {
     public class ImportProductsService
     {
-        private string _loggerSuffix = string.Empty;
-        private decimal _miniProgressBar = 0.89m;
-        private decimal _miniUploadStreamProgressBar = 0.95m;
-        //private readonly ICustomDistributedCache _distributedCache;
-        private Guid _currentUserId;
-        private string sheetName_Candidates;
-        private bool enableSemester = false;
-        private int _totalDataRow = 0;
-        private int _currentDataRow = 0;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private List<ProductDetailModel> _productsDetail;
-        private string sheetName_Product = "";
-        private string sheetName_Image = "";
-        private readonly IProductsService _productsService;
+        private string sheetName_Product = "Products";
+        private string sheetName_Image = "Images";
         private readonly StoreDbContext _storeDbContext;
         private readonly ICategoryService _categoryService;
 
-        public ImportProductsService(StoreDbContext storeDbContext, IHttpContextAccessor httpContextAccessor, IProductsService productsService)
+        public ImportProductsService(StoreDbContext storeDbContext, ICategoryService categoryService)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _productsService = productsService;
             _storeDbContext = storeDbContext;
+            _categoryService = categoryService;
         }
 
-        public async Task<bool> ImportProductExcel(ImportPathInfo request)
+        public async Task ImportProductExcel(ImportPathInfo request)
         {
             try
             {
@@ -45,11 +33,10 @@ namespace AffiliateStoreBE.Service
 
                 using (var fs = new MemoryStream(request.ImportFileBytes))
                 {
-                    ReadExcel(fs);
-
+                    var productsDetail = ReadExcel(fs);
+                    await InitDatas(productsDetail);
                     // await GenerateReport(Workbook, Report, originalSheets, request.Language);
                 }
-                return true;
             }
             catch (Exception ex)
             {
@@ -67,46 +54,63 @@ namespace AffiliateStoreBE.Service
             return true;
         }
 
-        private void ReadExcel(Stream stream)
+        private List<ProductDetailModel> ReadExcel(Stream stream)
         {
+            var productsDetail = new List<ProductDetailModel>();
             var productsExcel = ExcelHelper.ReadExcel<ProductSheetModel>(stream, sheetName_Product);
             var imagesExcel = ExcelHelper.ReadExcel<ImageSheetModel>(stream, sheetName_Image);
-            var productDetail = new ProductDetailModel();
             foreach (var pr in productsExcel)
             {
+                var productDetail = new ProductDetailModel();
+                var images = new List<string>();
                 productDetail.ProductName = pr["Name"];
                 productDetail.Description = pr["Description"];
                 productDetail.Price = int.Parse(pr["Price"]);
                 productDetail.CategoryName = pr["Category"];
-                productDetail.Images.AddRange(imagesExcel.SelectMany(dict => dict.Where(entry => entry.Key.ToLower().Equals(pr["Name"])).Select(entry => entry.Value).ToList()));
-                _productsDetail.Add(productDetail);
+                foreach(var imageExcel in imagesExcel)
+                {
+                    if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.ToLower().Equals(pr["Name"].ToLower())))
+                    {
+                        images.Add(imageExcel["Image"]);
+                    }
+                }
+                productDetail.Image = String.Join("; ", images);
+                productsDetail.Add(productDetail);
             }
+            return productsDetail;
         }
 
-        private async Task<bool> UpdateProductInfo()
+        private async Task InitDatas(List<ProductDetailModel> productsDetail)
         {
-            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.IsActive && _productsDetail.Select(e => e.ProductName).ToList().Contains(a.Name)).ToListAsync();
-            var productsUpdate = _productsDetail.Where(a => productsInDb.Select(p => p.Name.ToLower()).Equals(a.ProductName)).ToList();
-            var productsCreate = _productsDetail.Except(productsUpdate).ToList();
-            var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.ProductName).ToList());
-            foreach (var productDb in productsInDb)
+            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.IsActive && productsDetail.Select(e => e.ProductName).ToList().Contains(a.Name)).ToListAsync();
+            var productsUpdate = new List<ProductDetailModel>();
+            if(productsInDb.Any())
             {
-                var productUpdate = productsUpdate.Where(a => a.ProductName.ToLower().Equals(productDb.Name)).FirstOrDefault();
-                productDb.Description = productUpdate.Description;
-                productDb.Price = productUpdate.Price;
-                productDb.Images = String.Join(", ", productUpdate.Images);
+                productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name.ToLower()).Equals(a.ProductName)).ToList();
+                foreach (var productDb in productsInDb)
+                {
+                    var productUpdate = productsUpdate.Where(a => a.ProductName.ToLower().Equals(productDb.Name)).FirstOrDefault();
+                    productDb.Description = productUpdate.Description;
+                    productDb.Price = productUpdate.Price;
+                    productDb.Images = productUpdate.Image;
+                }
             }
-            var productsCreateDb = productsCreate.Select(a => new Product
+            var productsCreate = productsDetail.Except(productsUpdate).ToList();
+            if(productsCreate.Any())
             {
-                Id = Guid.NewGuid(),
-                Name = a.ProductName,
-                Description = a.Description,
-                Price = a.Price,
-                Images = String.Join(", ", a.Images),
-                CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.ProductName.ToLower())).Select(c => c.Id).FirstOrDefault()
-            }) ;
-            
-            return true;
+                var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
+                var productsCreateDb = productsCreate.Select(a => new Product
+                {
+                    Id = Guid.NewGuid(),
+                    Name = a.ProductName,
+                    Description = a.Description,
+                    Price = a.Price,
+                    Images = a.Image,
+                    CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.CategoryName.ToLower())).Select(c => c.Id).FirstOrDefault()
+                }).ToList();
+                await _storeDbContext.AddRangeAsync(productsCreateDb);
+            }
+            await _storeDbContext.SaveChangesAsync();
         }
 
         //private async Task GenerateReport(Workbook workbook, ImportReportInfo report, Dictionary<string, Worksheet> originalSheets, String language)
@@ -185,15 +189,21 @@ namespace AffiliateStoreBE.Service
 
         public class ProductSheetModel
         {
+            [ExcelColumn("Name")]
             public string ProductName { get; set; }
+            [ExcelColumn("Description")]
             public string Description { get; set; }
+            [ExcelColumn("Price")]
             public int Price { get; set; }
+            [ExcelColumn("Category")]
             public string CategoryName { get; set; }
         }
 
         public class ImageSheetModel
         {
+            [ExcelColumn("Product name")]
             public string ProductName { get; set; }
+            [ExcelColumn("Image")]
             public string Image { get; set; }
         }
 
@@ -203,7 +213,7 @@ namespace AffiliateStoreBE.Service
             public string Description { get; set; }
             public int Price { get; set; }
             public string CategoryName { get; set; }
-            public List<string> Images { get; set; }
+            public string Image { get; set; }
         }
     }
 }
