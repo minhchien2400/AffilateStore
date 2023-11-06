@@ -1,6 +1,6 @@
 ﻿using AffiliateStoreBE.Common.Models;
 
-namespace AffiliateStoreBE.Common.Service
+namespace AffiliateStoreBE.Common
 {
     public class SystemSettingEntity
     {

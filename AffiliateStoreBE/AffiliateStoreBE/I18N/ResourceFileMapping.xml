@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--/********************************************************************
+ *
+ *  PROPRIETARY and CONFIDENTIAL
+ *
+ *  This file is licensed from, and is a trade secret of:
+ *
+ *                   MaivenPoint Pte. Ltd.
+ *                   1 FUSIONOPOLIS PLACE, 
+ *                   #05-20/21/22/23
+ *                   SINGAPORE 138522
+ *                   Telephone: +65 6692 9028
+ *                   WWW: www.maivenpoint.com
+ *
+ *  Refer to your Software-as-a-Service Agreement for restrictions on use,
+ *  duplication, or disclosure.
+ *
+ *  RESTRICTED RIGHTS LEGEND
+ *
+ *  Copyright © 2021-2023 MaivenPoint® Pte. Ltd. All Rights Reserved. 
+ *
+ *  Unpublished - All rights reserved under the copyright laws of Singapore.
+ */-->
+<configuration>
+  <files>
+    <file filename="AssessmentSchedule.Service.resx" type="GUI" culture="en-US" />
+    <file filename="AssessmentSchedule.Service.ja-JP.resx" type="GUI" culture="ja-JP" />
+    <file filename="AssessmentSchedule.Service.de-DE.resx" type="GUI" culture="de-DE" />
+    <file filename="AssessmentSchedule.Service.en-GB.resx" type="GUI" culture="en-GB" />
+    <file filename="AssessmentSchedule.Service.zh-Hans.resx" type="GUI" culture="zh-CN" />
+    <file filename="AssessmentSchedule.Service.nl-NL.resx" type="GUI" culture="nl-NL" />
+  </files>
+</configuration>

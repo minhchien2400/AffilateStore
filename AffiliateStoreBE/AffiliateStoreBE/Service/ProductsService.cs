@@ -13,8 +13,13 @@ namespace AffiliateStoreBE.Service
         }
         public async Task<List<ValidateProductName>> CheckProductName(List<string> names)
         {
-            var productIds = await _storeDbContext.Set<Product>().Where(a => names.Contains(a.Name)).Select(a => new ValidateProductName { ProductId = a.Id, Name = a.Name }).ToListAsync();
-            return productIds;
+            var products = await _storeDbContext.Set<Product>().Where(a => names.Contains(a.Name)).Select(a => new ValidateProductName { ProductId = a.Id, Name = a.Name }).ToListAsync();
+            return products;
+        }
+        public async Task<List<ValidateProductName>> GetProductsByIds(List<Guid> ids)
+        {
+            var products = await _storeDbContext.Set<Product>().Where(a => ids.Contains(a.Id)).Select(a => new ValidateProductName { ProductId = a.Id, Name = a.Name }).ToListAsync();
+            return products;
         }
         public class ValidateProductName
         {

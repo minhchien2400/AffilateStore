@@ -1,4 +1,5 @@
-﻿using AffiliateStoreBE.Common.Models;
+﻿using AffiliateStoreBE.Common.I18N;
+using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace AffiliateStoreBE.Controllers
             _storeContext = storeContext;
         }
 
-        [HttpPost("getproductsbytype")]
+        [HttpGet("getproductsbytype")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetProductsByType([FromBody] Guid categoryId)
         {
@@ -42,13 +43,13 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpPost("getproductbyid")]
+        [HttpGet("getproductbyid")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetProductById([FromBody] Guid productId)
         {
             try
             {
-                var profile = await _storeContext.Set<Product>().Where(a => a.Id == productId &&  a.Status == Status.Active).Select(a => new ProductModel
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId &&  a.Status == Status.Active).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,
@@ -60,7 +61,33 @@ namespace AffiliateStoreBE.Controllers
                     Stars = a.Stars,
                     AffLink = a.AffLink
                 }).FirstOrDefaultAsync();
-                return Ok(profile);
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("getproductinactive")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetProductsInactive([FromBody] Guid productId)
+        {
+            try
+            {
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).Select(a => new ProductModel
+                {
+                    ProductId = a.Id,
+                    ProductName = a.Name,
+                    Description = a.Description,
+                    Cost = a.Cost,
+                    Price = a.Price,
+                    Images = a.Images,
+                    CategoryId = a.CategoryId,
+                    Stars = a.Stars,
+                    AffLink = a.AffLink
+                }).FirstOrDefaultAsync();
+                return Ok(product);
             }
             catch (Exception ex)
             {
@@ -146,14 +173,33 @@ namespace AffiliateStoreBE.Controllers
             return Ok(true);
         }
 
+        [HttpGet("activeproduct")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> ActiveProduct([FromBody] Guid productId)
+        {
+            try
+            {
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).FirstOrDefaultAsync();
+                if(product != null)
+                {
+                    product.Status = Status.Active;
+                }
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
     public class ProductModel
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public string Description { get; set; }
-        public double Cost { get; set; }
-        public double Price { get; set; }
+        public float Cost { get; set; }
+        public float Price { get; set; }
         public string Images { get; set; }
         public Guid CategoryId { get; set; }
         public int Stars { get; set; }

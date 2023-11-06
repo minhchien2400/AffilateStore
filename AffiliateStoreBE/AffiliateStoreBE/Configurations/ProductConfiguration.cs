@@ -13,10 +13,14 @@ namespace AffiliateStoreBE.Configurations
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.Name).HasMaxLength(128).IsRequired();
             builder.Property(a => a.Description).IsRequired();
-            builder.Property(a => a.Price).HasMaxLength(32).IsRequired();
+            builder.Property(a => a.Cost).IsRequired();
+            builder.Property(a => a.Price).IsRequired();
             builder.Property(a => a.Images).IsRequired();
             builder.Property(a => a.CategoryId).IsRequired();
+            builder.Property(a => a.Stars).IsRequired();
+            builder.Property(a => a.AffLink).IsRequired();
             builder.HasOne(a => a.Category).WithMany().HasForeignKey(a => a.CategoryId).OnDelete(DeleteBehavior.Restrict);
+            builder.Property(a => a.Status).IsRequired();
         }
     }
 }

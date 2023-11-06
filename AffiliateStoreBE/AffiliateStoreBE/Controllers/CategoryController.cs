@@ -1,4 +1,5 @@
-﻿using AffiliateStoreBE.Common.Models;
+﻿using AffiliateStoreBE.Common.I18N;
+using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,26 @@ namespace AffiliateStoreBE.Controllers
             return Ok(new { category, category.Count });
         }
 
+        [HttpGet("getcategoryinactive")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetCategoryInactive()
+        {
+            try
+            {
+                var category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Inactive).Select(a => new CategoryModel
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Image = a.Image,
+                }).ToListAsync();
+                return Ok(new { category, category.Count });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         [HttpPost("createorupdatecategory")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> CreateOrUpdateCategory([FromBody] CategoryModel category)
@@ -42,10 +63,10 @@ namespace AffiliateStoreBE.Controllers
             try
             {
                 var nowTime = DateTime.UtcNow;
-                if(category.Id != Guid.Empty)
+                if (category.Id != Guid.Empty)
                 {
-                    var oldCategory = await _storeDbContext.Set<Category>().Where(c => c.Id == category.Id).FirstOrDefaultAsync();
-                    if(oldCategory != null)
+                    var oldCategory = await _storeDbContext.Set<Category>().Where(c => c.Status == Status.Active && c.Id == category.Id).FirstOrDefaultAsync();
+                    if (oldCategory != null)
                     {
                         oldCategory.Name = category.Name != null ? category.Name : oldCategory.Name;
                         oldCategory.Image = category.Image != null ? category.Image : oldCategory.Image;
@@ -69,7 +90,7 @@ namespace AffiliateStoreBE.Controllers
                     await _storeDbContext.AddRangeAsync(newCategory);
                 }
                 await _storeDbContext.SaveChangesAsync();
-                
+
             }
             catch (Exception ex)
             {
@@ -78,18 +99,22 @@ namespace AffiliateStoreBE.Controllers
             return Ok(true);
         }
 
-        [HttpDelete("deletecategory")]
+        [HttpDelete("deleteorinactivecategory")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> DeleteCategory([FromBody] Guid categoryId)
+        public async Task<IActionResult> DeleteCategory([FromBody] DeleteOrInactiveCategory deleteOrInactive)
         {
             try
             {
-                var deleteCategory = await _storeDbContext.Set<Category>().Where(a => a.Id == categoryId && !a.IsDeleted).FirstOrDefaultAsync();
-                if(deleteCategory != null)
+                var oldCategory = await _storeDbContext.Set<Category>().Where(a => a.Id == deleteOrInactive.CategoryId && a.Status == Status.Active).FirstOrDefaultAsync();
+                if (oldCategory != null && deleteOrInactive.IsInactive)
                 {
-                    deleteCategory.IsDeleted = true;
-                    await _storeDbContext.SaveChangesAsync();
+                    oldCategory.Status = Status.Inactive;
                 }
+                else if (oldCategory != null && !deleteOrInactive.IsInactive)
+                {
+                    oldCategory.Status = Status.Deleted;
+                }
+                await _storeDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -97,11 +122,35 @@ namespace AffiliateStoreBE.Controllers
             }
             return Ok(true);
         }
+
+        [HttpPost("activecategory")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> ActiveCategory([FromBody] Guid categoryId)
+        {
+            try
+            {
+                var category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Inactive).FirstOrDefaultAsync();
+                if (category != null)
+                {
+                    category.Status = Status.Active;
+                }
+                return Ok(category);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         public class CategoryModel
         {
             public Guid Id { get; set; }
             public string Name { get; set; }
             public string Image { get; set; }
+        }
+        public class DeleteOrInactiveCategory
+        {
+            public Guid CategoryId { get; set; }
+            public bool IsInactive { get; set; }
         }
     }
 }

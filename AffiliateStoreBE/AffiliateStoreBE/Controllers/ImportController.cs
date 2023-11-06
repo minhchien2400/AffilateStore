@@ -1,4 +1,4 @@
-﻿using AffiliateStoreBE.Common.Service;
+﻿using AffiliateStoreBE.Common;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using AffiliateStoreBE.Service;
@@ -24,7 +24,6 @@ namespace AffiliateStoreBE.Controllers
         [SwaggerResponse(200)]
         public async Task<IActionResult> ImportProducts([FromForm] ImportRequest command)
         {
-
             var file = HttpContext.Request.Form.Files[0];
             command.ImportFile = file;
             try

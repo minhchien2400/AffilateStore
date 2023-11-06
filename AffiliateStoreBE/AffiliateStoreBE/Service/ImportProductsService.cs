@@ -1,5 +1,5 @@
 ﻿using AffiliateStoreBE.Common.Models;
-using AffiliateStoreBE.Common.Service;
+using AffiliateStoreBE.Common;
 using AffiliateStoreBE.Models;
 using Worksheet = Aspose.Cells.Worksheet;
 using AffiliateStoreBE.DbConnect;
@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using AffiliateStoreBE.Controllers;
 using static AffiliateStoreBE.Service.ImportProductsService;
 using LinqToExcel.Extensions;
+using AffiliateStoreBE.Common.I18N;
+using System.Runtime.CompilerServices;
 
 namespace AffiliateStoreBE.Service
 {
@@ -59,15 +61,19 @@ namespace AffiliateStoreBE.Service
             var productsDetail = new List<ProductDetailModel>();
             var productsExcel = ExcelHelper.ReadExcel<ProductSheetModel>(stream, sheetName_Product);
             var imagesExcel = ExcelHelper.ReadExcel<ImageSheetModel>(stream, sheetName_Image);
+            var videosExcel = ExcelHelper.ReadExcel<VideoReivewSheetModel>(stream, sheetName_Image);
             foreach (var pr in productsExcel)
             {
                 var productDetail = new ProductDetailModel();
                 var images = new List<string>();
                 productDetail.ProductName = pr["Name"];
                 productDetail.Description = pr["Description"];
-                productDetail.Price = int.Parse(pr["Price"]);
+                productDetail.Cost = float.Parse(pr["Cost"]);
+                productDetail.Price = float.Parse(pr["Price"]);
                 productDetail.CategoryName = pr["Category"];
-                foreach(var imageExcel in imagesExcel)
+                productDetail.Stars = int.Parse(pr["Stars"]);
+                productDetail.AffLink = pr[("Affiliate Link")];
+                foreach (var imageExcel in imagesExcel)
                 {
                     if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.ToLower().Equals(pr["Name"].ToLower())))
                     {
@@ -82,21 +88,24 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<ProductDetailModel> productsDetail)
         {
-            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.IsActive && productsDetail.Select(e => e.ProductName).ToList().Contains(a.Name)).ToListAsync();
+            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active && productsDetail.Select(e => e.ProductName).ToList().Contains(a.Name)).ToListAsync();
             var productsUpdate = new List<ProductDetailModel>();
-            if(productsInDb.Any())
+            if (productsInDb.Any())
             {
                 productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name.ToLower()).Equals(a.ProductName)).ToList();
                 foreach (var productDb in productsInDb)
                 {
                     var productUpdate = productsUpdate.Where(a => a.ProductName.ToLower().Equals(productDb.Name)).FirstOrDefault();
                     productDb.Description = productUpdate.Description;
+                    productDb.Cost = productUpdate.Cost;
                     productDb.Price = productUpdate.Price;
                     productDb.Images = productUpdate.Image;
+                    productDb.Stars = productUpdate.Stars;
+                    productDb.AffLink = productUpdate.AffLink;
                 }
             }
             var productsCreate = productsDetail.Except(productsUpdate).ToList();
-            if(productsCreate.Any())
+            if (productsCreate.Any())
             {
                 var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
                 var productsCreateDb = productsCreate.Select(a => new Product
@@ -104,9 +113,12 @@ namespace AffiliateStoreBE.Service
                     Id = Guid.NewGuid(),
                     Name = a.ProductName,
                     Description = a.Description,
+                    Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Image,
-                    CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.CategoryName.ToLower())).Select(c => c.Id).FirstOrDefault()
+                    CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.CategoryName.ToLower())).Select(c => c.Id).FirstOrDefault(),
+                    Stars = a.Stars,
+                    AffLink = a.AffLink,
                 }).ToList();
                 await _storeDbContext.AddRangeAsync(productsCreateDb);
             }
@@ -193,10 +205,16 @@ namespace AffiliateStoreBE.Service
             public string ProductName { get; set; }
             [ExcelColumn("Description")]
             public string Description { get; set; }
+            [ExcelColumn("Cost")]
+            public float Cost { get; set; }
             [ExcelColumn("Price")]
-            public int Price { get; set; }
+            public float Price { get; set; }
             [ExcelColumn("Category")]
             public string CategoryName { get; set; }
+            [ExcelColumn("Stars")]
+            public int Stars { get; set; }
+            [ExcelColumn("Affiliate Link")]
+            public string AffLink { get; set; }
         }
 
         public class ImageSheetModel
@@ -207,12 +225,16 @@ namespace AffiliateStoreBE.Service
             public string Image { get; set; }
         }
 
+
         public class ProductDetailModel
         {
             public string ProductName { get; set; }
             public string Description { get; set; }
-            public int Price { get; set; }
+            public float Cost { get; set; }
+            public float Price { get; set; }
             public string CategoryName { get; set; }
+            public int Stars { get; set; }
+            public string AffLink { get; set; }
             public string Image { get; set; }
         }
     }

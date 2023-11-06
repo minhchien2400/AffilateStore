@@ -1,7 +1,7 @@
 ﻿using Workbook = Aspose.Cells.Workbook;
 using Worksheet = Aspose.Cells.Worksheet;
 
-namespace AffiliateStoreBE.Common.Service
+namespace AffiliateStoreBE.Common
 {
     public class ExcelHelper
     {
