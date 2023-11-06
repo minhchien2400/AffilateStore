@@ -72,5 +72,32 @@ namespace AffiliateStoreBE.Controllers
             await _importCategoryService.ImportCategoryExcel(fileImportInfo);
             return Ok();
         }
+
+        [HttpPost("importvideoreview")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> ImportVideosReview([FromForm] ImportRequest command)
+        {
+
+            var file = HttpContext.Request.Form.Files[0];
+            command.ImportFile = file;
+            try
+            {
+                var item = Request.Cookies.FirstOrDefault(a => a.Key == CookieRequestCultureProvider.DefaultCookieName);
+                command.Language = item.Value;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            var importFileBytes = UploaderHelper.GetBytes(file);
+            var fileImportInfo = new ImportPathInfo()
+            {
+                FileName = command.ImportFile.FileName,
+                ImportFileBytes = importFileBytes,
+                Language = command.Language,
+            };
+            await _importCategoryService.ImportCategoryExcel(fileImportInfo);
+            return Ok();
+        }
     }
 }
