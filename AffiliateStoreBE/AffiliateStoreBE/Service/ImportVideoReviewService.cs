@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using static AffiliateStoreBE.Controllers.ImportController;
 using System.Linq;
 using AffiliateStoreBE.Service.IService;
+using static AffiliateStoreBE.Common.Models.ImportModel;
 
 namespace AffiliateStoreBE.Service
 {

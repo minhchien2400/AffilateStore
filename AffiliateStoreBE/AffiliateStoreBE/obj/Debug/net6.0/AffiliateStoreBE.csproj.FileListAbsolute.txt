@@ -362,3 +362,6 @@ D:\AffiliateStore\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6
 D:\AffiliateStore\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Newtonsoft.Json.dll
 D:\AffiliateStore\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.I18N.Vietnamese.vn-VN.resources
 D:\AffiliateStore\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.csproj.GenerateResource.cache
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.I18N.Vietnamese.vn-VN.resources
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.csproj.GenerateResource.cache
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Newtonsoft.Json.dll

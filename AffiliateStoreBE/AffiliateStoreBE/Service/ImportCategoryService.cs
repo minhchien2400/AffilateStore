@@ -60,31 +60,37 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<Dictionary<string, string>> excelsCategory)
         {
-            var (categoriesUpdate, categoriesCreate) = await CheckCategorysExcel(excelsCategory.Distinct().ToList());
-            if (categoriesUpdate.Any())
+            var timeNow = DateTime.UtcNow;
+            var (categoriesUpdate, categoriesExist) = await CheckCategorysExcel(excelsCategory.Distinct().ToList());
+            excelsCategory = excelsCategory.Except(categoriesExist).ToList();
+            var categoriesUpdateExcel = excelsCategory.Where(a => categoriesUpdate.Select(c => c.Name).Contains(a["Name"]) || categoriesUpdate.Select(c => c.Image).Contains(a["Image"])).ToList();
+            var categoriesCreateExcel = excelsCategory.Except(categoriesUpdateExcel).ToList();
             {
                 foreach (var category in categoriesUpdate)
                 {
-                    var categoryUpdateImage = categoriesUpdate.Where(a => a["Name"].ToLower().Equals(category.Name.ToLower())).FirstOrDefault();
+                    var categoryUpdateImage = categoriesUpdateExcel.Where(a => a["Name"].Equals(category.Name)).FirstOrDefault();
                     if (categoryUpdateImage != null)
                     {
                         category.Image = categoryUpdateImage["Image"];
+                        category.ModifiedTime = timeNow;
                     }
                     else
                     {
-                        category.Name = categoriesUpdate.Where(a => a["Image"].Equals(category.Image)).Select(a => a["Image"]).FirstOrDefault();
+                        category.Name = categoriesUpdateExcel.Where(a => a["Image"].Equals(category.Image)).Select(a => a["Name"]).FirstOrDefault();
+                        category.ModifiedTime = timeNow;
                     }
                 }
             }
-            if (categorisCreate.Any())
+            if (categoriesCreateExcel.Any())
             {
                 var newListCategory = new List<Category>();
-                foreach (var category in categorisCreate)
+                foreach (var category in categoriesCreateExcel)
                 {
                     var newCategory = new Category();
                     newCategory.Id = Guid.NewGuid();
                     newCategory.Name = category["Name"];
                     newCategory.Image = category["Image"];
+                    newCategory.CreatedTime = timeNow;
                     newListCategory.Add(newCategory);
                 }
                 await _storeDbContext.AddRangeAsync(newListCategory);
@@ -92,19 +98,19 @@ namespace AffiliateStoreBE.Service
             await _storeDbContext.SaveChangesAsync();
         }
 
-        private async Task<(List<Category>, List<Dictionary<string, string>>, List<Dictionary<string, string>>)> CheckCategorysExcel(List<Dictionary<string, string>> excelsCategory)
+        private async Task<(List<Category>, List<Dictionary<string, string>>)> CheckCategorysExcel(List<Dictionary<string, string>> excelsCategory)
         {
             var categoriesNameExcel = excelsCategory.Select(a => a["Name"].ToLower()).ToList();
-            var imagesExcel = excelsCategory.Select(a => a["Image"].ToLower()).ToList();
+            var imagesExcel = excelsCategory.Select(a => a["Image"]).ToList();
             var categoriesDb = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoriesNameExcel.Contains(a.Name.ToLower()) || (imagesExcel.Contains(a.Image)))).ToListAsync();
             var categoriesExist = categoriesDb.Where(a => categoriesNameExcel.Contains(a.Name.ToLower()) && imagesExcel.Contains(a.Image)).ToList();
-            var categoriesCreate = new List<Dictionary<string, string>>();
-            foreach(var category in categoriesDb)
+            var categoriesDbFinal = categoriesDb.Except(categoriesExist).ToList();
+            var categoriesExcelExist = new List<Dictionary<string, string>>();
+            foreach (var category in categoriesExist)
             {
-                categoriesCreate.AddRange(excelsCategory.Where(a => !a["Name"].ToLower().Equals(category.Name.ToLower()) && !a["Image"].Equals(category.Image)).Distinct().ToList());
+                categoriesExcelExist.AddRange(excelsCategory.Where(a => a["Name"].ToLower().Equals(category.Name.ToLower()) && a["Image"].Equals(category.Image)).Distinct().ToList());
             }
-            var categoriesUpdate = categoriesDb.Except(categoriesExist).ToList();
-            return (categoriesUpdate, categoriesCreate);
+            return (categoriesDbFinal, categoriesExcelExist);
         }
     }
 }
