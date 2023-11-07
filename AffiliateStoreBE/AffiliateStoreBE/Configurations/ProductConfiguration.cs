@@ -8,7 +8,7 @@ namespace AffiliateStoreBE.Configurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.ToTable("products");
+            builder.ToTable("products-data");
             builder.HasKey(a => a.Id);
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.Name).HasMaxLength(128).IsRequired();
@@ -19,6 +19,7 @@ namespace AffiliateStoreBE.Configurations
             builder.Property(a => a.CategoryId).IsRequired();
             builder.Property(a => a.Stars).IsRequired();
             builder.Property(a => a.AffLink).IsRequired();
+            builder.Property(a => a.TotalSales).IsRequired();
             builder.HasOne(a => a.Category).WithMany().HasForeignKey(a => a.CategoryId).OnDelete(DeleteBehavior.Restrict);
             builder.Property(a => a.Status).IsRequired();
         }

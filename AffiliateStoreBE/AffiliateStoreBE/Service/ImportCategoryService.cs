@@ -1,8 +1,13 @@
 ﻿using AffiliateStoreBE.Common;
+using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
+using AffiliateStoreBE.Service.IService;
 using Aspose.Cells;
-using LinqToExcel.Attributes;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using static AffiliateStoreBE.Common.Models.ImportModel;
 
 namespace AffiliateStoreBE.Service
 {
@@ -55,23 +60,30 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<Dictionary<string, string>> excelsCategory)
         {
-            var categorysDb = await _categoryService.GetCategoryByName(excelsCategory.Select(e => e["Name"]).Distinct().ToList());
-            var categorysCreate = excelsCategory.Where(a =>  !categorysDb.Select(c => c.Name).ToList().Contains(a["Name"])).ToList();
-            if(categorysDb.Any())
+            var (categoriesUpdate, categoriesCreate) = await CheckCategorysExcel(excelsCategory.Distinct().ToList());
+            if (categoriesUpdate.Any())
             {
-                foreach(var category in categorysDb)
+                foreach (var category in categoriesUpdate)
                 {
-                    category.Image = excelsCategory.Where(a => a["Name"].ToLower() == category.Name.ToLower()).Select(a => a["Image"]).FirstOrDefault();
+                    var categoryUpdateImage = categoriesUpdate.Where(a => a["Name"].ToLower().Equals(category.Name.ToLower())).FirstOrDefault();
+                    if (categoryUpdateImage != null)
+                    {
+                        category.Image = categoryUpdateImage["Image"];
+                    }
+                    else
+                    {
+                        category.Name = categoriesUpdate.Where(a => a["Image"].Equals(category.Image)).Select(a => a["Image"]).FirstOrDefault();
+                    }
                 }
             }
-            if(categorysCreate.Any())
+            if (categorisCreate.Any())
             {
                 var newListCategory = new List<Category>();
-                foreach(var category in categorysCreate)
+                foreach (var category in categorisCreate)
                 {
                     var newCategory = new Category();
                     newCategory.Id = Guid.NewGuid();
-                    newCategory.Name = category["Name"];   
+                    newCategory.Name = category["Name"];
                     newCategory.Image = category["Image"];
                     newListCategory.Add(newCategory);
                 }
@@ -79,12 +91,20 @@ namespace AffiliateStoreBE.Service
             }
             await _storeDbContext.SaveChangesAsync();
         }
-        public class CategorySheetModel
+
+        private async Task<(List<Category>, List<Dictionary<string, string>>, List<Dictionary<string, string>>)> CheckCategorysExcel(List<Dictionary<string, string>> excelsCategory)
         {
-            [ExcelColumn("Name")]
-            public string CategoryName { get; set; }
-            [ExcelColumn("Image")]
-            public string Image { get; set; } 
+            var categoriesNameExcel = excelsCategory.Select(a => a["Name"].ToLower()).ToList();
+            var imagesExcel = excelsCategory.Select(a => a["Image"].ToLower()).ToList();
+            var categoriesDb = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoriesNameExcel.Contains(a.Name.ToLower()) || (imagesExcel.Contains(a.Image)))).ToListAsync();
+            var categoriesExist = categoriesDb.Where(a => categoriesNameExcel.Contains(a.Name.ToLower()) && imagesExcel.Contains(a.Image)).ToList();
+            var categoriesCreate = new List<Dictionary<string, string>>();
+            foreach(var category in categoriesDb)
+            {
+                categoriesCreate.AddRange(excelsCategory.Where(a => !a["Name"].ToLower().Equals(category.Name.ToLower()) && !a["Image"].Equals(category.Image)).Distinct().ToList());
+            }
+            var categoriesUpdate = categoriesDb.Except(categoriesExist).ToList();
+            return (categoriesUpdate, categoriesCreate);
         }
     }
 }

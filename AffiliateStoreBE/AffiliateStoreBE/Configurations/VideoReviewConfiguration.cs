@@ -8,7 +8,7 @@ namespace AffiliateStoreBE.Configurations
     {
         public void Configure(EntityTypeBuilder<VideoReview> builder)
         {
-            builder.ToTable("videosreview");
+            builder.ToTable("videosreview-data");
             builder.HasKey(a => a.Id);
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.Title).IsRequired();

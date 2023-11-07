@@ -1,6 +1,8 @@
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Service;
+using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ImportProductsService>();
 builder.Services.AddScoped<ImportCategoryService>();
+builder.Services.AddScoped<ImportVideoReviewService>();
 builder.Services.AddScoped<ICategoryService, CategorysService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
 
 builder.Services.AddDbContext<StoreDbContext>(option =>
 {

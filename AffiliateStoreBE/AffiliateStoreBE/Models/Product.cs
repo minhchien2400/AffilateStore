@@ -13,21 +13,8 @@ namespace AffiliateStoreBE.Models
         public Guid CategoryId { get; set; }
         public int Stars { get; set; }
         public string AffLink { get; set; }
+        public int TotalSales { get; set; }
         public virtual Category Category { get; set; }
         public Status Status { get; set; } = 0;
-    }
-
-    public class ImportRequest
-    {
-        public IFormFile ImportFile { get; set; }
-
-        public String Language { get; set; }
-    }
-
-    public class ImportPathInfo
-    {
-        public string FileName { get; set; }
-        public byte[] ImportFileBytes { get; set; }
-        public string Language { get; set; }
     }
 }

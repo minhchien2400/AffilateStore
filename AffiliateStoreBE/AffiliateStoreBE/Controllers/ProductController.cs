@@ -34,6 +34,7 @@ namespace AffiliateStoreBE.Controllers
                     CategoryId = a.CategoryId,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
+                    TotalSales = a.TotalSales,
                 }).ToListAsync();
                 return Ok(products);
             }
@@ -59,7 +60,8 @@ namespace AffiliateStoreBE.Controllers
                     Images = a.Images,
                     CategoryId = a.CategoryId,
                     Stars = a.Stars,
-                    AffLink = a.AffLink
+                    AffLink = a.AffLink,
+                    TotalSales = a.TotalSales
                 }).FirstOrDefaultAsync();
                 return Ok(product);
             }
@@ -85,7 +87,8 @@ namespace AffiliateStoreBE.Controllers
                     Images = a.Images,
                     CategoryId = a.CategoryId,
                     Stars = a.Stars,
-                    AffLink = a.AffLink
+                    AffLink = a.AffLink,
+                    TotalSales = a.TotalSales
                 }).FirstOrDefaultAsync();
                 return Ok(product);
             }
@@ -116,6 +119,7 @@ namespace AffiliateStoreBE.Controllers
                         product.CategoryId = pr.CategoryId;
                         product.Stars = pr.Stars != 0 ? pr.Stars : product.Stars;
                         product.AffLink = pr.AffLink != null ? pr.AffLink : product.AffLink;
+                        product.TotalSales = pr.TotalSales != 0 ? pr.TotalSales : product.TotalSales;
                         product.ModifiedTime = timeNow;
                     }
                     else
@@ -133,6 +137,7 @@ namespace AffiliateStoreBE.Controllers
                     product.CategoryId = pr.CategoryId;
                     product.Stars = pr.Stars;
                     product.AffLink = pr.AffLink;
+                    product.TotalSales = pr.TotalSales;
                     product.CreatedTime = timeNow;
                     product.ModifiedTime = new DateTimeOffset();
                     await _storeContext.AddAsync(product);
@@ -173,7 +178,7 @@ namespace AffiliateStoreBE.Controllers
             return Ok(true);
         }
 
-        [HttpGet("activeproduct")]
+        [HttpPost("activeproduct")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> ActiveProduct([FromBody] Guid productId)
         {
@@ -204,6 +209,7 @@ namespace AffiliateStoreBE.Controllers
         public Guid CategoryId { get; set; }
         public int Stars { get; set; }
         public string AffLink { get; set; }
+        public int TotalSales { get; set; }
         public Status Status { get; set; }
     }
     public class DeleteOrInactiveProduct

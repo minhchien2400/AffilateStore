@@ -1,6 +1,6 @@
 ﻿using static AffiliateStoreBE.Service.ProductsService;
 
-namespace AffiliateStoreBE.Service
+namespace AffiliateStoreBE.Service.IService
 {
     public interface IProductsService
     {

@@ -8,7 +8,7 @@ namespace AffiliateStoreBE.Configurations
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("categorys");
+            builder.ToTable("categorys-data");
             builder.HasKey(a => a.Id);
             builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.Name).HasMaxLength(128).IsRequired();

@@ -1,6 +1,7 @@
 ﻿using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
+using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
 
 namespace AffiliateStoreBE.Service
@@ -9,17 +10,21 @@ namespace AffiliateStoreBE.Service
     {
         private readonly StoreDbContext _storeDbContext;
         public CategorysService(StoreDbContext storeDbContext)
-        { 
+        {
             _storeDbContext = storeDbContext;
         }
-        public async Task<List<Category>> GetCategoryByName(List<string> categoryNames)
+        public async Task<List<Category>> GetCategoryByNameAndImage(List<string> categoryNames, List<string> images = null)
         {
-            var category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && categoryNames.Select(c => c.ToLower()).ToList().Contains(a.Name.ToLower())).ToListAsync();
-            if (category == null)
+            var categories = new List<Category>();
+            if (images != null)
             {
-                return new List<Category>();
+                categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && ((categoryNames.Contains(a.Name.ToLower()) && !images.Contains(a.Image)) || (!categoryNames.Contains(a.Name.ToLower()) && images.Contains(a.Image)))).ToListAsync();
             }
-            return category;
+            else
+            {
+                categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoryNames.Contains(a.Name.ToLower()))).ToListAsync();
+            }
+            return categories;
         }
     }
 }

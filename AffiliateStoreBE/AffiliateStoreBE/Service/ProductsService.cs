@@ -1,5 +1,6 @@
 ﻿using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
+using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
 
 namespace AffiliateStoreBE.Service

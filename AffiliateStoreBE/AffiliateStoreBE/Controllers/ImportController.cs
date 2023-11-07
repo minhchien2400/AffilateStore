@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using Volo.Abp;
+using static AffiliateStoreBE.Common.Models.ImportModel;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -14,10 +15,12 @@ namespace AffiliateStoreBE.Controllers
     {
         private readonly ImportProductsService _importProductsService;
         private readonly ImportCategoryService _importCategoryService;
-        public ImportController(StoreDbContext storeDbContext, ImportProductsService importProductsService, ImportCategoryService importCategoryService)
+        private readonly ImportVideoReviewService _importVideoReviewService;
+        public ImportController(StoreDbContext storeDbContext, ImportProductsService importProductsService, ImportCategoryService importCategoryService, ImportVideoReviewService importVideoReviewService)
         {
             _importProductsService = importProductsService;
             _importCategoryService = importCategoryService;
+            _importVideoReviewService = importVideoReviewService;
         }
 
         [HttpPost("importproducts")]
@@ -75,7 +78,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("importvideoreview")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> ImportVideosReview([FromForm] ImportRequest command)
+        public async Task<IActionResult> ImportVideosReview([FromForm] ImportVideoReviewRequest command)
         {
 
             var file = HttpContext.Request.Form.Files[0];
@@ -90,14 +93,25 @@ namespace AffiliateStoreBE.Controllers
                 throw;
             }
             var importFileBytes = UploaderHelper.GetBytes(file);
-            var fileImportInfo = new ImportPathInfo()
+            var fileImportInfo = new ImportVideoReviewPathInfo()
             {
                 FileName = command.ImportFile.FileName,
                 ImportFileBytes = importFileBytes,
                 Language = command.Language,
+                ProductId = command.ProductId,
             };
-            await _importCategoryService.ImportCategoryExcel(fileImportInfo);
+            await _importVideoReviewService.ImportVideoReviewExcel(fileImportInfo);
             return Ok();
+        }
+
+        public class ImportVideoReviewRequest : ImportRequest
+        {
+            public Guid ProductId { get; set; }
+        }
+
+        public class ImportVideoReviewPathInfo : ImportPathInfo
+        {
+            public Guid ProductId { get; set;}
         }
     }
 }

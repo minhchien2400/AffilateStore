@@ -4,11 +4,8 @@ using AffiliateStoreBE.Models;
 using Worksheet = Aspose.Cells.Worksheet;
 using AffiliateStoreBE.DbConnect;
 using Microsoft.EntityFrameworkCore;
-using AffiliateStoreBE.Controllers;
-using static AffiliateStoreBE.Service.ImportProductsService;
-using LinqToExcel.Extensions;
-using AffiliateStoreBE.Common.I18N;
-using System.Runtime.CompilerServices;
+using static AffiliateStoreBE.Common.Models.ImportModel;
+using AffiliateStoreBE.Service.IService;
 
 namespace AffiliateStoreBE.Service
 {
@@ -61,7 +58,6 @@ namespace AffiliateStoreBE.Service
             var productsDetail = new List<ProductDetailModel>();
             var productsExcel = ExcelHelper.ReadExcel<ProductSheetModel>(stream, sheetName_Product);
             var imagesExcel = ExcelHelper.ReadExcel<ImageSheetModel>(stream, sheetName_Image);
-            var videosExcel = ExcelHelper.ReadExcel<VideoReivewSheetModel>(stream, sheetName_Image);
             foreach (var pr in productsExcel)
             {
                 var productDetail = new ProductDetailModel();
@@ -73,6 +69,8 @@ namespace AffiliateStoreBE.Service
                 productDetail.CategoryName = pr["Category"];
                 productDetail.Stars = int.Parse(pr["Stars"]);
                 productDetail.AffLink = pr[("Affiliate Link")];
+                productDetail.TotalSales = int.Parse(pr[("Total sales")]);
+
                 foreach (var imageExcel in imagesExcel)
                 {
                     if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.ToLower().Equals(pr["Name"].ToLower())))
@@ -102,12 +100,13 @@ namespace AffiliateStoreBE.Service
                     productDb.Images = productUpdate.Image;
                     productDb.Stars = productUpdate.Stars;
                     productDb.AffLink = productUpdate.AffLink;
+                    productDb.TotalSales = productUpdate.TotalSales;
                 }
             }
             var productsCreate = productsDetail.Except(productsUpdate).ToList();
             if (productsCreate.Any())
             {
-                var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
+                var categorys = await _categoryService.GetCategoryByNameAndImage(productsCreate.Select(p => p.CategoryName).ToList());
                 var productsCreateDb = productsCreate.Select(a => new Product
                 {
                     Id = Guid.NewGuid(),
@@ -119,6 +118,7 @@ namespace AffiliateStoreBE.Service
                     CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.CategoryName.ToLower())).Select(c => c.Id).FirstOrDefault(),
                     Stars = a.Stars,
                     AffLink = a.AffLink,
+                    TotalSales = a.TotalSales,
                 }).ToList();
                 await _storeDbContext.AddRangeAsync(productsCreateDb);
             }
@@ -199,31 +199,7 @@ namespace AffiliateStoreBE.Service
         //    report.ReportBytes = newStream.ToArray();
         //}
 
-        public class ProductSheetModel
-        {
-            [ExcelColumn("Name")]
-            public string ProductName { get; set; }
-            [ExcelColumn("Description")]
-            public string Description { get; set; }
-            [ExcelColumn("Cost")]
-            public float Cost { get; set; }
-            [ExcelColumn("Price")]
-            public float Price { get; set; }
-            [ExcelColumn("Category")]
-            public string CategoryName { get; set; }
-            [ExcelColumn("Stars")]
-            public int Stars { get; set; }
-            [ExcelColumn("Affiliate Link")]
-            public string AffLink { get; set; }
-        }
-
-        public class ImageSheetModel
-        {
-            [ExcelColumn("Product name")]
-            public string ProductName { get; set; }
-            [ExcelColumn("Image")]
-            public string Image { get; set; }
-        }
+        
 
 
         public class ProductDetailModel
@@ -235,6 +211,7 @@ namespace AffiliateStoreBE.Service
             public string CategoryName { get; set; }
             public int Stars { get; set; }
             public string AffLink { get; set; }
+            public int TotalSales { get; set; }
             public string Image { get; set; }
         }
     }
