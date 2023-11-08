@@ -2,7 +2,7 @@
 
 namespace AffiliateStoreBE.Models
 {
-    public class VideoReview
+    public class VideoReview : BaseEntity
     {
         public Guid Id { get; set; }
         public string Title { get; set; }

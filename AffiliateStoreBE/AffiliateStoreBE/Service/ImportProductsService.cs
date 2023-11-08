@@ -66,16 +66,16 @@ namespace AffiliateStoreBE.Service
                 productDetail.Description = pr["Description"];
                 productDetail.Cost = float.Parse(pr["Cost"]);
                 productDetail.Price = float.Parse(pr["Price"]);
-                productDetail.CategoryName = pr["Category"];
+                productDetail.CategoryName = pr["Category name"];
                 productDetail.Stars = int.Parse(pr["Stars"]);
-                productDetail.AffLink = pr[("Affiliate Link")];
+                productDetail.AffLink = pr[("Affiliate link")];
                 productDetail.TotalSales = int.Parse(pr[("Total sales")]);
 
                 foreach (var imageExcel in imagesExcel)
                 {
                     if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.ToLower().Equals(pr["Name"].ToLower())))
                     {
-                        images.Add(imageExcel["Image"]);
+                        images.Add(imageExcel["Image link"]);
                     }
                 }
                 productDetail.Image = String.Join("; ", images);
@@ -86,7 +86,8 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<ProductDetailModel> productsDetail)
         {
-            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active && productsDetail.Select(e => e.ProductName).ToList().Contains(a.Name)).ToListAsync();
+            var timeNow = DateTime.UtcNow;
+            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active && productsDetail.Select(e => e.ProductName).Distinct().ToList().Contains(a.Name)).ToListAsync();
             var productsUpdate = new List<ProductDetailModel>();
             if (productsInDb.Any())
             {
@@ -101,6 +102,7 @@ namespace AffiliateStoreBE.Service
                     productDb.Stars = productUpdate.Stars;
                     productDb.AffLink = productUpdate.AffLink;
                     productDb.TotalSales = productUpdate.TotalSales;
+                    productDb.ModifiedTime = timeNow;
                 }
             }
             var productsCreate = productsDetail.Except(productsUpdate).ToList();
@@ -119,6 +121,7 @@ namespace AffiliateStoreBE.Service
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
+                    CreatedTime = timeNow,
                 }).ToList();
                 await _storeDbContext.AddRangeAsync(productsCreateDb);
             }

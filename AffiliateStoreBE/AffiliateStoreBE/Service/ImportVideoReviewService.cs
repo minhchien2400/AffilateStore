@@ -60,6 +60,7 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<Dictionary<string, string>> excelVideosReview, Guid productId)
         {
+            var timeNow = DateTime.UtcNow;
             var videosReviewsDb = await _storeDbContext.Set<VideoReview>().Where(a => a.ProductId == productId).ToListAsync();
             var videosReviewUpdate = excelVideosReview.Where(a => videosReviewsDb.Select(x => x.VideoLink).ToList().Contains(a["Video link"])).ToList();
             var videosReviewAdd = excelVideosReview.Except(videosReviewUpdate).ToList();
@@ -72,6 +73,7 @@ namespace AffiliateStoreBE.Service
                     videoReview.Title = videoUpdate["Title"];
                     videoReview.Description = videoUpdate["Description"];
                     videoReview.VideoLink = videoUpdate["Video link"];
+                    videoReview.ModifiedTime = timeNow;
                 }
             }
             if (videosReviewAdd.Any())
@@ -84,6 +86,7 @@ namespace AffiliateStoreBE.Service
                     newVideo.Title = videoAdd["Title"];
                     newVideo.Description = videoAdd["Description"];
                     newVideo.VideoLink = videoAdd["Video link"];
+                    newVideo.CreatedTime = timeNow;
                     newListVideos.Add(newVideo);
                 }
                 await _storeDbContext.AddRangeAsync(newListVideos);

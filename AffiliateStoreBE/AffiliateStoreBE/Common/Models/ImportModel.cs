@@ -34,19 +34,21 @@
             public float Cost { get; set; }
             [ExcelColumn("Price")]
             public float Price { get; set; }
-            [ExcelColumn("Category")]
+            [ExcelColumn("Category name")]
             public string CategoryName { get; set; }
             [ExcelColumn("Stars")]
             public int Stars { get; set; }
-            [ExcelColumn("Affiliate Link")]
+            [ExcelColumn("Affiliate link")]
             public string AffLink { get; set; }
+            [ExcelColumn("Total sales")]
+            public int TotalSales { get; set; }
         }
 
         public class ImageSheetModel
         {
             [ExcelColumn("Product name")]
             public string ProductName { get; set; }
-            [ExcelColumn("Image")]
+            [ExcelColumn("Image link")]
             public string Image { get; set; }
         }
 
