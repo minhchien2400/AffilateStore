@@ -99,7 +99,7 @@ namespace AffiliateStoreBE.Controllers
             return Ok(true);
         }
 
-        [HttpDelete("deleteorinactivecategory")]
+        [HttpPost("deleteorinactivecategory")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> DeleteCategory([FromBody] DeleteOrInactiveCategory deleteOrInactive)
         {

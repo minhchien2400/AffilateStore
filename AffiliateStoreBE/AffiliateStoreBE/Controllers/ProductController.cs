@@ -151,7 +151,7 @@ namespace AffiliateStoreBE.Controllers
             return Ok(true);
         }
 
-        [HttpDelete("deleteorinactiveproduct")]
+        [HttpPost("deleteorinactiveproduct")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> DeleteProduct([FromBody] DeleteOrInactiveProduct deleteOrInactive)
         {
