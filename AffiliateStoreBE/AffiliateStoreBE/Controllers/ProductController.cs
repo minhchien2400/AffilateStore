@@ -2,6 +2,8 @@
 using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
+using AffiliateStoreBE.Service.IService;
+using LinqToExcel.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,9 +14,38 @@ namespace AffiliateStoreBE.Controllers
     public class ProductController : ControllerBase
     {
         private readonly StoreDbContext _storeContext;
-        public ProductController(StoreDbContext profileDbContext, StoreDbContext storeContext)
+        private readonly ICategoryService _categoryService;
+        public ProductController(StoreDbContext storeContext, ICategoryService categoryService)
         {
             _storeContext = storeContext;
+            _categoryService = categoryService;
+        }
+
+        [HttpGet("getallproducts")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetProductsByType()
+        {
+            try
+            {
+                var products = await _storeContext.Set<Product>().Include(a => a.Category).Where(a => a.Status == Status.Active).Select(a => new ProductModel
+                {
+                    ProductId = a.Id,
+                    ProductName = a.Name,
+                    Description = a.Description,
+                    Cost = a.Cost,
+                    Price = a.Price,
+                    Images = a.Images,
+                    CategoryId = a.CategoryId,
+                    Stars = a.Stars,
+                    AffLink = a.AffLink,
+                    TotalSales = a.TotalSales,
+                }).ToListAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         [HttpGet("getproductsbytype")]
@@ -50,12 +81,12 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
-                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId &&  a.Status == Status.Active).Select(a => new ProductModel
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Active).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,
                     Description = a.Description,
-                    Cost= a.Cost,
+                    Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Images,
                     CategoryId = a.CategoryId,
@@ -64,6 +95,38 @@ namespace AffiliateStoreBE.Controllers
                     TotalSales = a.TotalSales
                 }).FirstOrDefaultAsync();
                 return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("getproductsbycategoryname")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetProductsInactive(string categoryName)
+        {
+            try
+            {
+                var products = new List<ProductModel>();
+                var category = await _categoryService.GetCategoryByName(new List<string> { categoryName });
+                if (category != null)
+                {
+                    products = await _storeContext.Set<Product>().Where(a => category.Select(c => c.Id).FirstOrDefault().Equals(a.CategoryId) && a.Status == Status.Active).Select(a => new ProductModel
+                    {
+                        ProductId = a.Id,
+                        ProductName = a.Name,
+                        Description = a.Description,
+                        Cost = a.Cost,
+                        Price = a.Price,
+                        Images = a.Images,
+                        CategoryId = a.CategoryId,
+                        Stars = a.Stars,
+                        AffLink = a.AffLink,
+                        TotalSales = a.TotalSales
+                    }).ToListAsync();
+                }
+                return Ok(products);
             }
             catch (Exception ex)
             {
@@ -109,7 +172,7 @@ namespace AffiliateStoreBE.Controllers
                 if (pr.ProductId != Guid.Empty)
                 {
                     product = await _storeContext.Set<Product>().Where(a => a.Id == pr.ProductId && a.Status == Status.Active).FirstOrDefaultAsync();
-                    if(product != null)
+                    if (product != null)
                     {
                         product.Name = pr.ProductName != null ? pr.ProductName : product.Name;
                         product.Description = pr.Description != string.Empty ? pr.Description : product.Description;
@@ -160,7 +223,7 @@ namespace AffiliateStoreBE.Controllers
                 if (deleteOrInactive.ProductId != Guid.Empty)
                 {
                     var productInDb = await _storeContext.Set<Product>().Where(a => a.Id == deleteOrInactive.ProductId && a.Status == Status.Active).FirstOrDefaultAsync();
-                    if(productInDb != null && deleteOrInactive.IsInactive)
+                    if (productInDb != null && deleteOrInactive.IsInactive)
                     {
                         productInDb.Status = Status.Inactive;
                     }
@@ -171,7 +234,7 @@ namespace AffiliateStoreBE.Controllers
                     await _storeContext.SaveChangesAsync();
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -185,7 +248,7 @@ namespace AffiliateStoreBE.Controllers
             try
             {
                 var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).FirstOrDefaultAsync();
-                if(product != null)
+                if (product != null)
                 {
                     product.Status = Status.Active;
                 }
@@ -214,7 +277,7 @@ namespace AffiliateStoreBE.Controllers
     }
     public class DeleteOrInactiveProduct
     {
-        public Guid ProductId { get; set;}
+        public Guid ProductId { get; set; }
         public bool IsInactive { get; set; }
     }
 

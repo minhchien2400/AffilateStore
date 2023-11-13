@@ -16,8 +16,8 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(fetchProducts());
     dispatch(fetchCategories());
-    dispatch(fetchProductsByCategory(1, 'all'));
-    dispatch(fetchProductsByCategory(2, 'all'));
+    dispatch(fetchProductsByCategory('Electronics', 'all'));
+    dispatch(fetchProductsByCategory('Pets', 'all'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
