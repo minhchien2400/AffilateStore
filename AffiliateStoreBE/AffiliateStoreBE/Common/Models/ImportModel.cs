@@ -1,4 +1,6 @@
-﻿namespace AffiliateStoreBE.Common.Models
+﻿using System.ComponentModel;
+
+namespace AffiliateStoreBE.Common.Models
 {
     public class ImportModel
     {
@@ -60,6 +62,24 @@
             public string Description { get; set; }
             [ExcelColumn("Video link")]
             public string VideoLink { get; set; }
+        }
+
+        public enum ImportStatus
+        {
+            [Description("")]
+            NA = 0,
+
+            [Description("")]
+            Success = 1,
+
+            [Description("")]
+            Failed = 2,
+
+            [Description("")]
+            Skip = 3,
+
+            [Description("")]
+            Ignore = 4,
         }
     }
 }

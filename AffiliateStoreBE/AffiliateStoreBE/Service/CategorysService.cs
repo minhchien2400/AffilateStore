@@ -13,17 +13,11 @@ namespace AffiliateStoreBE.Service
         {
             _storeDbContext = storeDbContext;
         }
-        public async Task<List<Category>> GetCategoryByNameAndImage(List<string> categoryNames, List<string> images = null)
+        public async Task<List<Category>> GetCategoryByName(List<string> categoryNames)
         {
             var categories = new List<Category>();
-            if (images != null)
-            {
-                categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && ((categoryNames.Contains(a.Name.ToLower()) && !images.Contains(a.Image)) || (!categoryNames.Contains(a.Name.ToLower()) && images.Contains(a.Image)))).ToListAsync();
-            }
-            else
-            {
-                categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoryNames.Contains(a.Name.ToLower()))).ToListAsync();
-            }
+
+            categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoryNames.Contains(a.Name))).ToListAsync();
             return categories;
         }
     }

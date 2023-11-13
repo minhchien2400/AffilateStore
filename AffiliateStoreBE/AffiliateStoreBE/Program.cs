@@ -3,6 +3,8 @@ using AffiliateStoreBE.Service;
 using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,15 @@ builder.Services.AddDbContext<StoreDbContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("StoreDatabase"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin",
+        builder => builder.WithOrigins("http://localhost:3000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
 var app = builder.Build();
+app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

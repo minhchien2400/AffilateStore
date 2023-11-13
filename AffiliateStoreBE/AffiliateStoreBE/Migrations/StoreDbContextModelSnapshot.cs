@@ -110,9 +110,15 @@ namespace AffiliateStoreBE.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");

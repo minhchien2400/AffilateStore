@@ -33,7 +33,7 @@ namespace AffiliateStoreBE.Controllers
             {
                 throw;
             }
-            return Ok(new { category, category.Count });
+            return Ok(category);
         }
 
         [HttpGet("getcategoryinactive")]

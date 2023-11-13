@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AffiliateStoreBE.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20231107165527_AffiliateStore")]
+    [Migration("20231113030909_AffiliateStore")]
     partial class AffiliateStore
     {
         /// <inheritdoc />
@@ -113,9 +113,15 @@ namespace AffiliateStoreBE.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");

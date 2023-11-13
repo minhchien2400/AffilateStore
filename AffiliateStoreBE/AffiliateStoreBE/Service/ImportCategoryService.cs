@@ -100,15 +100,15 @@ namespace AffiliateStoreBE.Service
 
         private async Task<(List<Category>, List<Dictionary<string, string>>)> CheckCategorysExcel(List<Dictionary<string, string>> excelsCategory)
         {
-            var categoriesNameExcel = excelsCategory.Select(a => a["Name"].ToLower()).ToList();
+            var categoriesNameExcel = excelsCategory.Select(a => a["Name"]).ToList();
             var imagesExcel = excelsCategory.Select(a => a["Image"]).ToList();
-            var categoriesDb = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoriesNameExcel.Contains(a.Name.ToLower()) || (imagesExcel.Contains(a.Image)))).ToListAsync();
-            var categoriesExist = categoriesDb.Where(a => categoriesNameExcel.Contains(a.Name.ToLower()) && imagesExcel.Contains(a.Image)).ToList();
+            var categoriesDb = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active && (categoriesNameExcel.Contains(a.Name) || (imagesExcel.Contains(a.Image)))).ToListAsync();
+            var categoriesExist = categoriesDb.Where(a => categoriesNameExcel.Contains(a.Name) && imagesExcel.Contains(a.Image)).ToList();
             var categoriesDbFinal = categoriesDb.Except(categoriesExist).ToList();
             var categoriesExcelExist = new List<Dictionary<string, string>>();
             foreach (var category in categoriesExist)
             {
-                categoriesExcelExist.AddRange(excelsCategory.Where(a => a["Name"].ToLower().Equals(category.Name.ToLower()) && a["Image"].Equals(category.Image)).Distinct().ToList());
+                categoriesExcelExist.AddRange(excelsCategory.Where(a => a["Name"].Equals(category.Name) && a["Image"].Equals(category.Image)).Distinct().ToList());
             }
             return (categoriesDbFinal, categoriesExcelExist);
         }

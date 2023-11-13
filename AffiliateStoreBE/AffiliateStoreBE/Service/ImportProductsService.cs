@@ -6,13 +6,14 @@ using AffiliateStoreBE.DbConnect;
 using Microsoft.EntityFrameworkCore;
 using static AffiliateStoreBE.Common.Models.ImportModel;
 using AffiliateStoreBE.Service.IService;
+using ImportStatus = AffiliateStoreBE.Common.Models.ImportStatus;
 
 namespace AffiliateStoreBE.Service
 {
     public class ImportProductsService
     {
-        private string sheetName_Product = "Products";
-        private string sheetName_Image = "Images";
+        private string sheetName_Product = "Product";
+        private string sheetName_Image = "Image";
         private readonly StoreDbContext _storeDbContext;
         private readonly ICategoryService _categoryService;
 
@@ -22,11 +23,15 @@ namespace AffiliateStoreBE.Service
             _categoryService = categoryService;
         }
 
-        public async Task ImportProductExcel(ImportPathInfo request)
+        public async Task<ImportStatus> ImportProductExcel(ImportPathInfo request)
         {
             try
             {
                 // validate here
+                if(ValidateFileFormat(request.FileName))
+                {
+                    return ImportStatus.Failed;    
+                }
 
                 var originalSheets = new Dictionary<string, Worksheet>();
 
@@ -41,6 +46,7 @@ namespace AffiliateStoreBE.Service
             {
                 throw ex;
             }
+            return ImportStatus.Success;
         }
 
         private bool ValidateFileFormat(string filePath)
@@ -73,7 +79,7 @@ namespace AffiliateStoreBE.Service
 
                 foreach (var imageExcel in imagesExcel)
                 {
-                    if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.ToLower().Equals(pr["Name"].ToLower())))
+                    if (imageExcel.Any(i => i.Key.Equals("Product name") && i.Value.Equals(pr["Name"])))
                     {
                         images.Add(imageExcel["Image link"]);
                     }
@@ -91,14 +97,16 @@ namespace AffiliateStoreBE.Service
             var productsUpdate = new List<ProductDetailModel>();
             if (productsInDb.Any())
             {
-                productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name.ToLower()).Equals(a.ProductName)).ToList();
+                productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name).Equals(a.ProductName)).ToList();
+                var categorys = await _categoryService.GetCategoryByName(productsUpdate.Select(p => p.CategoryName).ToList());
                 foreach (var productDb in productsInDb)
                 {
-                    var productUpdate = productsUpdate.Where(a => a.ProductName.ToLower().Equals(productDb.Name)).FirstOrDefault();
+                    var productUpdate = productsUpdate.Where(a => a.ProductName.Equals(productDb.Name)).FirstOrDefault();
                     productDb.Description = productUpdate.Description;
                     productDb.Cost = productUpdate.Cost;
                     productDb.Price = productUpdate.Price;
                     productDb.Images = productUpdate.Image;
+                    productDb.CategoryId = categorys.Where(c => c.Name.Equals(productUpdate.CategoryName)).Select(c => c.Id).FirstOrDefault();
                     productDb.Stars = productUpdate.Stars;
                     productDb.AffLink = productUpdate.AffLink;
                     productDb.TotalSales = productUpdate.TotalSales;
@@ -108,7 +116,7 @@ namespace AffiliateStoreBE.Service
             var productsCreate = productsDetail.Except(productsUpdate).ToList();
             if (productsCreate.Any())
             {
-                var categorys = await _categoryService.GetCategoryByNameAndImage(productsCreate.Select(p => p.CategoryName).ToList());
+                var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
                 var productsCreateDb = productsCreate.Select(a => new Product
                 {
                     Id = Guid.NewGuid(),
@@ -117,7 +125,7 @@ namespace AffiliateStoreBE.Service
                     Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Image,
-                    CategoryId = categorys.Where(c => c.Name.ToLower().Equals(a.CategoryName.ToLower())).Select(c => c.Id).FirstOrDefault(),
+                    CategoryId = categorys.Where(c => c.Name.Equals(a.CategoryName)).Select(c => c.Id).FirstOrDefault(),
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
@@ -201,9 +209,6 @@ namespace AffiliateStoreBE.Service
         //    workbook.Save(newStream, SaveFormat.Xlsx);
         //    report.ReportBytes = newStream.ToArray();
         //}
-
-        
-
 
         public class ProductDetailModel
         {
