@@ -27,8 +27,22 @@ namespace AffiliateStoreBE.Controllers
             try
             {
                 var listStringSearch = _searchStringFunction.SearchString(stringInput);
-                var listProductsName = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active).Select(a => a.Name.ToLower()).ToListAsync();
-                return Ok(resultList);
+                var products = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active).ToListAsync();
+                var productsDetail = products.Select(a => new ProductSearch { Id = a.Id, Name = a.Name }).ToList();
+                productsDetail.ForEach(t => { t.Name = _searchStringFunction.RemoveSpaceAndConvert(t.Name); });
+                var listProductIds = new List<Guid>();
+                foreach (var stringSearch in listStringSearch)
+                {
+                    foreach(var product in productsDetail)
+                    {
+                        if(product.Name.ToLower().Contains(stringSearch.ToLower()))
+                        {
+                            listProductIds.Add(product.Id);
+                        }
+                    }
+                }
+                var productsSearch = products.Where(a => listProductIds.Contains(a.Id)).Distinct().ToList();
+                return Ok(productsSearch);
             }
             catch(Exception e)
             {
@@ -39,6 +53,12 @@ namespace AffiliateStoreBE.Controllers
         {
             string decomposed = input.Normalize(NormalizationForm.FormD);
             return Regex.Replace(decomposed, @"\p{Mn}", string.Empty);
+        }
+
+        public class ProductSearch
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }
