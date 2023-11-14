@@ -58,13 +58,13 @@ const SingleProduct = () => {
           {/* details left */}
           <div className = "details-right">
             <div className = "details-img">
-              <img src = {product.images[0]} alt = {product.title} />
+              <img src = {product.images} alt = {product.name} />
             </div>
           </div>
           {/* detials right */}
           <div className='details-left'>
             <div className = "details-info">
-              <h3 className = "title text-regal-blue fs-22 fw-5">{product.title}</h3>
+              <h3 className = "title text-regal-blue fs-22 fw-5">{product.name}</h3>
               <p className='description text-pine-green'>{product.description}</p>
               <div className='price fw-7 fs-24'>Price: {formatPrice(product.price)}</div>
               <div className = "qty flex">

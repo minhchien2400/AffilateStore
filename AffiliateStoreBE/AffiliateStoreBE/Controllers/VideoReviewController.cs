@@ -17,7 +17,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("getvideoreview")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetVideosReview([FromBody] Guid productId)
+        public async Task<IActionResult> GetVideosReview(Guid productId)
         {
             try
             {

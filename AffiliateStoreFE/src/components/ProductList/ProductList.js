@@ -34,12 +34,14 @@ const ProductList = ({products, status}) => {
                             products.slice(0, 20).map(product => (
                                 <div className='product-item bg-white' key = {product.id} onClick = {() => viewModalHandler(product)}>
                                     <div className='product-item-img'>
-                                        <img src = {product.images[0]} alt = "" />
-                                        <div className = "product-item-cat text-white fs-13 text-uppercase bg-gold fw-6">{product.category.name}</div>
+                                        <img src = {product.images} alt = "" />
+                                        <div className = "product-item-cat text-white fs-13 text-uppercase bg-gold fw-6">{product.categoryName}</div>
                                     </div>
                                     <div className='product-item-body'>
-                                        <h6 className = "product-item-title text-pine-green fw-4 fs-15">{product.title}</h6>
-                                        <div className = "product-item-price text-regal-blue fw-7 fs-18">{formatPrice(product.price)}</div>
+                                        <h6 className = "product-item-title text-pine-green fw-4 fs-15">{product.productName}</h6>
+                                        <div className = "product-item-price text-regal-blue fw-7 fs-10">{formatPrice(product.cost)}</div>
+                                        <div className = "product-item-price-sale text-regal-blue fw-7 fs-18">{formatPrice(product.price)}</div>
+                                        <div className = "product-item-price-sale text-pine-green fw-5 fs-10">Da ban: {product.totalSales}</div>
                                     </div>
                                 </div>
                             ))

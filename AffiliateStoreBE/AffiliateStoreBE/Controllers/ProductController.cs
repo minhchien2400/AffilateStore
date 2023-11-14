@@ -27,7 +27,7 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
-                var products = await _storeContext.Set<Product>().Include(a => a.Category).Where(a => a.Status == Status.Active).Select(a => new ProductModel
+                var products = await _storeContext.Set<Product>().Where(a => a.Status == Status.Active).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,
@@ -35,7 +35,7 @@ namespace AffiliateStoreBE.Controllers
                     Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Images,
-                    CategoryId = a.CategoryId,
+                    CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
@@ -62,7 +62,7 @@ namespace AffiliateStoreBE.Controllers
                     Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Images,
-                    CategoryId = a.CategoryId,
+                    CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
@@ -89,7 +89,7 @@ namespace AffiliateStoreBE.Controllers
                     Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Images,
-                    CategoryId = a.CategoryId,
+                    CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales
@@ -120,7 +120,7 @@ namespace AffiliateStoreBE.Controllers
                         Cost = a.Cost,
                         Price = a.Price,
                         Images = a.Images,
-                        CategoryId = a.CategoryId,
+                        CategoryName = a.Category.Name,
                         Stars = a.Stars,
                         AffLink = a.AffLink,
                         TotalSales = a.TotalSales
@@ -148,7 +148,7 @@ namespace AffiliateStoreBE.Controllers
                     Cost = a.Cost,
                     Price = a.Price,
                     Images = a.Images,
-                    CategoryId = a.CategoryId,
+                    CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales
@@ -243,7 +243,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("activeproduct")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> ActiveProduct([FromBody] Guid productId)
+        public async Task<IActionResult> ActiveProduct(Guid productId)
         {
             try
             {
@@ -269,11 +269,11 @@ namespace AffiliateStoreBE.Controllers
         public float Cost { get; set; }
         public float Price { get; set; }
         public string Images { get; set; }
-        public Guid CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public int Stars { get; set; }
         public string AffLink { get; set; }
         public int TotalSales { get; set; }
-        public Status Status { get; set; }
+        public Guid CategoryId { get; set; }
     }
     public class DeleteOrInactiveProduct
     {

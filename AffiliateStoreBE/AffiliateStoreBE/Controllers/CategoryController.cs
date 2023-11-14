@@ -125,7 +125,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("activecategory")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> ActiveCategory([FromBody] Guid categoryId)
+        public async Task<IActionResult> ActiveCategory(Guid categoryId)
         {
             try
             {
