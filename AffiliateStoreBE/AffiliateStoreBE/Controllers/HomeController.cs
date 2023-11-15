@@ -22,12 +22,16 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("searchproducts")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetDataHomePage(string stringInput)
+        public async Task<IActionResult> GetDataHomePage(SearchFilter request)
         {
             try
             {
-                var listStringSearch = _searchStringFunction.SearchString(stringInput);
+                var listStringSearch = _searchStringFunction.SearchString(request.SearchText);
                 var products = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active).ToListAsync();
+                if(request.CategoryName != string.Empty)
+                {
+                    products.Where(a => a.Category.Name.Equals(request.CategoryName));
+                }
                 var productsDetail = products.Select(a => new ProductSearch { Id = a.Id, Name = a.Name }).ToList();
                 productsDetail.ForEach(t => { t.Name = _searchStringFunction.RemoveSpaceAndConvert(t.Name); });
                 var listProductIds = new List<Guid>();
@@ -35,13 +39,13 @@ namespace AffiliateStoreBE.Controllers
                 {
                     foreach(var product in productsDetail)
                     {
-                        if(product.Name.ToLower().Contains(stringSearch.ToLower()))
+                        if(product.Name.ToLower().Contains(stringSearch.ToLower()) && !listProductIds.Contains(product.Id))
                         {
                             listProductIds.Add(product.Id);
                         }
                     }
                 }
-                var productsSearch = products.Where(a => listProductIds.Contains(a.Id)).Distinct().ToList();
+                var productsSearch = products.Where(a => listProductIds.Contains(a.Id)).OrderBy(a => listProductIds.IndexOf(a.Id)).ToList();
                 return Ok(productsSearch);
             }
             catch(Exception e)
@@ -49,16 +53,16 @@ namespace AffiliateStoreBE.Controllers
                 throw;
             }
         }
-        static string RemoveAccents(string input)
-        {
-            string decomposed = input.Normalize(NormalizationForm.FormD);
-            return Regex.Replace(decomposed, @"\p{Mn}", string.Empty);
-        }
-
+        
         public class ProductSearch
         {
             public Guid Id { get; set; }
             public string Name { get; set; }
+        }
+        public class SearchFilter
+        {
+            public string SearchText { get; set; }  
+            public string CategoryName { get; set; }
         }
     }
 }

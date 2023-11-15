@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategories } from '../../store/categorySlice';
 import { getCartTotal } from '../../store/cartSlice';
+import { fetchSearchProducts } from '../../store/productSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const Navbar = () => {
   const {totalItems} = useSelector((state => state.cart));
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchText, setSearchText] = useState("")
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -18,18 +20,22 @@ const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleOnSearch = () => {
+    dispatch(fetchSearchProducts(searchText))
+  }
+
   return (
     <nav className = "navbar">
       <div className='navbar-content'>
         <div className = "container">
           <div className = "navbar-top flex flex-between">
               <Link to = "/" className = "navbar-brand">
-                <span className = "text-regal-blue">Điện Tử</span><span className='text-gold'> Chiến Quyết</span>
+                <span className = "text-regal-blue">ABC</span><span className='text-gold'> XYZ</span>
               </Link>
 
               <form className = "navbar-search flex">
-                <input type = "text" placeholder='Search here ...' />
-                <button type = "submit" className = "navbar-search-btn">
+                <input type = "text" placeholder='Search here ...' value={searchText} onChange={(e) => setSearchText(e.target.value)}/> 
+                <button type = "submit" className = "navbar-search-btn" onClick={() => }>
                   <i className = "fas fa-search"></i>
                 </button>
               </form>
