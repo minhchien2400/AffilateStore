@@ -35,7 +35,7 @@ const Navbar = () => {
 
               <form className = "navbar-search flex">
                 <input type = "text" placeholder='Search here ...' value={searchText} onChange={(e) => setSearchText(e.target.value)}/> 
-                <button type = "submit" className = "navbar-search-btn" onClick={() => }>
+                <button type = "submit" className = "navbar-search-btn" onClick={() => ""}>
                   <i className = "fas fa-search"></i>
                 </button>
               </form>

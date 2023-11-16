@@ -8,6 +8,8 @@ import { fetchProducts } from '../../store/productSlice';
 import { fetchCategories, fetchProductsByCategory } from '../../store/categorySlice';
 import "./HomePage.scss";
 
+import Filter from '../../components/Filter/Filter';
+
 const HomePage = () => {
   const dispatch = useDispatch();
   const {data: categories, status: categoryStatus} = useSelector((state) => state.category);
@@ -23,6 +25,7 @@ const HomePage = () => {
 
   return (
     <div className = "home-page">
+      <Filter/>
       <Slider />
       <Category categories = {categories} status = {categoryStatus} />
       <ProductList products = {products} status = {productStatus} />

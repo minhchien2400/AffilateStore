@@ -40,7 +40,7 @@ export const fetchProducts = () => {
 }
 
 export const fetchSearchProducts = async (searchData) => {
-    dispatch(setStatus(STATUS.LOADING));
+    //dispatch(setStatus(STATUS.LOADING));
     let searchUrl = `${BASE_URL}searchproducts`;
     await fetch(searchUrl, {
         method: 'GET',
@@ -53,12 +53,12 @@ export const fetchSearchProducts = async (searchData) => {
         .then(response => response.json())
         .then(data => {
             // Xử lý dữ liệu trả về từ server
-            dispatch(searchProducts(data));
-        dispatch(setStatus(STATUS.IDLE));
+        //    dispatch(searchProducts(data));
+      //  dispatch(setStatus(STATUS.IDLE));
         })
         .catch(error => {
             // Xử lý lỗi nếu có
-            dispatch(setStatus(STATUS.ERROR))
+         //   dispatch(setStatus(STATUS.ERROR))
         });
     // try{
     //     const response = await fetch();

@@ -1,0 +1,18 @@
+.filter{
+    .filter-top-sale{
+        border-radius: 5px;
+        border: 2px solid #ff0000;
+    }
+    .filter-over-stars{
+        border-radius: 5px;
+        border: 2px solid #ff0000;
+    }
+    .filter-price{
+        border-radius: 5px;
+        border: 2px solid #ff0000;
+        .filter-price-top{
+            font-size: 10px;
+            font-weight: 100;
+        }
+    }
+}
