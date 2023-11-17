@@ -8,10 +8,13 @@ import Footer from "./components/Footer/Footer";
 import {Provider} from 'react-redux';
 import store from "./store/store";
 
+import Filter from './components/Filter/Filter';
+
 function App() {
   return (
     <div className="App">
-      <Provider store = {store}>
+      <Filter/>
+      {/* <Provider store = {store}>
         <BrowserRouter>
           <Navbar />
           <Routes>
@@ -21,7 +24,7 @@ function App() {
           </Routes>
           <Footer />
         </BrowserRouter>
-      </Provider>
+      </Provider> */}
     </div>
   );
 }
