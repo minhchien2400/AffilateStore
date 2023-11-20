@@ -2,9 +2,7 @@ import React, { useState, useEffect} from 'react';
 import "./Navbar.scss";
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCategories } from '../../store/categorySlice';
 import { getCartTotal } from '../../store/cartSlice';
-import { fetchSearchProducts } from '../../store/productSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -20,14 +18,10 @@ const Navbar = () => {
   })
 
   useEffect(() => {
-    dispatch(fetchCategories(filterCategories, 'POST'));
+    //dispatch(fetchCategories(filterCategories, 'POST'));
     dispatch(getCartTotal());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleOnSearch = () => {
-    dispatch(fetchSearchProducts(searchText))
-  }
 
   return (
     <nav className = "navbar">

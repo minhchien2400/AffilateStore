@@ -6,6 +6,7 @@ using AffiliateStoreBE.Models;
 using AffiliateStoreBE.Service.IService;
 using LinqToExcel.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using Status = AffiliateStoreBE.Common.Models.Status;
@@ -154,14 +155,15 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("category/{id}")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByCategoryId(Guid id)
+        public async Task<IActionResult> GetProductsByCategoryId(ProductCategoryFilter filter)
         {
             try
             {
                 var products = new List<ProductModel>();
-                if (id != Guid.Empty)
+                int totalCount = 1;
+                if (filter.CategoryId != Guid.Empty)
                 {
-                    products = await _storeContext.Set<Product>().Where(a => a.CategoryId == id && a.Status == Status.Active).Select(a => new ProductModel
+                    products = await _storeContext.Set<Product>().Where(a => a.CategoryId == filter.CategoryId && a.Status == Status.Active).Select(a => new ProductModel
                     {
                         ProductId = a.Id,
                         ProductName = a.Name,
@@ -174,6 +176,23 @@ namespace AffiliateStoreBE.Controllers
                         AffLink = a.AffLink,
                         TotalSales = a.TotalSales
                     }).ToListAsync();
+                    if (filter.SearchText != String.Empty)
+                    {
+                        var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
+                        products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();
+                    }
+                    if (products.Any())
+                    {
+                        totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
+                        products = DoTake(products.AsQueryable(), filter).ToList();
+                    }
+                    return Ok(new
+                    {
+                        HasError = false,
+                        Result = products,
+                        Filter = filter,
+                        TotalCount = totalCount == 0 ? 1 : totalCount,
+                    });
                 }
                 return Ok(products);
             }
@@ -330,4 +349,8 @@ namespace AffiliateStoreBE.Controllers
         public bool IsInactive { get; set; }
     }
 
+    public class ProductCategoryFilter : FilterModel
+    {
+        public Guid CategoryId { get; set; }
+    }
 }

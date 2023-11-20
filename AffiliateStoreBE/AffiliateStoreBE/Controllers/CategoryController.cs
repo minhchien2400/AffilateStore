@@ -42,7 +42,8 @@ namespace AffiliateStoreBE.Controllers
             {
                 HasError = false,
                 Result= category,
-                Filter = filter
+                Filter = filter,
+                TotalCount = totalCount == 0 ? 1 : totalCount,
             });
         }
 

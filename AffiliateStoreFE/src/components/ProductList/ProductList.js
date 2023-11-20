@@ -31,7 +31,7 @@ const ProductList = ({products, status, name = "Our Products"}) => {
                     </div>
                     <div className='product-items grid'>
                         {
-                            products.slice(0, 20).map(product => (
+                            products.map(product => (
                                 <div className='product-item bg-white' key = {product.id} onClick = {() => viewModalHandler(product)}>
                                     <div className='product-item-img'>
                                         <img src = {product.images} alt = "" />

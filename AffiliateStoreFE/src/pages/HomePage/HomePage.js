@@ -35,8 +35,8 @@ const HomePage = () => {
   return (
     <div className = "home-page">
       <Slider />
-      <Category categories = {categories.result} status = {categoryStatus} />
-      <ProductList products = {products.result} status = {productStatus} />
+      <Category categories = {categories} status = {categoryStatus} />
+      <ProductList products = {products} status = {productStatus}/>
       <section>
         { productsByCategory[0] && <SingleCategory products = {productsByCategory[0]} status = {catProductAllStatus} /> }
       </section>
