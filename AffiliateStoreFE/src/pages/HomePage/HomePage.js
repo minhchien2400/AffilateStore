@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Slider from '../../components/Slider/Slider';
 import Category from '../../components/Category/Category';
 import ProductList from '../../components/ProductList/ProductList';
@@ -8,27 +8,35 @@ import { fetchProducts } from '../../store/productSlice';
 import { fetchCategories, fetchProductsByCategory } from '../../store/categorySlice';
 import "./HomePage.scss";
 
-import Filter from '../../components/Filter/Filter';
-
 const HomePage = () => {
   const dispatch = useDispatch();
   const {data: categories, status: categoryStatus} = useSelector((state) => state.category);
   const {data: products, status: productStatus} = useSelector((state) => state.product);
   const {catProductAll: productsByCategory, catProductAllStatus} = useSelector((state) => state.category);
+  const [filterProducts, SetFilterProducts] = useState({
+    Offset: 1,
+    Limit: 6,
+    SearchText:'',
+  });
+  const [filterCategories, SetFilterCategories] = useState({
+    Offset: 1,
+    Limit: 6,
+    SearchText:'',
+  });
   useEffect(() => {
-    dispatch(fetchProducts());
-    dispatch(fetchCategories());
+    dispatch(fetchProducts(filterProducts, 'POST'));
+    dispatch(fetchCategories(filterCategories, 'POST'));
     dispatch(fetchProductsByCategory('Electronics', 'all'));
     dispatch(fetchProductsByCategory('Pets', 'all'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   return (
     <div className = "home-page">
-      <Filter/>
       <Slider />
-      <Category categories = {categories} status = {categoryStatus} />
-      <ProductList products = {products} status = {productStatus} />
+      <Category categories = {categories.result} status = {categoryStatus} />
+      <ProductList products = {products.result} status = {productStatus} />
       <section>
         { productsByCategory[0] && <SingleCategory products = {productsByCategory[0]} status = {catProductAllStatus} /> }
       </section>

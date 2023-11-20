@@ -1,17 +1,49 @@
-﻿using System.Text.RegularExpressions;
-using System.Text;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+using AffiliateStoreBE.Common.Models;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace AffiliateStoreBE.Common
 {
-    public class SearchStringFunction : ISearchStringFunction
+    public class ApiBaseController : Controller
     {
-        public SearchStringFunction()
-        { }
-        public List<string> SearchString(string stringInput)
+        public readonly IHttpContextAccessor _httpContextAccessor = null;
+
+        public ApiBaseController()
+        {
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+        }
+
+
+        //获取分页后的数据
+        protected IQueryable<T> DoTake<T>(IQueryable<T> query, FilterModel filter)
+        {
+            var offsetFinal = filter.Offset <= 0 ? 1 : filter.Offset;
+            var limitFinal = filter.Limit <= 0 ? 10 : filter.Limit;
+            return query.Skip((offsetFinal - 1) * limitFinal)
+                        .Take(limitFinal);
+        }
+
+        //获取分页后的数据
+        protected IEnumerable<T> DoTake<T>(IEnumerable<T> query, FilterModel filter)
+        {
+            var offsetFinal = filter.Offset <= 0 ? 1 : filter.Offset;
+            var limitFinal = filter.Limit <= 0 ? 10 : filter.Limit;
+            return query.Skip((offsetFinal - 1) * limitFinal)
+                        .Take(limitFinal);
+        }
+
+        public List<string> SearchString(string stringInput, List<string> listNamesConvert)
         {
             string result = string.Join(" ", stringInput.Split().Where(s => !string.IsNullOrWhiteSpace(s)));
             List<string> resultList = new List<string>();
+            List<string> listNamesReturn = new List<string>();
 
             string[] words = result.Split(' ');
 
@@ -24,7 +56,18 @@ namespace AffiliateStoreBE.Common
                     resultList.Add(substring);
                 }
             }
-            return resultList;
+
+            foreach(var str in resultList)
+            {
+                foreach(var name in listNamesConvert)
+                {
+                    if(RemoveSpaceAndConvert(name).Contains(str.ToLower()))
+                    {
+                        listNamesReturn.Add(name);
+                    }
+                }
+            }
+            return listNamesReturn;
         }
 
         // chuyen chu co dau ve khong dau cho 1 string
@@ -69,5 +112,6 @@ namespace AffiliateStoreBE.Common
 
             return sb.ToString();
         }
+
     }
 }

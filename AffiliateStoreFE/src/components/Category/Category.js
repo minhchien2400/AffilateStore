@@ -31,7 +31,6 @@ const Category = ({categories, status}) => {
                             </Link>
                         ))
                     }
-                    
                 </div>
             </div>
         </div>

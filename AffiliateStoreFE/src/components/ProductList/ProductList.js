@@ -8,7 +8,7 @@ import { formatPrice } from '../../utils/helpers';
 import Loader from '../Loader/Loader';
 import Error from '../Error/Error';
 
-const ProductList = ({products, status}) => {
+const ProductList = ({products, status, name = "Our Products"}) => {
     const dispatch = useDispatch();
     const {isModalVisible} = useSelector((state) => state.modal);
 
@@ -27,7 +27,7 @@ const ProductList = ({products, status}) => {
             <div className='container'>
                 <div className='product-content'>
                     <div className='section-title'>
-                        <h3 className='text-uppercase fw-7 text-regal-blue ls-1'>Our Products</h3>
+                        <h3 className='text-uppercase fw-7 text-regal-blue ls-1'>{name}</h3>
                     </div>
                     <div className='product-items grid'>
                         {

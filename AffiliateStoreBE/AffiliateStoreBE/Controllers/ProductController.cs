@@ -1,4 +1,5 @@
-﻿using AffiliateStoreBE.Common.I18N;
+﻿using AffiliateStoreBE.Common;
+using AffiliateStoreBE.Common.I18N;
 using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
@@ -11,7 +12,7 @@ using Status = AffiliateStoreBE.Common.Models.Status;
 
 namespace AffiliateStoreBE.Controllers
 {
-    public class ProductController : ControllerBase
+    public class ProductController : ApiBaseController
     {
         private readonly StoreDbContext _storeContext;
         private readonly ICategoryService _categoryService;
@@ -21,12 +22,13 @@ namespace AffiliateStoreBE.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("getallproducts")]
+        [HttpPost("getallproducts")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByType()
+        public async Task<IActionResult> GetProductsByType([FromBody] FilterModel filterModel)
         {
             try
             {
+                int totalCount = 1;
                 var products = await _storeContext.Set<Product>().Where(a => a.Status == Status.Active).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
@@ -40,7 +42,23 @@ namespace AffiliateStoreBE.Controllers
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
                 }).ToListAsync();
-                return Ok(products);
+                if(filterModel.SearchText != String.Empty)
+                {
+                    var listProductsName = SearchString(filterModel.SearchText, products.Select(p => p.ProductName).ToList());
+                    products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();
+                }
+                if(products.Any())
+                {
+                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filterModel.Limit);
+                    products = DoTake(products.AsQueryable(), filterModel).ToList();
+                }
+                return Ok(new
+                {
+                    HasError = false,
+                    Result = products,
+                    Filter = filterModel,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
+                });
             }
             catch (Exception ex)
             {
@@ -104,7 +122,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("getproductsbycategoryname")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsInactive(string categoryName)
+        public async Task<IActionResult> GetProductsByCategoryName(string categoryName)
         {
             try
             {
@@ -134,9 +152,40 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
+        [HttpGet("category/{id}")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetProductsByCategoryId(Guid id)
+        {
+            try
+            {
+                var products = new List<ProductModel>();
+                if (id != Guid.Empty)
+                {
+                    products = await _storeContext.Set<Product>().Where(a => a.CategoryId == id && a.Status == Status.Active).Select(a => new ProductModel
+                    {
+                        ProductId = a.Id,
+                        ProductName = a.Name,
+                        Description = a.Description,
+                        Cost = a.Cost,
+                        Price = a.Price,
+                        Images = a.Images,
+                        CategoryName = a.Category.Name,
+                        Stars = a.Stars,
+                        AffLink = a.AffLink,
+                        TotalSales = a.TotalSales
+                    }).ToListAsync();
+                }
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         [HttpGet("getproductinactive")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsInactive([FromBody] Guid productId)
+        public async Task<IActionResult> GetProductsInactive(Guid productId)
         {
             try
             {

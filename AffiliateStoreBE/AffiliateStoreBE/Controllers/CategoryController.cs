@@ -1,25 +1,28 @@
-﻿using AffiliateStoreBE.Common.I18N;
+﻿using AffiliateStoreBE.Common;
+using AffiliateStoreBE.Common.I18N;
 using AffiliateStoreBE.Common.Models;
 using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace AffiliateStoreBE.Controllers
 {
-    public class CategoryController : ControllerBase
+    public class CategoryController : ApiBaseController
     {
         private readonly StoreDbContext _storeDbContext;
         public CategoryController(StoreDbContext storeDbContext)
         {
             _storeDbContext = storeDbContext;
         }
-        [HttpGet("getcategory")]
+        [HttpPost("getcategory")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetCategory()
+        public async Task<IActionResult> GetCategory([FromBody] FilterModel filter)
         {
             var category = new List<CategoryModel>();
+            int totalCount = 1;
             try
             {
                 category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active).Select(a => new CategoryModel
@@ -28,12 +31,19 @@ namespace AffiliateStoreBE.Controllers
                     Name = a.Name,
                     Image = a.Image,
                 }).ToListAsync();
+                totalCount = (int)Math.Ceiling(category.Count() / (decimal)filter.Limit);
+                category = DoTake(category.AsQueryable(), filter).ToList();
             }
             catch (Exception ex)
             {
                 throw;
             }
-            return Ok(category);
+            return Ok(new
+            {
+                HasError = false,
+                Result= category,
+                Filter = filter
+            });
         }
 
         [HttpGet("getcategoryinactive")]

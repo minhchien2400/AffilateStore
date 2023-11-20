@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import ProductList from '../../components/ProductList/ProductList';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProductsByCategory } from '../../store/categorySlice';
+import { fetchProductsByCategory, fetchProductsByCategoryId } from '../../store/categorySlice';
 import { useParams, Link } from 'react-router-dom';
 import "./CategoryPage.scss";
 
@@ -11,7 +11,7 @@ const CategoryPage = () => {
     const {catProductSingle: products, catProductSingleStatus: status} = useSelector((state) => state.category);
 
     useEffect(() => {
-      dispatch(fetchProductsByCategory(id, 'single'));
+      dispatch(fetchProductsByCategoryId(id, 'single'));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -35,12 +35,12 @@ const CategoryPage = () => {
                 </span>
               </li>
               <li>
-                { products[0] && products[0].category.name}
+                { products[0] && products[0].categoryName}
               </li>
             </ul>
           </div>
         </div>
-        <ProductList products = {products} status = {status} />
+        <ProductList products = {products} status = {status} name={`${products[0].categoryName}`}/>
       </div>
     )
 }

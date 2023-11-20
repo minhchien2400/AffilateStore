@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { BASE_URL } from "../utils/apiURL";
 import { STATUS } from "../utils/status";
-import { fetchData } from "../utils/fetchData";
+import { fetchDataBody } from "../utils/fetchData";
 
 const categorySlice = createSlice({
   name: "category",
@@ -46,26 +46,27 @@ export const {
 } = categorySlice.actions;
 export default categorySlice.reducer;
 
-export const fetchCategories = () => {
+export const fetchCategories = (dataSend, method) => {
   return async function fetchCategoryThunk(dispatch) {
     dispatch(setStatus(STATUS.LOADING));
-    try {
-      const data = fetchData(`${BASE_URL}getcategory`);
-      dispatch(setCategories(data.slice(0, 5)));
-      dispatch(setStatus(STATUS.IDLE));
-    } catch (error) {
-      dispatch(setStatus(STATUS.ERROR));
+
+    try{
+        const data = await fetchDataBody(`${BASE_URL}getcategory`, dataSend, method);
+        dispatch(setCategories(data));
+        dispatch(setStatus(STATUS.IDLE));
+    } catch(error){
+        dispatch(setStatus(STATUS.ERROR));
     }
 
-    // try{
-    //     const response = await fetch(`${BASE_URL}getcategory`);
-    //     console.log(response);
-    //     const data = await response.json();
-    //     dispatch(setCategories(data.slice(0, 5)));
-    //     dispatch(setStatus(STATUS.IDLE));
-    // } catch(error){
-    //     dispatch(setStatus(STATUS.ERROR));
-    // }
+
+  //   try{
+  //     const response = await fetch(`${BASE_URL}getcategory`);
+  //     const data = await response.json();
+  //     dispatch(setCategories(data.slice(0, 5)));
+  //     dispatch(setStatus(STATUS.IDLE));
+  // } catch(error){
+  //     dispatch(setStatus(STATUS.ERROR));
+  // }
   };
 };
 
@@ -78,6 +79,31 @@ export const fetchProductsByCategory = (categoryName, dataType) => {
     try {
       const response = await fetch(
         `${BASE_URL}getproductsbycategoryname?categoryName=${categoryName}`
+      );
+      const data = await response.json();
+      if (dataType === "all") {
+        dispatch(setCategoriesProductAll(data.slice(0, 10)));
+        dispatch(setCategoriesStatusAll(STATUS.IDLE));
+      }
+      if (dataType === "single") {
+        dispatch(setCategoriesProductSingle(data.slice(0, 20)));
+        dispatch(setCategoriesStatusSingle(STATUS.IDLE));
+      }
+    } catch (error) {
+      dispatch(setCategoriesStatusAll(STATUS.ERROR));
+    }
+  };
+};
+
+export const fetchProductsByCategoryId = (id, dataType) => {
+  return async function fetchCategoryProductThunk(dispatch) {
+    if (dataType === "all") dispatch(setCategoriesStatusAll(STATUS.LOADING));
+    if (dataType === "single")
+      dispatch(setCategoriesStatusSingle(STATUS.LOADING));
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}category/${id}`
       );
       const data = await response.json();
       if (dataType === "all") {

@@ -13,9 +13,14 @@ const Navbar = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("")
+  const [filterCategories, setCategories] = useState({
+    Offset: 1,
+    Limit: 6,
+    SearchText:''
+  })
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchCategories(filterCategories, 'POST'));
     dispatch(getCartTotal());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
