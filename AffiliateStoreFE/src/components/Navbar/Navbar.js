@@ -1,78 +1,121 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import "./Navbar.scss";
-import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { getCartTotal } from '../../store/cartSlice';
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getCartTotal } from "../../store/cartSlice";
+import { fetchCategories } from "../../store/categorySlice";
+import { fetchSearchProducts } from "../../store/searchSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const {data: categories} = useSelector((state) => state.category);
-  const {totalItems} = useSelector((state => state.cart));
+  const { data: categories } = useSelector((state) => state.category);
+  const { totalItems } = useSelector((state) => state.cart);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState("");
   const [filterCategories, setCategories] = useState({
     Offset: 1,
     Limit: 6,
-    SearchText:''
-  })
+    SearchText: searchText,
+  });
 
   useEffect(() => {
-    //dispatch(fetchCategories(filterCategories, 'POST'));
+    dispatch(fetchCategories(filterCategories, 'POST'));
     dispatch(getCartTotal());
+    dispatch(fetchSearchProducts(filterCategories, 'POST'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleSearch = (newSearchText) => {
+    setCategories((prevFilterCategories) => ({
+      ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
+      SearchText: newSearchText, // Thay đổi giá trị SearchText
+    }));
+    console.log(searchText);
+    setSearchText('');
+  };
+
   return (
-    <nav className = "navbar">
-      <div className='navbar-content'>
-        <div className = "container">
-          <div className = "navbar-top flex flex-between">
-              <Link to = "/" className = "navbar-brand">
-                <span className = "text-regal-blue">ABC</span><span className='text-gold'> XYZ</span>
+    <nav className="navbar">
+      <div className="navbar-content">
+        <div className="container">
+          <div className="navbar-top flex flex-between">
+            <Link to="/" className="navbar-brand">
+              <span className="text-regal-blue">ABC</span>
+              <span className="text-gold"> XYZ</span>
+            </Link>
+
+            <form className="navbar-search flex">
+              <input
+                type="text"
+                placeholder="Search here ..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+              <Link to= {`search=${searchText}`} className="">
+              <button
+                type="submit"
+                className="navbar-search-btn"
+                onClick={() => handleSearch(searchText)}
+              >
+                <i className="fas fa-search"></i>
+              </button>
               </Link>
+            </form>
 
-              <form className = "navbar-search flex">
-                <input type = "text" placeholder='Search here ...' value={searchText} onChange={(e) => setSearchText(e.target.value)}/> 
-                <button type = "submit" className = "navbar-search-btn" onClick={() => ""}>
-                  <i className = "fas fa-search"></i>
-                </button>
-              </form>
-
-              <div className = "navbar-btns">
-                <Link to = "/cart" className="add-to-cart-btn flex">
-                  <span className = "btn-ico">
-                    <i className = "fas fa-shopping-cart"></i>
-                  </span>
-                  <div className='btn-txt fw-5'>Cart
-                    <span className='cart-count-value'>{totalItems}</span>
-                  </div>
-                </Link>
-              </div>
+            <div className="navbar-btns">
+              <Link to="/cart" className="add-to-cart-btn flex">
+                <span className="btn-ico">
+                  <i className="fas fa-shopping-cart"></i>
+                </span>
+                <div className="btn-txt fw-5">
+                  Cart
+                  <span className="cart-count-value">{totalItems}</span>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
-        
-        <div className='navbar-bottom bg-regal-blue'>
-          <div className='container flex flex-between'>
-            <ul className = {`nav-links flex ${isSidebarOpen ? 'show-nav-links' : ""}`}>
-              <button type = "button" className='navbar-hide-btn text-white' onClick={() => setIsSidebarOpen(false)}>
-                <i className='fas fa-times'></i>
+
+        <div className="navbar-bottom bg-regal-blue">
+          <div className="container flex flex-between">
+            <ul
+              className={`nav-links flex ${
+                isSidebarOpen ? "show-nav-links" : ""
+              }`}
+            >
+              <button
+                type="button"
+                className="navbar-hide-btn text-white"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <i className="fas fa-times"></i>
               </button>
-              {
-                categories.map(category => (
-                  <li key = {category.id}><Link to = {`/category/${category.id}`} className = "nav-link text-white" onClick={() => setIsSidebarOpen(false)}>{category.name}</Link></li>
-                ))
-              }
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    to={`/category/${category.id}`}
+                    className="nav-link text-white"
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
 
-            <button type = "button" className='navbar-show-btn text-gold' onClick={() => setIsSidebarOpen(true)}>
-              <i className = "fas fa-bars"></i>
+            <button
+              type="button"
+              className="navbar-show-btn text-gold"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <i className="fas fa-bars"></i>
             </button>
           </div>
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
 export default Navbar;

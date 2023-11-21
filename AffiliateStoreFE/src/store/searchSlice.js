@@ -3,33 +3,29 @@ import { BASE_URL } from "../utils/apiURL";
 import { STATUS } from "../utils/status";
 import { fetchDataBody } from "../utils/fetchData";
 
-const productSlice = createSlice({
-    name: "product",
+const searchSlice = createSlice({
+    name: "search",
     initialState: {
         data: [],
         status: STATUS.IDLE,
     },
 
     reducers: {
-        setProducts(state, action){
+        setDataSearch(state, action){
             state.data = action.payload;
         },
         setStatus(state, action){
             state.status = action.payload;
         },
-        searchProducts(state, action){
-            state.status = action.payload;
-        }
     },
 });
 
-export const {setProducts, setStatus, searchProducts} = productSlice.actions;
-export default productSlice.reducer;
+export const {setDataSearch, setStatus} = searchSlice.actions;
+export default searchSlice.reducer;
 
-export const fetchProducts = (dataSend, method) => {
+export const fetchSearchProducts = (dataSend, method) => {
     return async function fetchProductThunk(dispatch){
         dispatch(setStatus(STATUS.LOADING));
-
         try{
             const data = await fetchDataBody(`${BASE_URL}getallproducts`, dataSend, method);
             console.log(data);
@@ -37,12 +33,10 @@ export const fetchProducts = (dataSend, method) => {
             {
                 dispatch(setStatus(STATUS.ERROR));
             }
-            dispatch(setProducts(data.result));
+            dispatch(setDataSearch(data.result));
             dispatch(setStatus(STATUS.IDLE));
         } catch(error){
             dispatch(setStatus(STATUS.ERROR));
         }
     }
 }
-
-

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ProductList from "../../components/ProductList/ProductList";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchProductsByCategory,
   fetchProductsByCategoryId,
 } from "../../store/categorySlice";
 import { useParams, Link } from "react-router-dom";
@@ -11,19 +10,21 @@ import "./CategoryPage.scss";
 const CategoryPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { catProduct: products, catProductStatus: status } =
+  const { catProductAll: products, catProductStatus: status } =
     useSelector((state) => state.category);
-  const [filter, setFilter] = useState({
-    categoryId: id,
+  const [filterModel, setFilterModel] = useState({
+    CategoryId: id,
     Offset: 1,
     Limit: 6,
     SearchText: "",
   });
 
   useEffect(() => {
-    dispatch(fetchProductsByCategoryId(filter, 'POST'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(id);
+    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
   }, [id]);
+
+  console.log(products);
 
   return (
     <div className="category-page">
@@ -44,14 +45,13 @@ const CategoryPage = () => {
                 <i className="fas fa-chevron-right"></i>
               </span>
             </li>
-            <li>{products[0] && products[0].categoryName}</li>
+            <li>{products && products.categoryName}</li>
           </ul>
         </div>
       </div>
       <ProductList
         products={products}
         status={status}
-        name={`${products[0].categoryName}`}
       />
     </div>
   );

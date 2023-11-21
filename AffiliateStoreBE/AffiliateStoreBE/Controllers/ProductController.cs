@@ -153,7 +153,7 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpGet("category/{id}")]
+        [HttpPost("category/{categoryId}")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetProductsByCategoryId(ProductCategoryFilter filter)
         {
@@ -176,7 +176,7 @@ namespace AffiliateStoreBE.Controllers
                         AffLink = a.AffLink,
                         TotalSales = a.TotalSales
                     }).ToListAsync();
-                    if (filter.SearchText != String.Empty)
+                    if (filter.SearchText != String.Empty && filter.SearchText != null)
                     {
                         var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
                         products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();

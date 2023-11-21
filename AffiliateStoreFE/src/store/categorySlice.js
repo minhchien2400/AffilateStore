@@ -103,6 +103,7 @@ export const fetchProductsByCategory = (categoryName, dataType) => {
 
 export const fetchProductsByCategoryId = (dataSend, method) => {
   return async function fetchCategoryProductThunk(dispatch) {
+    console.log(dataSend);
     // if (dataType === "all") dispatch(setCategoriesStatusAll(STATUS.LOADING));
     // if (dataType === "single")
     //   dispatch(setCategoriesStatusSingle(STATUS.LOADING));
@@ -128,7 +129,7 @@ export const fetchProductsByCategoryId = (dataSend, method) => {
 
     try {
       const data = await fetchDataBody(
-        `${BASE_URL}category/${dataSend.categoryId}`,
+        `${BASE_URL}category/${dataSend.CategoryId}`,
         dataSend,
         method
       );
