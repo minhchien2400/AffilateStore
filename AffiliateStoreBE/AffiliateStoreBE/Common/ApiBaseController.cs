@@ -21,7 +21,6 @@ namespace AffiliateStoreBE.Common
         }
 
 
-        //获取分页后的数据
         protected IQueryable<T> DoTake<T>(IQueryable<T> query, FilterModel filter)
         {
             var offsetFinal = filter.Offset <= 0 ? 1 : filter.Offset;
@@ -30,7 +29,6 @@ namespace AffiliateStoreBE.Common
                         .Take(limitFinal);
         }
 
-        //获取分页后的数据
         protected IEnumerable<T> DoTake<T>(IEnumerable<T> query, FilterModel filter)
         {
             var offsetFinal = filter.Offset <= 0 ? 1 : filter.Offset;

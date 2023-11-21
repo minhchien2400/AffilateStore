@@ -46,7 +46,7 @@ namespace AffiliateStoreBE.Controllers
                 if(filterModel.SearchText != String.Empty && filterModel.SearchText != null)
                 {
                     var listProductsName = SearchString(filterModel.SearchText, products.Select(p => p.ProductName).ToList());
-                    products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();
+                    products = products.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
                 }
                 if(products.Any())
                 {
