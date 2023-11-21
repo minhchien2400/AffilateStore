@@ -3,19 +3,20 @@ import ProductList from '../../components/ProductList/ProductList';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../../store/productSlice';
 import { fetchSearchProducts } from '../../store/searchSlice';
+import { useParams, Link } from "react-router-dom";
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
-  const {data: products, status: productStatus} = useSelector((state) => state.product);
+  const { searchText } = useParams();
+  const {data: products, status: productStatus} = useSelector((state) => state.search);
   const [filterProducts, SetFilterProducts] = useState({
     Offset: 1,
     Limit: 6,
-    SearchText:'',
+    SearchText:searchText,
   });
   useEffect(() => {
-    dispatch(fetchSearchProducts(filterProducts, 'POST'));
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchText]);
 
 
   return (

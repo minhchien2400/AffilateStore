@@ -43,7 +43,7 @@ namespace AffiliateStoreBE.Controllers
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
                 }).ToListAsync();
-                if(filterModel.SearchText != String.Empty)
+                if(filterModel.SearchText != String.Empty && filterModel.SearchText != null)
                 {
                     var listProductsName = SearchString(filterModel.SearchText, products.Select(p => p.ProductName).ToList());
                     products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();

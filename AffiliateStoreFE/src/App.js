@@ -8,6 +8,7 @@ import Footer from "./components/Footer/Footer";
 import {Provider} from 'react-redux';
 import store from "./store/store";
 import CategoryPage from './pages/CategoryPage/CategoryPage';
+import ProductsPage from './pages/ProductsPage/ProductsPage';
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
             <Route path = "/" element = {<Home />} />
             <Route path = "/category/:id" element = {<Category />} />
             <Route path = "/cart" element = {<Cart />} />
-            {/* <Route path = "/search=:searchText" element = {<CategoryPage />} /> */}
+            <Route path = "/search=:searchText" element = {<ProductsPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>

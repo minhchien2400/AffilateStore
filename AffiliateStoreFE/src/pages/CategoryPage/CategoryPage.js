@@ -20,9 +20,22 @@ const CategoryPage = () => {
   });
 
   useEffect(() => {
-    console.log(id);
-    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
+    setFilterModel((prevFilterCategories) => ({
+      ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
+      CategoryId: id, // Thay đổi giá trị SearchText
+    }));
   }, [id]);
+
+  useEffect(() => {
+    console.log('tao');
+    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
+    return () => {
+    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
+    }
+  }, [])
+  useEffect(() => {
+    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
+  }, [filterModel])
 
   console.log(products);
 
@@ -45,13 +58,14 @@ const CategoryPage = () => {
                 <i className="fas fa-chevron-right"></i>
               </span>
             </li>
-            <li>{products && products.categoryName}</li>
+            <li>{products && products[0].categoryName}</li>
           </ul>
         </div>
       </div>
       <ProductList
         products={products}
         status={status}
+        name= {products[0].categoryName}
       />
     </div>
   );

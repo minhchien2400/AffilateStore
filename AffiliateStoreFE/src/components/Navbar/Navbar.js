@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [filterCategories, setCategories] = useState({
+  const [filterCategories, setFilterCategories] = useState({
     Offset: 1,
     Limit: 6,
     SearchText: searchText,
@@ -22,19 +22,22 @@ const Navbar = () => {
   useEffect(() => {
     dispatch(fetchCategories(filterCategories, 'POST'));
     dispatch(getCartTotal());
-    dispatch(fetchSearchProducts(filterCategories, 'POST'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (newSearchText) => {
-    setCategories((prevFilterCategories) => ({
+    setFilterCategories((prevFilterCategories) => ({
       ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
       SearchText: newSearchText, // Thay đổi giá trị SearchText
     }));
-    console.log(searchText);
     setSearchText('');
   };
 
+  useEffect(() => {
+    dispatch(fetchSearchProducts(filterCategories, 'POST'));
+  }, [filterCategories]);
+
+console.log(categories);
   return (
     <nav className="navbar">
       <div className="navbar-content">
