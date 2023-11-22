@@ -41,6 +41,7 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
+      
       <Slider />
       <Category categories={categories} status={categoryStatus} />
       <ProductList products={products} status={productStatus} />

@@ -84,7 +84,7 @@ namespace AffiliateStoreBE.Service
                         images.Add(imageExcel["Image link"]);
                     }
                 }
-                productDetail.Image = String.Join("; ", images);
+                productDetail.Image = String.Join(";", images);
                 productsDetail.Add(productDetail);
             }
             return productsDetail;

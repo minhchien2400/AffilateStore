@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using Status = AffiliateStoreBE.Common.Models.Status;
+using System.Linq;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -37,7 +38,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Cost = a.Cost,
                     Price = a.Price,
-                    Images = a.Images,
+                    Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                     CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
@@ -80,7 +81,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Cost = a.Cost,
                     Price = a.Price,
-                    Images = a.Images,
+                    Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                     CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
@@ -96,7 +97,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("getproductbyid")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductById([FromBody] Guid productId)
+        public async Task<IActionResult> GetProductById(Guid productId)
         {
             try
             {
@@ -107,7 +108,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Cost = a.Cost,
                     Price = a.Price,
-                    Images = a.Images,
+                    Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                     CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
@@ -138,7 +139,7 @@ namespace AffiliateStoreBE.Controllers
                         Description = a.Description,
                         Cost = a.Cost,
                         Price = a.Price,
-                        Images = a.Images,
+                        Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                         CategoryName = a.Category.Name,
                         Stars = a.Stars,
                         AffLink = a.AffLink,
@@ -170,7 +171,7 @@ namespace AffiliateStoreBE.Controllers
                         Description = a.Description,
                         Cost = a.Cost,
                         Price = a.Price,
-                        Images = a.Images,
+                        Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                         CategoryName = a.Category.Name,
                         Stars = a.Stars,
                         AffLink = a.AffLink,
@@ -215,7 +216,7 @@ namespace AffiliateStoreBE.Controllers
                     Description = a.Description,
                     Cost = a.Cost,
                     Price = a.Price,
-                    Images = a.Images,
+                    Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
                     CategoryName = a.Category.Name,
                     Stars = a.Stars,
                     AffLink = a.AffLink,
@@ -246,7 +247,7 @@ namespace AffiliateStoreBE.Controllers
                         product.Description = pr.Description != string.Empty ? pr.Description : product.Description;
                         product.Cost = pr.Cost != 0 ? pr.Cost : product.Cost;
                         product.Price = pr.Price != 0 ? pr.Price : product.Price;
-                        product.Images = pr.Images != null ? pr.Images : product.Images;
+                        product.Images = pr.Images != null ? String.Join("; ", pr.Images) : String.Empty;
                         product.CategoryId = pr.CategoryId;
                         product.Stars = pr.Stars != 0 ? pr.Stars : product.Stars;
                         product.AffLink = pr.AffLink != null ? pr.AffLink : product.AffLink;
@@ -264,7 +265,7 @@ namespace AffiliateStoreBE.Controllers
                     product.Name = pr.ProductName;
                     product.Description = pr.Description;
                     product.Cost = pr.Cost;
-                    product.Images = pr.Images;
+                    product.Images = String.Join("; ", pr.Images);
                     product.CategoryId = pr.CategoryId;
                     product.Stars = pr.Stars;
                     product.AffLink = pr.AffLink;
@@ -336,7 +337,7 @@ namespace AffiliateStoreBE.Controllers
         public string Description { get; set; }
         public float Cost { get; set; }
         public float Price { get; set; }
-        public string Images { get; set; }
+        public List<string> Images { get; set; }
         public string CategoryName { get; set; }
         public int Stars { get; set; }
         public string AffLink { get; set; }
