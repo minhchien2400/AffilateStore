@@ -1,0 +1,38 @@
+@import "../../App.scss";
+// Variables
+$pagination-color: #333;
+$pagination-hover-color: #555;
+
+// Pagination Styles
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+
+    li {
+      padding: 2px 8px;
+      margin: 0 5px;
+      background-color: rgb(207, 170, 170);
+      cursor: pointer;
+      border: 2px solid rgb(4, 4, 4);
+
+      &:hover {
+        color: $pagination-hover-color;
+      }
+    }
+  }
+  .limit-items {
+    padding: 5px;
+    background-color: rgb(207, 170, 170);
+    cursor: pointer;
+    border: 2px solid rgb(4, 4, 4);
+    &:hover {
+      color: $pagination-hover-color;
+    }
+  }
+}
