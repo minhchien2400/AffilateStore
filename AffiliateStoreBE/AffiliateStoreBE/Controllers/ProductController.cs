@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using Status = AffiliateStoreBE.Common.Models.Status;
 using System.Linq;
+using System.ComponentModel;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -18,6 +19,7 @@ namespace AffiliateStoreBE.Controllers
     {
         private readonly StoreDbContext _storeContext;
         private readonly ICategoryService _categoryService;
+        private readonly IProductsService _productService;
         public ProductController(StoreDbContext storeContext, ICategoryService categoryService)
         {
             _storeContext = storeContext;
@@ -26,7 +28,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("getallproducts")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByType([FromBody] FilterModel filterModel)
+        public async Task<IActionResult> GetProductsByType([FromBody] FilterModel filter)
         {
             try
             {
@@ -43,22 +45,27 @@ namespace AffiliateStoreBE.Controllers
                     Stars = a.Stars,
                     AffLink = a.AffLink,
                     TotalSales = a.TotalSales,
+                    CategoryId = a.Category.Id,
                 }).ToListAsync();
-                if(filterModel.SearchText != String.Empty && filterModel.SearchText != null)
+                if (filter.SearchText != String.Empty && filter.SearchText != null)
                 {
-                    var listProductsName = SearchString(filterModel.SearchText, products.Select(p => p.ProductName).ToList());
+                    var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
                     products = products.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
                 }
-                if(products.Any())
+                if (filter.Keys != null)
                 {
-                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filterModel.Limit);
-                    products = DoTake(products.AsQueryable(), filterModel).ToList();
+                    products = _productService.GetProductsByFilterKeys(products, filter.Keys);
+                }
+                if (products.Any())
+                {
+                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
+                    products = DoTake(products.AsQueryable(), filter).ToList();
                 }
                 return Ok(new
                 {
                     HasError = false,
                     Result = products,
-                    Filter = filterModel,
+                    Filter = filter,
                     TotalCount = totalCount == 0 ? 1 : totalCount,
                 });
             }
@@ -68,32 +75,6 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpGet("getproductsbytype")]
-        [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByType([FromBody] Guid categoryId)
-        {
-            try
-            {
-                var products = await _storeContext.Set<Product>().Include(a => a.Category).Where(a => a.Id == categoryId && a.Status == Status.Active).Select(a => new ProductModel
-                {
-                    ProductId = a.Id,
-                    ProductName = a.Name,
-                    Description = a.Description,
-                    Cost = a.Cost,
-                    Price = a.Price,
-                    Images = !string.IsNullOrEmpty(a.Images) ? a.Images.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>(),
-                    CategoryName = a.Category.Name,
-                    Stars = a.Stars,
-                    AffLink = a.AffLink,
-                    TotalSales = a.TotalSales,
-                }).ToListAsync();
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
 
         [HttpGet("getproductbyid")]
         [SwaggerResponse(200)]
@@ -124,15 +105,15 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("getproductsbycategoryname")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByCategoryName(string categoryName)
+        public async Task<IActionResult> GetProductsByCategoryName(ProductsCategoryNameFilter filter)
         {
             try
             {
                 var products = new List<ProductModel>();
-                var category = await _categoryService.GetCategoryByName(new List<string> { categoryName });
-                if (category != null)
+                int totalCount = 1;
+                if (filter.CategoryName != String.Empty && filter.CategoryName != null)
                 {
-                    products = await _storeContext.Set<Product>().Where(a => category.Select(c => c.Id).FirstOrDefault().Equals(a.CategoryId) && a.Status == Status.Active).Select(a => new ProductModel
+                    products = await _storeContext.Set<Product>().Where(a => filter.CategoryName.Equals(a.Category.Name) && a.Status == Status.Active).Select(a => new ProductModel
                     {
                         ProductId = a.Id,
                         ProductName = a.Name,
@@ -146,7 +127,24 @@ namespace AffiliateStoreBE.Controllers
                         TotalSales = a.TotalSales
                     }).ToListAsync();
                 }
-                return Ok(products);
+
+                if (filter.Keys != null)
+                {
+                    products = _productService.GetProductsByFilterKeys(products, filter.Keys);
+                }
+                if (products.Any())
+                {
+                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
+                    products = DoTake(products.AsQueryable(), filter).ToList();
+                }
+
+                return Ok(new
+                {
+                    HasError = false,
+                    Result = products,
+                    Filter = filter,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
+                });
             }
             catch (Exception ex)
             {
@@ -156,7 +154,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("category/{categoryId}")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByCategoryId(ProductCategoryFilter filter)
+        public async Task<IActionResult> GetProductsByCategoryId(ProductsCategoryIdFilter filter)
         {
             try
             {
@@ -177,25 +175,28 @@ namespace AffiliateStoreBE.Controllers
                         AffLink = a.AffLink,
                         TotalSales = a.TotalSales
                     }).ToListAsync();
-                    if (filter.SearchText != String.Empty && filter.SearchText != null)
-                    {
-                        var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
-                        products = products.Where(a => listProductsName.Contains(a.ProductName)).ToList();
-                    }
-                    if (products.Any())
-                    {
-                        totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
-                        products = DoTake(products.AsQueryable(), filter).ToList();
-                    }
-                    return Ok(new
-                    {
-                        HasError = false,
-                        Result = products,
-                        Filter = filter,
-                        TotalCount = totalCount == 0 ? 1 : totalCount,
-                    });
                 }
-                return Ok(products);
+                if (filter.SearchText != String.Empty && filter.SearchText != null)
+                {
+                    var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
+                    products = products.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
+                }
+                if (filter.Keys != null)
+                {
+                    products = _productService.GetProductsByFilterKeys(products, filter.Keys);
+                }
+                if (products.Any())
+                {
+                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
+                    products = DoTake(products.AsQueryable(), filter).ToList();
+                }
+                return Ok(new
+                {
+                    HasError = false,
+                    Result = products,
+                    Filter = filter,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
+                });
             }
             catch (Exception ex)
             {
@@ -350,8 +351,13 @@ namespace AffiliateStoreBE.Controllers
         public bool IsInactive { get; set; }
     }
 
-    public class ProductCategoryFilter : FilterModel
+    public class ProductsCategoryIdFilter : FilterModel
     {
         public Guid CategoryId { get; set; }
+    }
+
+    public class ProductsCategoryNameFilter : FilterModel
+    {
+        public string CategoryName { get; set; }
     }
 }

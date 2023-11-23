@@ -30,12 +30,12 @@ const categorySlice = createSlice({
     setCategoriesStatusAll(state, action) {
       state.catProductAllStatus = action.payload;
     },
-    setCategoriesProductSingle(state, action) {
-      state.catProductSingle = action.payload;
-    },
-    setCategoriesStatusSingle(state, action) {
-      state.catProductSingleStatus = action.payload;
-    },
+    // setCategoriesProductSingle(state, action) {
+    //   state.catProductSingle = action.payload;
+    // },
+    // setCategoriesStatusSingle(state, action) {
+    //   state.catProductSingleStatus = action.payload;
+    // },
   },
 });
 
@@ -44,8 +44,8 @@ export const {
   setStatus,
   setCategoriesProductAll,
   setCategoriesStatusAll,
-  setCategoriesProductSingle,
-  setCategoriesStatusSingle,
+  // setCategoriesProductSingle,
+  // setCategoriesStatusSingle,
 } = categorySlice.actions;
 export default categorySlice.reducer;
 
@@ -79,22 +79,14 @@ export const fetchCategories = (dataSend, method) => {
 export const fetchProductsByCategory = (categoryName, dataType) => {
   return async function fetchCategoryProductThunk(dispatch) {
     if (dataType === "all") dispatch(setCategoriesStatusAll(STATUS.LOADING));
-    if (dataType === "single")
-      dispatch(setCategoriesStatusSingle(STATUS.LOADING));
 
     try {
       const response = await fetch(
         `${BASE_URL}getproductsbycategoryname?categoryName=${categoryName}`
       );
       const data = await response.json();
-      if (dataType === "all") {
-        dispatch(setCategoriesProductAll(data.slice(0, 10)));
+        dispatch(setCategoriesProductAll(data.result));
         dispatch(setCategoriesStatusAll(STATUS.IDLE));
-      }
-      if (dataType === "single") {
-        dispatch(setCategoriesProductSingle(data.slice(0, 20)));
-        dispatch(setCategoriesStatusSingle(STATUS.IDLE));
-      }
     } catch (error) {
       dispatch(setCategoriesStatusAll(STATUS.ERROR));
     }

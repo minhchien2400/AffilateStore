@@ -30,14 +30,41 @@ const HomePage = () => {
     Offset: 1,
     Limit: 6,
     SearchText: "",
+    Keys: [],
+  });
+
+  const [filterSingleCategory1, SetFilterSingleCategory1] = useState({
+    CategoryName: "Electronics",
+    Offset: 1,
+    Limit: 6,
+    SearchText: "",
+    Keys: [],
+  });
+
+  const [filterSingleCategory2, SetFilterSingleCategory2] = useState({
+    CategoryName: "Pets",
+    Offset: 1,
+    Limit: 6,
+    SearchText: "",
+    Keys: [],
   });
   useEffect(() => {
     dispatch(fetchProducts(filterProducts, "POST"));
     dispatch(fetchCategories(filterCategories, "POST"));
-    dispatch(fetchProductsByCategory("Electronics", "all"));
-    dispatch(fetchProductsByCategory("Pets", "all"));
+    dispatch(fetchProductsByCategory("Electronics"));
+    dispatch(fetchProductsByCategory("Pets"));
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleSingleCategoryFilter1 = () => {
+    SetFilterSingleCategory1({
+      CategoryName: "Electronics",
+      Offset: 1,
+      Limit: 6,
+      SearchText: "",
+      Keys: [],
+    })
+  }
 
   return (
     <div className="home-page">
@@ -48,7 +75,7 @@ const HomePage = () => {
       <section>
         {productsByCategory[0] && (
           <SingleCategory
-            products={productsByCategory}
+            products={productsByCategory[0]}
             status={catProductAllStatus}
           />
         )}
@@ -56,7 +83,7 @@ const HomePage = () => {
       <section>
         {productsByCategory[1] && (
           <SingleCategory
-            products={productsByCategory}
+            products={productsByCategory[1]}
             status={catProductAllStatus}
           />
         )}

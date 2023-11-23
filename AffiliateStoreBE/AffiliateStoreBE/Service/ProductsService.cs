@@ -1,4 +1,6 @@
-﻿using AffiliateStoreBE.DbConnect;
+﻿using AffiliateStoreBE.Common.Models;
+using AffiliateStoreBE.Controllers;
+using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Models;
 using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +22,27 @@ namespace AffiliateStoreBE.Service
         public async Task<List<ValidateProductName>> GetProductsByIds(List<Guid> ids)
         {
             var products = await _storeDbContext.Set<Product>().Where(a => ids.Contains(a.Id)).Select(a => new ValidateProductName { ProductId = a.Id, Name = a.Name }).ToListAsync();
+            return products;
+        }
+        public List<ProductModel> GetProductsByFilterKeys(List<ProductModel> products, List<string> keys)
+        {
+
+            if (keys.Contains("over-3-stars"))
+            {
+                products = products.Where(a => (float)(a.Stars / 10) > 3).ToList();
+            }
+            else if (keys.Contains("over-4-stars"))
+            {
+                products = products.Where(a => (float)(a.Stars / 10) > 4).ToList();
+            }
+            if (keys.Contains("price-up"))
+            {
+                products = products.OrderBy(a => a.Price).ToList();
+            }
+            else if (keys.Contains("price-down"))
+            {
+                products = products.OrderByDescending(a => a.Price).ToList();
+            }
             return products;
         }
         public class ValidateProductName

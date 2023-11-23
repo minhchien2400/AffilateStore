@@ -6,7 +6,6 @@ import { fetchSearchProducts } from '../../store/searchSlice';
 import { useParams, Link } from "react-router-dom";
 
 const ProductsPage = () => {
-  const dispatch = useDispatch();
   const { searchText } = useParams();
   const {data: products, status: productStatus} = useSelector((state) => state.search);
   const [filterProducts, SetFilterProducts] = useState({

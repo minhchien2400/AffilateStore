@@ -1,18 +1,33 @@
-.filter{
-    .filter-top-sale{
+@import "../../App.scss";
+.container {
+  display: flex;
+  .filter {
+    .filter-price {
+      button {
+        padding: 1px 5px; /* Kích thước padding của nút, điều chỉnh theo mong muốn */
+        border: 1px solid #ccc; /* Viền của nút */
+        background-color: #f8f8f8; /* Màu nền của nút */
+        cursor: pointer;
+        outline: none; /* Loại bỏ đường viền khi focus */
         border-radius: 5px;
-        border: 2px solid #ff0000;
+      }
+      button.filter-price-selected {
+        background-color: #ff0000; /* Màu viền đỏ khi được chọn */
+      }
     }
-    .filter-over-stars{
+    .filter-stars {
+      margin-left: 30px;
+      button {
+        padding: 1px 5px; /* Kích thước padding của nút, điều chỉnh theo mong muốn */
+        border: 1px solid #ccc; /* Viền của nút */
+        background-color: #f8f8f8; /* Màu nền của nút */
+        cursor: pointer;
+        outline: none; /* Loại bỏ đường viền khi focus */
         border-radius: 5px;
-        border: 2px solid #ff0000;
+      }
+      button.filter-stars-selected {
+        background-color: #ff0000; /* Màu viền đỏ khi được chọn */
+      }
     }
-    .filter-price{
-        border-radius: 5px;
-        border: 2px solid #ff0000;
-        .filter-price-icon{
-            font-size: 10px;
-            font-weight: 100;
-        }
-    }
+  }
 }

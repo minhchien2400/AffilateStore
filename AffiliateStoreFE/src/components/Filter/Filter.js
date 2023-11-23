@@ -1,76 +1,78 @@
 import "./Filter.scss";
 import { useState, useEffect } from "react";
 
-const Filter = () => {
-  const [filter, setFilter] = useState("");
-  const [order, setOrder] = useState("top-sale");
-  const [overStars, setOverStars] = useState(false);
+const Filter = ({sendFilterItems}) => {
+  const [filter, setFilter] = useState({ Price: "all", Stars: "all" });
+  const [orderPrice, setOrderPrice] = useState("all");
+  const [orderStars, setOrderStars] = useState("all");
+
+  const [currentPriceIndex, setCurrentPriceIndex] = useState(0);
+  const [currentStarsIndex, setCurrentStarsIndex] = useState(0);
+
+  const orderPriceValues = ["all", "price-up", "price-down"];
+  const orderStarsValues = ["all", "over-3-stars", "over-4-stars"];
+
+  const orderPriceDisplay = ["All", "Increasing", "Descending"];
+  const orderStarsDisplay = ["All", "Over 3 stars", "Over 4 stars"];
 
   useEffect(() => {
-    setColorButtom();
-    console.log("abc");
-  }, []);
+    setFilter({
+      Price: orderPrice,
+      Stars: orderStars,
+    });
+    sendFilterItems(filter);
+  }, [orderPrice, orderStars]);
 
-  const handleOrder = (number) => {
-    if (order === "") {
-      if (number === 1) {
-        setOrder("top-sale");
-      } else if (number === 2) {
-        setOrder("price-up");
-      }
-    } else if (order === "top-sale" && number === 1) {
-      setOrder("");
-    } else if (order === "top-sale" && number === 2) {
-      setOrder("price-up");
-    } else if (order === "price-up" && number === 2) {
-      setOrder("price-down");
-    } else if (order === "price-down" && number === 2) {
-      setOrder("price-up");
-    } else if (
-      (order === "price-up" || order === "price-down") &&
-      number === 1
-    ) {
-      setOrder("top-sale");
+  const handleSetOrder = (type, orderValue, index) => {
+    if (type === 0) {
+      setOrderPrice(orderValue);
+      setCurrentPriceIndex(index);
+    } else if (type === 1) {
+      setOrderStars(orderValue);
+      setCurrentStarsIndex(index);
     }
-  };
-
-  const handleOverStars = (overStars) => {
-    overStars === true ? setOverStars(false) : setOverStars(true);
-  };
-
-  const setColorButtom = () => {
-    let className = "";
-    if (order === "top-sale") {
-      className = "filter-top-sale";
-    } else if (order === "price-up") {
-      className = "filter-price-icon-up";
-    } else if (order === "price-down") {
-      className = "filter-price-icon-down";
-    }
-    const elements = document.getElementsByClassName(className);
-    console.log(elements);
-    elements[0].style.color = "green";
   };
 
   return (
     <div className="container">
-      <div className="flex filter">
-        <button className="filter-top-sale" onClick={() => handleOrder(1)}>
-          Top Sale
-        </button>
-        <div className="filter-price flex" onClick={() => handleOrder(2)}>
-          <div>Gia</div>
-          <div className="filter-price-icon">
-            <div className="filter-price-icon-up">^</div>
-            <div className="filter-price-icon-down">v</div>
-          </div>
+      <div className="filter flex">
+        <div className="filter-price flex">
+          Price:
+          {orderPriceValues.map((orderPriceValue, index) => (
+            <button
+              key={index}
+              className={
+                index === currentPriceIndex ? "filter-price-selected" : ""
+              }
+              onClick={() => handleSetOrder(0, orderPriceValue, index)}
+            >
+              {orderPriceDisplay[index]}
+              {index !== 0 ? (
+                index === 1 ? (
+                  <i class="fa-solid fa-arrow-up"></i>
+                ) : (
+                  <i class="fa-solid fa-arrow-down"></i>
+                )
+              ) : (
+                ""
+              )}
+            </button>
+          ))}
         </div>
-        <button
-          className="filter-over-stars"
-          onClick={() => handleOverStars(overStars)}
-        >
-          Over 4 Stars
-        </button>
+        <div className="filter-stars flex">
+          Stars:
+          {orderStarsValues.map((orderStarsValue, index) => (
+            <button
+              key={index}
+              className={
+                index === currentStarsIndex ? "filter-stars-selected" : ""
+              }
+              onClick={() => handleSetOrder(1, orderStarsValue, index)}
+            >
+              {orderStarsDisplay[index]}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

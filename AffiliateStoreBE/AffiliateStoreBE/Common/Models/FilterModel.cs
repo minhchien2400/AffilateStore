@@ -11,6 +11,6 @@ namespace AffiliateStoreBE.Common.Models
 
         //Search
         public string SearchText { get; set; }
-
+        public List<string> Keys { get; set; }
     }
 }
