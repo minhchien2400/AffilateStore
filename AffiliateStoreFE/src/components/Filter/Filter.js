@@ -1,10 +1,12 @@
 import "./Filter.scss";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setOrderFilter } from "../../store/filterSlice";
 
-const Filter = ({sendFilterItems}) => {
+const Filter = () => {
+  const dispatch = useDispatch();
+
   const [filter, setFilter] = useState({ Price: "all", Stars: "all" });
-  const [orderPrice, setOrderPrice] = useState("all");
-  const [orderStars, setOrderStars] = useState("all");
 
   const [currentPriceIndex, setCurrentPriceIndex] = useState(0);
   const [currentStarsIndex, setCurrentStarsIndex] = useState(0);
@@ -16,19 +18,21 @@ const Filter = ({sendFilterItems}) => {
   const orderStarsDisplay = ["All", "Over 3 stars", "Over 4 stars"];
 
   useEffect(() => {
-    setFilter({
-      Price: orderPrice,
-      Stars: orderStars,
-    });
-    sendFilterItems(filter);
-  }, [orderPrice, orderStars]);
+    dispatch(setOrderFilter(filter));
+  }, [filter]);
 
   const handleSetOrder = (type, orderValue, index) => {
     if (type === 0) {
-      setOrderPrice(orderValue);
+      setFilter({
+        ...filter,
+        Price: orderValue
+      });
       setCurrentPriceIndex(index);
     } else if (type === 1) {
-      setOrderStars(orderValue);
+      setFilter({
+        ...filter,
+        Stars: orderValue
+      });
       setCurrentStarsIndex(index);
     }
   };

@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="App">
       {/* <Pagination/> */}
-      {/* <Provider store = {store}>
+      <Provider store = {store}>
         <BrowserRouter>
           <Navbar />
           <Routes>
@@ -28,7 +28,7 @@ function App() {
           </Routes>
           <Footer />
         </BrowserRouter>
-      </Provider> */}
+      </Provider>
     </div>
   );
 }

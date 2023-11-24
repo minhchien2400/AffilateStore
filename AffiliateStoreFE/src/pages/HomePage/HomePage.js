@@ -10,6 +10,7 @@ import {
   fetchProductsByCategory,
 } from "../../store/categorySlice";
 import "./HomePage.scss";
+import Pagination from "../../components/Pagination/Pagination";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -21,14 +22,19 @@ const HomePage = () => {
   );
   const { catProductAll: productsByCategory, catProductAllStatus } =
     useSelector((state) => state.category);
+
+    const { data: filter } =
+    useSelector((state) => state.filter);
+
+    // filter state
   const [filterProducts, SetFilterProducts] = useState({
     Offset: 1,
-    Limit: 6,
+    Limit: 10,
     SearchText: "",
   });
   const [filterCategories, SetFilterCategories] = useState({
     Offset: 1,
-    Limit: 6,
+    Limit: 10,
     SearchText: "",
     Keys: [],
   });
@@ -36,7 +42,7 @@ const HomePage = () => {
   const [filterSingleCategory1, SetFilterSingleCategory1] = useState({
     CategoryName: "Electronics",
     Offset: 1,
-    Limit: 6,
+    Limit: 10,
     SearchText: "",
     Keys: [],
   });
@@ -44,17 +50,34 @@ const HomePage = () => {
   const [filterSingleCategory2, SetFilterSingleCategory2] = useState({
     CategoryName: "Pets",
     Offset: 1,
-    Limit: 6,
+    Limit: 10,
     SearchText: "",
     Keys: [],
   });
+
+  // pagination state
+  const [paginationCategories, setPaginationCategories] = useState({
+    
+  });
+
+  const SetFilterDefault = (filter) => {
+
+  }
+
   useEffect(() => {
-    dispatch(fetchProducts(filterProducts, "POST"));
     dispatch(fetchCategories(filterCategories, "POST"));
+    dispatch(fetchProducts(filterProducts, "POST"));
     dispatch(fetchProductsByCategory("Electronics"));
     dispatch(fetchProductsByCategory("Pets"));
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchProducts(filterProducts, "POST"));
+    dispatch(fetchProductsByCategory("Electronics"));
+    dispatch(fetchProductsByCategory("Pets"));
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
 
   const handleSingleCategoryFilter1 = () => {
     SetFilterSingleCategory1({
@@ -72,6 +95,7 @@ const HomePage = () => {
       <Slider />
       <Category categories={categories} status={categoryStatus} />
       <ProductList products={products} status={productStatus} />
+      <Pagination />
       <section>
         {productsByCategory[0] && (
           <SingleCategory

@@ -4,6 +4,7 @@ import categoryReducer from "./categorySlice";
 import modalReducer from "./modalSlice";
 import cartReducer from "./cartSlice";
 import searchReducer from "./searchSlice";
+import filterReducer from "./filterSlice";
 
 const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
         category: categoryReducer,
         modal: modalReducer,
         cart: cartReducer,
-        search: searchReducer
+        search: searchReducer,
+        filter: filterReducer
     }
 });
 

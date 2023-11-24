@@ -29,3 +29,28 @@ export const formatStars = (stars) => {
   }
   return starIcons;
 };
+
+// export const setupGlobalSetting = () => {
+//   // Kiểm tra xem đã lưu global setting hay chưa
+//   const storedSetting = localStorage.getItem('globalSetting');
+
+//   if (!storedSetting) {
+//     // Nếu chưa có global setting, lấy kích thước màn hình và cài đặt
+//     const screenSize = {
+//       width: window.innerWidth,
+//       height: window.innerHeight
+//     };
+
+//     // Thực hiện cài đặt global setting dựa trên kích thước màn hình
+//     const globalSetting = {
+//       // ...thêm các thuộc tính global setting khác dựa trên kích thước màn hình
+//       screenSize,
+//       // Ví dụ: có thể cài đặt theme, font size, etc.
+//     };
+
+//     // Lưu global setting vào localStorage
+//     localStorage.setItem('globalSetting', JSON.stringify(globalSetting));
+//   }
+// }
+
+// // Gọi hàm khi trang web được tải
