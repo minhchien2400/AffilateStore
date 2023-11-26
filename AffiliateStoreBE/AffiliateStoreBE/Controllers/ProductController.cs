@@ -26,7 +26,7 @@ namespace AffiliateStoreBE.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpPost("getallproducts")]
+        [HttpPost("getproducts")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetProductsByType([FromBody] FilterModel filter)
         {
@@ -52,7 +52,7 @@ namespace AffiliateStoreBE.Controllers
                     var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
                     products = products.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
                 }
-                if (filter.Keys != null)
+                if (filter.Keys != null && filter.Keys.Any())
                 {
                     products = _productService.GetProductsByFilterKeys(products, filter.Keys);
                 }

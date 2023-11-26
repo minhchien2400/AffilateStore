@@ -43,6 +43,10 @@ namespace AffiliateStoreBE.Service
             {
                 products = products.OrderByDescending(a => a.Price).ToList();
             }
+            else if (keys.Contains("top-sale"))
+            {
+                products = products.OrderByDescending(a => (int)((a.Price/a.Cost)*100)).ThenByDescending(a => a.Price).ToList();
+            }
             return products;
         }
         public class ValidateProductName

@@ -16,5 +16,7 @@ export const  setFilter  = filterSlice.actions;
 export default filterSlice.reducer;
 
 export const setOrderFilter = (filter) => {
-    setFilter(filter);
+    return async function setFilterThunk(dispatch){
+        dispatch(setFilter(filter));
+    }
 }

@@ -27,7 +27,7 @@ export const fetchSearchProducts = (dataSend, method) => {
     return async function fetchProductThunk(dispatch){
         dispatch(setStatus(STATUS.LOADING));
         try{
-            const data = await fetchDataBody(`${BASE_URL}getallproducts`, dataSend, method);
+            const data = await fetchDataBody(`${BASE_URL}getproducts`, dataSend, method);
             console.log(data);
             if(data.hasError)
             {

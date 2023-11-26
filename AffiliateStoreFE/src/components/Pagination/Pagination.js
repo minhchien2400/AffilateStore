@@ -1,33 +1,42 @@
 import React, { useEffect } from "react";
 import "./Pagination.scss";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setPaginations } from "../../store/paginationSilce";
 
-const Pagination = ({props}) => {
+const Pagination = ({ totalCount }) => {
+  const dispatch = useDispatch();
+  const [pagination, setPagination] = useState({
+    Offet: 1,
+    Limit: 10,
+  });
+
   const pages = Array.from(
-    { length: props.TotalCount },
+    { length: totalCount },
     (_, index) => index + 1
   );
-  const [pagination, setPagination] = useState({
-    Limit: props.filter.Limit,
-    Offset: props.filter.Offset
-  })
 
   useEffect(() => {
-    
-  }, [pagination])
+    console.log(pagination);
+    dispatch(setPaginations(pagination));
+  }, []);
+
+  useEffect(() => {
+    dispatch(setPaginations(pagination));
+  }, [pagination]);
 
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
     setPagination({
       ...pagination,
-      Limit: selectedValue
+      Limit: selectedValue,
     });
   };
 
   const handleOffsetChange = (page) => {
     setPagination({
       ...pagination,
-      Offset: page
+      Offset: page,
     });
   };
 

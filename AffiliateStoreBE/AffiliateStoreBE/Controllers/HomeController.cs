@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AffiliateStoreBE.Controllers
 {
-    public class HomeController : ControllerBase
+    public class HomeController : ApiBaseController
     {
         private readonly StoreDbContext _storeDbContext;
         private readonly ISearchStringFunction _searchStringFunction;
@@ -20,40 +20,32 @@ namespace AffiliateStoreBE.Controllers
             _searchStringFunction = searchStringFunction;
         }
 
-        [HttpGet("searchproducts")]
+        [HttpGet("topsale")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetDataHomePage(SearchFilter request)
+        public async Task<IActionResult> GetTopSaleProducts(FilterModel filter)
         {
             try
             {
-                var listStringSearch = _searchStringFunction.SearchString(request.SearchText);
-                var products = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active).ToListAsync();
-                if(request.CategoryName != string.Empty)
+                int totalCount = 1;
+                var products = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active).OrderByDescending(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).Take(50).ToListAsync();
+                if (products.Any())
                 {
-                    products.Where(a => a.Category.Name.Equals(request.CategoryName));
+                    totalCount = (int)Math.Ceiling(products.Count() / (decimal)filter.Limit);
+                    products = DoTake(products.AsQueryable(), filter).ToList();
                 }
-                var productsDetail = products.Select(a => new ProductSearch { Id = a.Id, Name = a.Name }).ToList();
-                productsDetail.ForEach(t => { t.Name = _searchStringFunction.RemoveSpaceAndConvert(t.Name); });
-                var listProductIds = new List<Guid>();
-                foreach (var stringSearch in listStringSearch)
+                return Ok(new
                 {
-                    foreach(var product in productsDetail)
-                    {
-                        if(product.Name.ToLower().Contains(stringSearch.ToLower()) && !listProductIds.Contains(product.Id))
-                        {
-                            listProductIds.Add(product.Id);
-                        }
-                    }
-                }
-                var productsSearch = products.Where(a => listProductIds.Contains(a.Id)).OrderBy(a => listProductIds.IndexOf(a.Id)).ToList();
-                return Ok(productsSearch);
+                    HasError = false,
+                    Result = products,
+                    Filter = filter,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
+                });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw;
             }
         }
-        
         public class ProductSearch
         {
             public Guid Id { get; set; }
@@ -61,7 +53,7 @@ namespace AffiliateStoreBE.Controllers
         }
         public class SearchFilter
         {
-            public string SearchText { get; set; }  
+            public string SearchText { get; set; }
             public string CategoryName { get; set; }
         }
     }

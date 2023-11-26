@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { STATUS } from "../../utils/status";
 import "./ProductList.scss";
 import SingleProduct from "../SingleProduct/SingleProduct";
@@ -7,8 +7,10 @@ import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import ProductCard from "../ProductCard/ProductCard";
 import Filter from "../Filter/Filter";
+import Pagination from "../Pagination/Pagination";
 
 const ProductList = ({ products, status, name = "Our Products" }) => {
+  
   const dispatch = useDispatch();
   const { isModalVisible } = useSelector((state) => state.modal);
 
@@ -26,10 +28,11 @@ const ProductList = ({ products, status, name = "Our Products" }) => {
             <Filter/>
           </div>
           {products.map((product) => (
-            <ProductCard products={product} />
+            <ProductCard product={product} />
           ))}
         </div>
       </div>
+      <Pagination />
     </section>
   );
 };

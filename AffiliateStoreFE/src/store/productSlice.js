@@ -8,6 +8,8 @@ const productSlice = createSlice({
     initialState: {
         data: [],
         status: STATUS.IDLE,
+        topSale: {},
+        topSaleStatus: STATUS.IDLE,
     },
 
     reducers: {
@@ -17,13 +19,17 @@ const productSlice = createSlice({
         setStatus(state, action){
             state.status = action.payload;
         },
-        searchProducts(state, action){
-            state.status = action.payload;
-        }
+        // top sale in home page
+        setTopSale(state, action){
+            state.topSale = action.payload;
+        },
+        setTopSaleStatus(state, action){
+            state.topSaleStatus  = action.payload;
+        },
     },
 });
 
-export const {setProducts, setStatus, searchProducts} = productSlice.actions;
+export const {setProducts, setStatus, setTopSale, setTopSaleStatus} = productSlice.actions;
 export default productSlice.reducer;
 
 export const fetchProducts = (dataSend, method) => {
@@ -31,16 +37,34 @@ export const fetchProducts = (dataSend, method) => {
         dispatch(setStatus(STATUS.LOADING));
 
         try{
-            const data = await fetchDataBody(`${BASE_URL}getallproducts`, dataSend, method);
-            console.log(data);
+            const data = await fetchDataBody(`${BASE_URL}getproducts`, dataSend, method);
             if(data.hasError)
             {
                 dispatch(setStatus(STATUS.ERROR));
             }
-            dispatch(setProducts(data.result));
+            dispatch(setProducts(data));
             dispatch(setStatus(STATUS.IDLE));
         } catch(error){
             dispatch(setStatus(STATUS.ERROR));
+        }
+    }
+}
+
+export const fetchTopSale = (dataSend, method) => {
+    return async function fetchProductThunk(dispatch){
+        dispatch(setTopSaleStatus(STATUS.LOADING));
+
+        try{
+            const data = await fetchDataBody(`${BASE_URL}getproducts`, dataSend, method);
+            console.log(data);
+            if(data.hasError)
+            {
+                dispatch(setTopSaleStatus(STATUS.ERROR));
+            }
+            dispatch(setTopSale(data));
+            dispatch(setTopSaleStatus(STATUS.IDLE));
+        } catch(error){
+            dispatch(setTopSaleStatus(STATUS.ERROR));
         }
     }
 }

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
 import { fetchCategories } from "../../store/categorySlice";
-import { fetchSearchProducts } from "../../store/searchSlice";
+import {  } from "../../store/searchSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -34,10 +34,9 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchSearchProducts(filterCategories, 'POST'));
+    // dispatch((filterCategories, 'POST'));
   }, [filterCategories]);
 
-console.log(categories);
   return (
     <nav className="navbar">
       <div className="navbar-content">
