@@ -23,16 +23,15 @@ const HomePage = () => {
   const { topSale: topSale, topSaleStatus: topSaleStatus } =
     useSelector((state) => state.product);
 
-  // const { data: filter } = useSelector((state) => state.filter);
+  const { data: dataFilter } = useSelector((state) => state.filter);
 
-  const { data: paginationSlice } = useSelector((state) => state.pagination);
 
   // filter state
   const [pagination, setPagination] = useState({
     Offset: 1,
     Limit: 10,
     SearchText: "",
-    Keys: [],
+    Keys: ["all","all"],
   });
   // const [filterCategories, SetFilterCategories] = useState({
   //   Offset: 1,
@@ -62,34 +61,23 @@ const HomePage = () => {
 
   // const SetFilterDefault = (filter) => {};
 
-  useEffect(() => {
-    // dispatch(fetchCategories(filterCategories, "POST"));
-    dispatch(fetchTopSale(pagination, "POST"));
-    // dispatch(fetchProductsByCategory("Electronics"));
-    // dispatch(fetchProductsByCategory("Pets"));
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
+    //console.log(dataFilter);
     setPagination({
-      Offset: paginationSlice.Offset,
-      Limit: paginationSlice.Limit,
+      Offset: dataFilter.Offset,
+      Limit: dataFilter.Limit,
       SearchText: "",
-      Keys: [],
+      Keys: dataFilter.Keys,
     })
-    //dispatch(fetchTopSale(pagination, "POST"));
-    // dispatch(fetchProductsByCategory("Electronics"));
-    // dispatch(fetchProductsByCategory("Pets"));
-    //console.log(paginationSlice);
-  }, [paginationSlice.Offset, paginationSlice.Limit]);
+  }, [dataFilter]);
 
   useEffect(() => {
+    //console.log(dataFilter);
     dispatch(fetchTopSale(pagination, "POST"));
     // dispatch(fetchProductsByCategory("Electronics"));
     // dispatch(fetchProductsByCategory("Pets"));
-    console.log(pagination);
-    console.log(paginationSlice);
-  }, [pagination]);
+  }, [dataFilter.Offset, dataFilter.Limit, dataFilter.Keys]);
 
   // const handleSingleCategoryFilter1 = () => {
   //   SetFilterSingleCategory1({

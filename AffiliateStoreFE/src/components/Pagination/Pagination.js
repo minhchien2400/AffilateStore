@@ -1,7 +1,8 @@
 import React from "react";
 import "./Pagination.scss";
 import { useDispatch } from "react-redux";
-import { setPaginations } from "../../store/paginationSilce";
+import { setOrderFilter } from "../../store/filterSlice";
+import { useSelector } from "react-redux";
 
 const Pagination = ({ data }) => {
   const dispatch = useDispatch();
@@ -10,21 +11,35 @@ const Pagination = ({ data }) => {
     (_, index) => index + 1
   );
 
+  const { data: dataFilter } = useSelector((state) => state.filter);
+
+
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
+
+    console.log(dataFilter);
     dispatch(
-      setPaginations({
+      setOrderFilter({
+        ...dataFilter,
         Offset: 1,
         Limit: selectedValue,
+        //Keys: data.filter.keys,
+        // Price: data.filter.keys[0],
+        // Limit: data.filter.keys[1],
       })
     );
   };
 
   const handleOffsetChange = (page) => {
+    console.log(dataFilter);
     dispatch(
-      setPaginations({
+      setOrderFilter({
+        ...dataFilter,
         Offset: page,
-        Limit: data.filter.limit,
+        // Limit: data.filter.limit,
+        // Keys: data.filter.keys,
+        // Price: data.filter.keys[0],
+        // Limit: data.filter.keys[1],
       })
     );
   };

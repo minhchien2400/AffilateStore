@@ -6,17 +6,18 @@ const filterSlice = createSlice({
         data: {},
     },
     reducers: {
-        setFilter(state, action){
+        setFilters(state, action){
             state.data = action.payload;
+            console.log(action.payload);
         },
     }
 });
 
-export const  setFilter  = filterSlice.actions;
+export const  {setFilters}  = filterSlice.actions;
 export default filterSlice.reducer;
 
 export const setOrderFilter = (filter) => {
     return async function setFilterThunk(dispatch){
-        dispatch(setFilter(filter));
+        dispatch(setFilters(filter));
     }
 }

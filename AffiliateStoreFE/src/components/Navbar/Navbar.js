@@ -19,11 +19,11 @@ const Navbar = () => {
     SearchText: searchText,
   });
 
-  useEffect(() => {
-    dispatch(fetchCategories(filterCategories, 'POST'));
-    dispatch(getCartTotal());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchCategories(filterCategories, 'POST'));
+  //   dispatch(getCartTotal());
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleSearch = (newSearchText) => {
     setFilterCategories((prevFilterCategories) => ({

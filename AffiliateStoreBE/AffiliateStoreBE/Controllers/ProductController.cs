@@ -52,9 +52,28 @@ namespace AffiliateStoreBE.Controllers
                     var listProductsName = SearchString(filter.SearchText, products.Select(p => p.ProductName).ToList());
                     products = products.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
                 }
-                if (filter.Keys != null && filter.Keys.Any())
+                if (filter.Keys != null && filter.Keys.Any(a => a != null))
                 {
-                    products = _productService.GetProductsByFilterKeys(products, filter.Keys);
+                    if (filter.Keys.Contains("over-3-stars"))
+                    {
+                        products = products.Where(a => (float)(a.Stars / 10) > 3).ToList();
+                    }
+                    else if (filter.Keys.Contains("over-4-stars"))
+                    {
+                        products = products.Where(a => (float)(a.Stars / 10) > 4).ToList();
+                    }
+                    if (filter.Keys.Contains("price-up"))
+                    {
+                        products = products.OrderBy(a => a.Price).ToList();
+                    }
+                    else if (filter.Keys.Contains("price-down"))
+                    {
+                        products = products.OrderByDescending(a => a.Price).ToList();
+                    }
+                    else if (filter.Keys.Contains("top-sale"))
+                    {
+                        products = products.OrderByDescending(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+                    }
                 }
                 if (products.Any())
                 {
