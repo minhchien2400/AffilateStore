@@ -12,13 +12,18 @@ const ProductCard = (props) => {
   };
 
   return (
-    <div className="product-item bg-white" key={props.product.id}>
+    <div className="product-item">
       <div className="product-item-img">
         <img
           src={props.product.images[0]}
           alt=""
           onClick={() => viewModalHandler(props.product)}
         />
+        <div className="product-item-sale text-white fs-13 text-uppercase fw-6">
+          {`-${
+              100 - Math.floor((props.product.price / props.product.cost) * 100)
+            }%`}
+        </div>
         <div className="product-item-cat text-white fs-13 text-uppercase bg-gold fw-6">
           {props.product.categoryName}
         </div>
@@ -32,9 +37,6 @@ const ProductCard = (props) => {
             <div className="product-item-price text-regal-blue fw-7 fs-10">
               {formatPrice(props.product.cost)}
             </div>
-            {`-${
-              100 - Math.floor((props.product.price / props.product.cost) * 100)
-            }%`}
             <div className="product-item-price-sale text-regal-blue fw-7 fs-18">
               {formatPrice(props.product.price)}
             </div>

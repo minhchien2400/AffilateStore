@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setOrderFilter } from "../../store/filterSlice";
 
-const Filter = () => {
+const Filter = ({data}) => {
   const dispatch = useDispatch();
 
   const [filter, setFilter] = useState({ Price: "all", Stars: "all" });
@@ -11,10 +11,10 @@ const Filter = () => {
   const [currentPriceIndex, setCurrentPriceIndex] = useState(0);
   const [currentStarsIndex, setCurrentStarsIndex] = useState(0);
 
-  const orderPriceValues = ["all", "price-up", "price-down"];
+  const orderPriceValues = ["all", "price-up", "price-down", "top-sale"];
   const orderStarsValues = ["all", "over-3-stars", "over-4-stars"];
 
-  const orderPriceDisplay = ["All", "Increasing", "Descending"];
+  const orderPriceDisplay = ["All", "Increasing", "Descending", "Flash sale"];
   const orderStarsDisplay = ["All", "Over 3 stars", "Over 4 stars"];
 
   useEffect(() => {
@@ -23,16 +23,16 @@ const Filter = () => {
 
   const handleSetOrder = (type, orderValue, index) => {
     if (type === 0) {
-      setFilter({
-        ...filter,
-        Price: orderValue
-      });
+      dispatch(setOrderFilter({
+        Price: orderValue,
+        Stars: data.filter.keys[1]
+      }))
       setCurrentPriceIndex(index);
     } else if (type === 1) {
-      setFilter({
-        ...filter,
+      dispatch(setOrderFilter({
+        Price: data.filter.keys[0],
         Stars: orderValue
-      });
+      }))
       setCurrentStarsIndex(index);
     }
   };
@@ -51,16 +51,7 @@ const Filter = () => {
               onClick={() => handleSetOrder(0, orderPriceValue, index)}
             >
               {orderPriceDisplay[index]}
-              {index !== 0 ? (
-                index === 1 ? (
-                  <i class="fa-solid fa-arrow-up"></i>
-                ) : (
-                  <i class="fa-solid fa-arrow-down"></i>
-                )
-              ) : (
-                ""
-              )}
-            </button>
+              {index === 1 ? <i class="fa-solid fa-arrow-up"/> : (index === 2 ? <i class="fa-solid fa-arrow-down"/> : "")}          </button>
           ))}
         </div>
         <div className="filter-stars flex">

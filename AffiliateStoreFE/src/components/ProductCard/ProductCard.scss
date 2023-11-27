@@ -1,67 +1,66 @@
 @import "../../App.scss";
 
-.product-items {
-  row-gap: 20px;
-  .product-item {
-    box-shadow: rgba(99, 99, 99, 0.05) 0px 2px 8px 0px;
-    padding: 18px;
+.product-item {
+  box-shadow: rgba(99, 99, 99, 0.05) 0px 2px 8px 0px;
+  .product-item-img {
+    position: relative;
+
     border-radius: 4px;
+    &-img {
+      border-radius: 10px;
+      overflow: hidden;
+    }
     &-body {
       padding: 12px 0;
     }
+    .product-item-cat {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border-radius: 8px;
+      padding-right: 8px;
+      padding-left: 8px;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
 
-    &-img {
-      position: relative;
+    .product-item-sale {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      border-radius: 8px;
+      padding-right: 8px;
+      padding-left: 8px;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      background-color: aqua;
+    }
+  }
+  &-sale {
+    padding: 8px 0;
+    opacity: 0.8;
+    display: block;
+  }
 
-      .product-item-cat {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        border-radius: 8px;
-        padding-right: 8px;
-        padding-left: 8px;
-        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  &-title {
+    padding: 8px 0;
+    opacity: 0.8;
+    display: block;
+  }
+  .product-item-body {
+    .product-item-details {
+      display: flex;
+      .product-item-details-right {
+        .product-item-price {
+          color: #888;
+          text-decoration: line-through;
+        }
+      }
+      .product-item-details-left {
+        .product-item-stars {
+          display: flex;
+          height: 15px;
+          width: 15px;
+        }
       }
     }
-
-    &-title {
-      padding: 8px 0;
-      opacity: 0.8;
-      display: block;
-    }
-    .product-item-body {
-      .product-item-details {
-        display: flex;
-        .product-item-details-right {
-        }
-        .product-item-details-left {
-          .product-item-stars {
-            display: flex;
-            height: 15px;
-            width: 15px;
-          }
-        }
-      }
-    }
-  }
-
-  @media screen and (min-width: 576px) {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 20px;
-  }
-
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: 20px;
-  }
-
-  @media screen and (min-width: 992px) {
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 20px;
-  }
-
-  @media screen and (min-width: 1200px) {
-    grid-template-columns: repeat(5, 1fr);
-    column-gap: 20px;
   }
 }

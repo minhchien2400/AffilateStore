@@ -10,13 +10,9 @@ import store from "./store/store";
 import CategoryPage from "./pages/CategoryPage/CategoryPage";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
 
-import { formatStars } from "./utils/helpers";
-import Filter from "./components/Filter/Filter";
-import Pagination from "./components/Pagination/Pagination";
 function App() {
   return (
     <div className="App">
-      {/* <Pagination/> */}
       <Provider store = {store}>
         <BrowserRouter>
           <Navbar />

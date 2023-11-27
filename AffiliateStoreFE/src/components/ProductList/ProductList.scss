@@ -2,46 +2,6 @@
 
 .product-items {
   row-gap: 20px;
-  .product-item {
-    cursor: pointer;
-    box-shadow: rgba(99, 99, 99, 0.05) 0px 2px 8px 0px;
-    padding: 18px 18px 0;
-    border-radius: 4px;
-    transition: $transition;
-
-    &-body {
-      padding: 12px 0 0 0;
-      
-      .product-item-price {
-        color: #888;
-        text-decoration: line-through;
-      }
-    }
-
-    &-img {
-      position: relative;
-
-      .product-item-cat {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        border-radius: 8px;
-        padding-right: 8px;
-        padding-left: 8px;
-        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-      }
-    }
-
-    &-title {
-      padding: 8px 0;
-      opacity: 0.8;
-      display: block;
-      height: 64px;
-    }
-    &:hover {
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    }
-  }
 
   @media screen and (min-width: 576px) {
     grid-template-columns: repeat(1, 1fr);

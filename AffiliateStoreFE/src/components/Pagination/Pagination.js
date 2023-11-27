@@ -1,50 +1,44 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./Pagination.scss";
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setPaginations } from "../../store/paginationSilce";
 
-const Pagination = ({ totalCount }) => {
+const Pagination = ({ data }) => {
   const dispatch = useDispatch();
-  const [pagination, setPagination] = useState({
-    Offet: 1,
-    Limit: 10,
-  });
-
   const pages = Array.from(
-    { length: totalCount },
+    { length: data.totalCount },
     (_, index) => index + 1
   );
 
-  useEffect(() => {
-    console.log(pagination);
-    dispatch(setPaginations(pagination));
-  }, []);
-
-  useEffect(() => {
-    dispatch(setPaginations(pagination));
-  }, [pagination]);
-
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
-    setPagination({
-      ...pagination,
-      Limit: selectedValue,
-    });
+    dispatch(
+      setPaginations({
+        Offset: 1,
+        Limit: selectedValue,
+      })
+    );
   };
 
   const handleOffsetChange = (page) => {
-    setPagination({
-      ...pagination,
-      Offset: page,
-    });
+    dispatch(
+      setPaginations({
+        Offset: page,
+        Limit: data.filter.limit,
+      })
+    );
   };
 
   return (
     <div className="container">
+      {console.log("re-render Pagination")}
       <ul className="flex pagination">
         {pages.map((page) => (
-          <li key={page} className="" onClick={() => handleOffsetChange(page)}>
+          <li
+            key={page}
+            className={page === data.filter.offset ? "selected" : ""}
+            onClick={() => handleOffsetChange(page)}
+          >
             {page}
           </li>
         ))}
@@ -52,7 +46,7 @@ const Pagination = ({ totalCount }) => {
       <select
         className="limit-items"
         name="selectedNumber"
-        value={pagination.Limit}
+        value={data.filter.limit}
         onChange={handleLimitChange}
       >
         <option value="10">10</option>

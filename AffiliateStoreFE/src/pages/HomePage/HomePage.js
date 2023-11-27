@@ -25,12 +25,12 @@ const HomePage = () => {
 
   // const { data: filter } = useSelector((state) => state.filter);
 
-  const { data: pagination } = useSelector((state) => state.pagination);
+  const { data: paginationSlice } = useSelector((state) => state.pagination);
 
   // filter state
-  const [filterProducts, SetFilterProducts] = useState({
-    Offset: pagination.Offset,
-    Limit: pagination.Limit,
+  const [pagination, setPagination] = useState({
+    Offset: 1,
+    Limit: 10,
     SearchText: "",
     Keys: [],
   });
@@ -64,17 +64,32 @@ const HomePage = () => {
 
   useEffect(() => {
     // dispatch(fetchCategories(filterCategories, "POST"));
-    dispatch(fetchTopSale(filterProducts, "POST"));
+    dispatch(fetchTopSale(pagination, "POST"));
     // dispatch(fetchProductsByCategory("Electronics"));
     // dispatch(fetchProductsByCategory("Pets"));
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   dispatch(fetchTopSale(filterProducts, "POST"));
-  //   // dispatch(fetchProductsByCategory("Electronics"));
-  //   // dispatch(fetchProductsByCategory("Pets"));
-  // }, [pagination]);
+  useEffect(() => {
+    setPagination({
+      Offset: paginationSlice.Offset,
+      Limit: paginationSlice.Limit,
+      SearchText: "",
+      Keys: [],
+    })
+    //dispatch(fetchTopSale(pagination, "POST"));
+    // dispatch(fetchProductsByCategory("Electronics"));
+    // dispatch(fetchProductsByCategory("Pets"));
+    //console.log(paginationSlice);
+  }, [paginationSlice.Offset, paginationSlice.Limit]);
+
+  useEffect(() => {
+    dispatch(fetchTopSale(pagination, "POST"));
+    // dispatch(fetchProductsByCategory("Electronics"));
+    // dispatch(fetchProductsByCategory("Pets"));
+    console.log(pagination);
+    console.log(paginationSlice);
+  }, [pagination]);
 
   // const handleSingleCategoryFilter1 = () => {
   //   SetFilterSingleCategory1({
@@ -88,12 +103,10 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      <Slider />
+      {/* <Slider /> */}
       {/* <Category categories={categories} status={categoryStatus} /> */}
       {/* <ProductList products={topSale.result} status={topSaleStatus} /> */}
-      {topSale.result && <ProductList products={topSale.result} status={topSaleStatus} />}
-      <Pagination totalCount = {topSale.totalCount}/>
-      
+      {topSale.result && <ProductList data={topSale} status={topSaleStatus} name="Top sale"/>}
       {/* <section>
         {productsByCategory[0] && (
           <SingleCategory

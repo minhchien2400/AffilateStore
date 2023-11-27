@@ -25,6 +25,9 @@ $pagination-hover-color: #555;
         color: $pagination-hover-color;
       }
     }
+    li.selected{
+      border-color: #ff0000; /* Màu viền đỏ khi được chọn */
+    }
   }
   .limit-items {
     padding: 5px;
