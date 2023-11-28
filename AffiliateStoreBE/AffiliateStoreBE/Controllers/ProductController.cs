@@ -72,7 +72,7 @@ namespace AffiliateStoreBE.Controllers
                     }
                     else if (filter.Keys.Contains("top-sale"))
                     {
-                        products = products.OrderByDescending(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+                        products = products.OrderBy(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
                     }
                 }
                 if (products.Any())

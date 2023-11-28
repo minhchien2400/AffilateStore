@@ -56,7 +56,7 @@ export const fetchTopSale = (dataSend, method) => {
 
         try{
             const data = await fetchDataBody(`${BASE_URL}getproducts`, dataSend, method);
-            //console.log(data);
+            console.log(data);
             if(data.hasError)
             {
                 dispatch(setTopSaleStatus(STATUS.ERROR));

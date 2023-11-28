@@ -10,43 +10,29 @@ import {
   fetchProductsByCategory,
 } from "../../store/categorySlice";
 import "./HomePage.scss";
-import Pagination from "../../components/Pagination/Pagination";
 
 const HomePage = () => {
   const dispatch = useDispatch();
+
+  const { data: categoriesData, status: categoryStatus } =
+  useSelector((state) => state.category);
+
   const { topSale: topSale, topSaleStatus: topSaleStatus } =
     useSelector((state) => state.product);
 
-  const { data: dataFilter } = useSelector((state) => state.filter);
-  console.log("dataFilter", dataFilter);
-
-
-  // filter state
-  const [pagination, setPagination] = useState({
-    Offset: 1,
-    Limit: 10,
-    SearchText: "",
-    Keys: ["all", "all"],
-  });
-  
+  const { data: dataFilter, categoryData: categoryFilter  } = useSelector((state) => state.filter);
   useEffect(() => {
-    setPagination((prevPagination) => ({
-      ...prevPagination,
-      Offset: dataFilter.Offset,
-      Limit: dataFilter.Limit,
-      Keys: dataFilter.Keys,
-    }));
+    dispatch(fetchTopSale(dataFilter, "POST"));
   }, [dataFilter]);
-  
+
   useEffect(() => {
-    dispatch(fetchTopSale(pagination, "POST"));
-  }, [pagination]);
+    dispatch(fetchCategories(categoryFilter, "POST"));
+  }, [categoryFilter]);
 
   return (
     <div className="home-page">
       {/* <Slider /> */}
-      {/* <Category categories={categories} status={categoryStatus} /> */}
-      {/* <ProductList products={topSale.result} status={topSaleStatus} /> */}
+      {categoriesData.result && <Category data={categoriesData} status={categoryStatus} />}
       {topSale.result && <ProductList data={topSale} status={topSaleStatus} name="Top sale"/>}
       {/* <section>
         {productsByCategory[0] && (

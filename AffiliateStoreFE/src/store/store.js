@@ -5,7 +5,6 @@ import modalReducer from "./modalSlice";
 import cartReducer from "./cartSlice";
 import searchReducer from "./searchSlice";
 import filterReducer from "./filterSlice";
-import paginationReducer from "./paginationSilce"
 
 const store = configureStore({
     reducer: {
@@ -15,7 +14,6 @@ const store = configureStore({
         cart: cartReducer,
         search: searchReducer,
         filter: filterReducer,
-        pagination: paginationReducer
     }
 });
 

@@ -11,27 +11,26 @@ const Pagination = ({ data }) => {
     (_, index) => index + 1
   );
 
-  const { data: dataFilter } = useSelector((state) => state.filter);
 
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
 
-    console.log(dataFilter);
     dispatch(
       setOrderFilter({
         Offset: 1,
         Limit: selectedValue,
+        SearchText: data.filter.searchText,
         Keys: data.filter.keys,
       })
     );
   };
 
   const handleOffsetChange = (page) => {
-    //console.log(dataFilter);
     dispatch(
       setOrderFilter({
         Offset: page,
         Limit: data.filter.limit,
+        SearchText: data.filter.searchText,
         Keys: data.filter.keys,
       })
     );

@@ -5,10 +5,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
 import { fetchCategories } from "../../store/categorySlice";
 import {  } from "../../store/searchSlice";
+import { setOrderFilter } from "../../store/filterSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { data: categories } = useSelector((state) => state.category);
+  const { data: categoriesData } = useSelector((state) => state.category);
+
+  const {data: dataFilter} = useSelector((state) => state.filter)
+
   const { totalItems } = useSelector((state) => state.cart);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,6 +21,7 @@ const Navbar = () => {
     Offset: 1,
     Limit: 6,
     SearchText: searchText,
+    Keys: ["all"]
   });
 
   // useEffect(() => {
@@ -30,12 +35,15 @@ const Navbar = () => {
       ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
       SearchText: newSearchText, // Thay đổi giá trị SearchText
     }));
+    dispatch(setOrderFilter({
+      Offset: 1,
+      Limit: 10,
+      SearchText: "",
+      Keys: ["all", "all"],
+    },))
     setSearchText('');
   };
 
-  useEffect(() => {
-    // dispatch((filterCategories, 'POST'));
-  }, [filterCategories]);
 
   return (
     <nav className="navbar">
@@ -93,7 +101,7 @@ const Navbar = () => {
               >
                 <i className="fas fa-times"></i>
               </button>
-              {categories.map((category) => (
+              {categoriesData.result && categoriesData.result.map((category) => (
                 <li key={category.id}>
                   <Link
                     to={`/category/${category.id}`}

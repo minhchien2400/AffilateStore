@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from "react";
 import ProductList from "../../components/ProductList/ProductList";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchProductsByCategoryId,
-} from "../../store/categorySlice";
 import { useParams, Link } from "react-router-dom";
+import { fetchProductsByCategoryId } from "../../store/categorySlice";
 import "./CategoryPage.scss";
 
 const CategoryPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { catProductAll: products, catProductStatus: status } =
+  const { productsCategory: products, productsCategoryStatus: status } =
     useSelector((state) => state.category);
-  const [filterModel, setFilterModel] = useState({
-    CategoryId: id,
-    Offset: 1,
-    Limit: 6,
-    SearchText: "",
-  });
 
-  useEffect(() => {
-    console.log('1');
-    setFilterModel((prevFilterCategories) => ({
-      ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
-      CategoryId: id, // Thay đổi giá trị SearchText
-    }));
-  }, [id]);
+  const { data: dataFilter } = useSelector((state) => state.filter);
 
+  // useEffect(() => {
+  //   dispatch(fetchProducts(filterModel, 'POST'));
+  // }, [])
   useEffect(() => {
-    console.log('tao');
-    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
-  }, [])
-  useEffect(() => {
-    console.log('3');
-    dispatch(fetchProductsByCategoryId(filterModel, 'POST'));
-  }, [filterModel])
+    dispatch(fetchProductsByCategoryId({
+      Offset: dataFilter.Offset,
+      Limit: dataFilter.Limit,
+      SearchText: dataFilter.SearchText,
+      Keys: dataFilter.Keys,
+      CategoryId: id
+    }, "POST"));
+  }, [dataFilter, id]);
 
-  console.log(products);
 
   return (
     <div className="category-page">
@@ -57,14 +46,16 @@ const CategoryPage = () => {
                 <i className="fas fa-chevron-right"></i>
               </span>
             </li>
-            <li>{products && products.length > 0 && products[0].categoryName}</li>
+            <li>
+              {products && products.length > 0 && products[0].categoryName}
+            </li>
           </ul>
         </div>
       </div>
       <ProductList
         products={products}
         status={status}
-        name= {products && products.length > 0 && products[0].categoryName}
+        name={products.result && products.result.length > 0 && products[0].categoryName}
       />
     </div>
   );

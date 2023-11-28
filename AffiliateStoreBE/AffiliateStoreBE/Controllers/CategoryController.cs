@@ -21,30 +21,49 @@ namespace AffiliateStoreBE.Controllers
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetCategory([FromBody] FilterModel filter)
         {
-            var category = new List<CategoryModel>();
+            var categories = new List<CategoryModel>();
             int totalCount = 1;
             try
             {
-                category = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active).Select(a => new CategoryModel
+                categories = await _storeDbContext.Set<Category>().Where(a => a.Status == Status.Active).Select(a => new CategoryModel
                 {
                     Id = a.Id,
                     Name = a.Name,
                     Image = a.Image,
                 }).ToListAsync();
-                totalCount = (int)Math.Ceiling(category.Count() / (decimal)filter.Limit);
-                category = DoTake(category.AsQueryable(), filter).ToList();
+                if (filter.SearchText != String.Empty && filter.SearchText != null)
+                {
+                    var listCategoriesName = SearchString(filter.SearchText, categories.Select(p => p.Name).ToList());
+                    categories = categories.Where(a => listCategoriesName.Contains(a.Name)).OrderBy(a => listCategoriesName.IndexOf(a.Name)).ToList();
+                }
+                if (filter.Keys != null && filter.Keys.Any(a => a != null))
+                {
+                    if (filter.Keys.Contains("a-z"))
+                    {
+                        categories = categories.OrderBy(c => c.Name).ToList();
+                    }
+                    else if (filter.Keys.Contains("z-a"))
+                    {
+                        categories = categories.OrderByDescending(c => c.Name).ToList();
+                    }
+                }
+                if (categories.Any() && filter.Limit != 100)
+                {
+                    totalCount = (int)Math.Ceiling(categories.Count() / (decimal)filter.Limit);
+                    categories = DoTake(categories.AsQueryable(), filter).ToList();
+                }
+                return Ok(new
+                {
+                    HasError = false,
+                    Result = categories,
+                    Filter = filter,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
+                });
             }
             catch (Exception ex)
             {
                 throw;
             }
-            return Ok(new
-            {
-                HasError = false,
-                Result= category,
-                Filter = filter,
-                TotalCount = totalCount == 0 ? 1 : totalCount,
-            });
         }
 
         [HttpGet("getcategoryinactive")]
