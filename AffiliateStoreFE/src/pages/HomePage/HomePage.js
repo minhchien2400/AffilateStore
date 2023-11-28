@@ -14,16 +14,11 @@ import Pagination from "../../components/Pagination/Pagination";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  // const { data: categories, status: categoryStatus } = useSelector(
-  //   (state) => state.category
-  // );
-  // const { data: products, status: productStatus } = useSelector(
-  //   (state) => state.product
-  // );
   const { topSale: topSale, topSaleStatus: topSaleStatus } =
     useSelector((state) => state.product);
 
   const { data: dataFilter } = useSelector((state) => state.filter);
+  console.log("dataFilter", dataFilter);
 
 
   // filter state
@@ -31,63 +26,21 @@ const HomePage = () => {
     Offset: 1,
     Limit: 10,
     SearchText: "",
-    Keys: ["all","all"],
+    Keys: ["all", "all"],
   });
-  // const [filterCategories, SetFilterCategories] = useState({
-  //   Offset: 1,
-  //   Limit: 10,
-  //   SearchText: "",
-  //   Keys: [],
-  // });
-
-  // const [filterSingleCategory1, SetFilterSingleCategory1] = useState({
-  //   CategoryName: "Electronics",
-  //   Offset: 1,
-  //   Limit: 10,
-  //   SearchText: "",
-  //   Keys: [],
-  // });
-
-  // const [filterSingleCategory2, SetFilterSingleCategory2] = useState({
-  //   CategoryName: "Pets",
-  //   Offset: 1,
-  //   Limit: 10,
-  //   SearchText: "",
-  //   Keys: [],
-  // });
-
-  // // pagination state
-  // const [paginationCategories, setPaginationCategories] = useState({});
-
-  // const SetFilterDefault = (filter) => {};
-
-
+  
   useEffect(() => {
-    //console.log(dataFilter);
-    setPagination({
+    setPagination((prevPagination) => ({
+      ...prevPagination,
       Offset: dataFilter.Offset,
       Limit: dataFilter.Limit,
-      SearchText: "",
       Keys: dataFilter.Keys,
-    })
+    }));
   }, [dataFilter]);
-
+  
   useEffect(() => {
-    //console.log(dataFilter);
     dispatch(fetchTopSale(pagination, "POST"));
-    // dispatch(fetchProductsByCategory("Electronics"));
-    // dispatch(fetchProductsByCategory("Pets"));
-  }, [dataFilter.Offset, dataFilter.Limit, dataFilter.Keys]);
-
-  // const handleSingleCategoryFilter1 = () => {
-  //   SetFilterSingleCategory1({
-  //     CategoryName: "Electronics",
-  //     Offset: 1,
-  //     Limit: 6,
-  //     SearchText: "",
-  //     Keys: [],
-  //   });
-  // };
+  }, [pagination]);
 
   return (
     <div className="home-page">

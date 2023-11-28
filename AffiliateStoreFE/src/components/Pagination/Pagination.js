@@ -13,40 +13,32 @@ const Pagination = ({ data }) => {
 
   const { data: dataFilter } = useSelector((state) => state.filter);
 
-
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
 
     console.log(dataFilter);
     dispatch(
       setOrderFilter({
-        ...dataFilter,
         Offset: 1,
         Limit: selectedValue,
-        //Keys: data.filter.keys,
-        // Price: data.filter.keys[0],
-        // Limit: data.filter.keys[1],
+        Keys: data.filter.keys,
       })
     );
   };
 
   const handleOffsetChange = (page) => {
-    console.log(dataFilter);
+    //console.log(dataFilter);
     dispatch(
       setOrderFilter({
-        ...dataFilter,
         Offset: page,
-        // Limit: data.filter.limit,
-        // Keys: data.filter.keys,
-        // Price: data.filter.keys[0],
-        // Limit: data.filter.keys[1],
+        Limit: data.filter.limit,
+        Keys: data.filter.keys,
       })
     );
   };
 
   return (
     <div className="container">
-      {console.log("re-render Pagination")}
       <ul className="flex pagination">
         {pages.map((page) => (
           <li
