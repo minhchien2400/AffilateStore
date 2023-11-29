@@ -2,26 +2,40 @@ import React, { useEffect, useState } from "react";
 import Slider from "../../components/Slider/Slider";
 import Category from "../../components/Category/Category";
 import ProductList from "../../components/ProductList/ProductList";
-import SingleCategory from "../../components/SingleCategory/SingleCategory";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts, fetchTopSale } from "../../store/productSlice";
-import {
-  fetchCategories,
-  fetchProductsByCategory,
-} from "../../store/categorySlice";
+import { fetchCategories } from "../../store/categorySlice";
+import { setPageState } from "../../store/pageSlice";
+import { setOrderFilter } from "../../store/filterSlice";
 import "./HomePage.scss";
 
 const HomePage = () => {
   const dispatch = useDispatch();
 
-  const { data: categoriesData, status: categoryStatus } =
-  useSelector((state) => state.category);
-  console.log("categoriesData", categoriesData);
+  const { data: categoriesData, status: categoryStatus } = useSelector(
+    (state) => state.category
+  );
 
-  const { topSale: topSale, topSaleStatus: topSaleStatus } =
-    useSelector((state) => state.product);
+  const { topSale: topSale, topSaleStatus: topSaleStatus } = useSelector(
+    (state) => state.product
+  );
 
-  const { data: dataFilter, categoryData: categoryFilter  } = useSelector((state) => state.filter);
+  const { data: dataFilter, categoryData: categoryFilter } = useSelector(
+    (state) => state.filter
+  );
+
+  useEffect(() => {
+    dispatch(setPageState({
+      IsHomePage: true,
+    }));
+    dispatch(setOrderFilter({
+      Offset: 1,
+      Limit: 10,
+      SearchText: "",
+      Keys: ["all", "all"],
+    }))
+  }, [])
+
   useEffect(() => {
     dispatch(fetchTopSale(dataFilter, "POST"));
   }, [dataFilter]);
@@ -33,8 +47,12 @@ const HomePage = () => {
   return (
     <div className="home-page">
       {/* <Slider /> */}
-      {categoriesData.result && <Category data={categoriesData} status={categoryStatus} />}
-      {topSale.result && <ProductList data={topSale} status={topSaleStatus} name="Top sale"/>}
+      {categoriesData.result && (
+        <Category data={categoriesData} status={categoryStatus} />
+      )}
+      {topSale.result && (
+        <ProductList data={topSale} status={topSaleStatus} name="Top sale" />
+      )}
       {/* <section>
         {productsByCategory[0] && (
           <SingleCategory

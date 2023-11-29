@@ -6,7 +6,7 @@ import { fetchDataBody } from "../utils/fetchData";
 const productSlice = createSlice({
     name: "product",
     initialState: {
-        data: [],
+        data: {},
         status: STATUS.IDLE,
         topSale: {},
         topSaleStatus: STATUS.IDLE,

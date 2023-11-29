@@ -30,8 +30,9 @@ export const { setFilters, setCategoryFilters } = filterSlice.actions;
 export default filterSlice.reducer;
 
 export const setOrderFilter = (filter) => {
+  console.log("setOrderFilter", filter);
   return async function setFilterThunk(dispatch) {
-    dispatch(setFilters(filter));
+    await dispatch(setFilters(filter));
   };
 };
 

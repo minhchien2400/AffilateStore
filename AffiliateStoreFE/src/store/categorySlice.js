@@ -54,6 +54,7 @@ export const fetchCategories = (dataSend, method) => {
 };
 
 export const fetchProductsByCategoryId = (dataSend, method) => {
+  console.log("data send fetchProductsByCategoryId", dataSend);
   return async function fetchCategoryProductThunk(dispatch) {
     
     dispatch(setCategoryProductsStatus(STATUS.LOADING));
@@ -65,7 +66,7 @@ export const fetchProductsByCategoryId = (dataSend, method) => {
         method
       );
       console.log("fetchProductsByCategoryId", data);
-      dispatch(setCategoryProducts(data));
+      await dispatch(setCategoryProducts(data));
       dispatch(setCategoryProductsStatus(STATUS.IDLE));
     } catch (error) {
       dispatch(setCategoryProductsStatus(STATUS.ERROR));

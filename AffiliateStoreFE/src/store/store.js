@@ -3,8 +3,8 @@ import productReducer from "./productSlice";
 import categoryReducer from "./categorySlice";
 import modalReducer from "./modalSlice";
 import cartReducer from "./cartSlice";
-import searchReducer from "./searchSlice";
 import filterReducer from "./filterSlice";
+import pageReducer from "./pageSlice";
 
 const store = configureStore({
     reducer: {
@@ -12,8 +12,8 @@ const store = configureStore({
         category: categoryReducer,
         modal: modalReducer,
         cart: cartReducer,
-        search: searchReducer,
         filter: filterReducer,
+        page : pageReducer
     }
 });
 

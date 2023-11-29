@@ -173,12 +173,10 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("category/{categoryId}")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductsByCategoryId(ProductsCategoryIdFilter filter)
+        public async Task<IActionResult> GetProductsByCategoryId([FromBody] ProductsCategoryIdFilter filter)
         {
             try
             {
-                filter.SearchText = filter.SearchText != null ? filter.SearchText : "";
-                filter.Keys = filter.Keys != null ? filter.Keys : new List<string> { "all", "all" };
                 var products = new List<ProductModel>();
                 int totalCount = 1;
                 if (filter.CategoryId != Guid.Empty)

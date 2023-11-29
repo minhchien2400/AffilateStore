@@ -3,12 +3,14 @@ import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
-import { fetchCategories } from "../../store/categorySlice";
-import {  } from "../../store/searchSlice";
 import { setOrderFilter } from "../../store/filterSlice";
+import { useParams } from 'react-router-dom';
 
 const Navbar = () => {
   const dispatch = useDispatch();
+
+  const { data: page } = useSelector((state) => state.page);
+
   const { data: categoriesData } = useSelector((state) => state.category);
 
   const {data: dataFilter} = useSelector((state) => state.filter)
@@ -17,12 +19,6 @@ const Navbar = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [filterCategories, setFilterCategories] = useState({
-    Offset: 1,
-    Limit: 6,
-    SearchText: searchText,
-    Keys: ["all"]
-  });
 
   // useEffect(() => {
   //   dispatch(fetchCategories(filterCategories, 'POST'));
@@ -31,19 +27,15 @@ const Navbar = () => {
   // }, []);
 
   const handleSearch = (newSearchText) => {
-    setFilterCategories((prevFilterCategories) => ({
-      ...prevFilterCategories, // Giữ nguyên các giá trị còn lại
-      SearchText: newSearchText, // Thay đổi giá trị SearchText
-    }));
+    console.log("click search");
     dispatch(setOrderFilter({
-      Offset: 1,
-      Limit: 10,
-      SearchText: "",
-      Keys: ["all", "all"],
+      Offset: dataFilter.Offset,
+      Limit: dataFilter.Limit,
+      SearchText: newSearchText,
+      Keys: dataFilter.Keys
     },))
     setSearchText('');
   };
-
 
   return (
     <nav className="navbar">

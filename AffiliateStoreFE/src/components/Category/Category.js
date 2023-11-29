@@ -6,6 +6,7 @@ import Error from "../Error/Error";
 import Loader from "../Loader/Loader";
 import { setCategoryOrderFilter } from "../../store/filterSlice";
 import { useDispatch } from "react-redux";
+import { setOrderFilter } from "../../store/filterSlice";
 
 const Category = ({ data, status }) => {
   const dispatch = useDispatch();
@@ -105,8 +106,8 @@ const Category = ({ data, status }) => {
     }
   };
 
-  const handleClickCategory = () => {
-    //dispatch
+  const handleClickCategory = (id) => {
+    console.log("handleClickCategory");
   }
 
   if (status === STATUS.ERROR) return <Error />;

@@ -3,26 +3,51 @@ import ProductList from "../../components/ProductList/ProductList";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { fetchProductsByCategoryId } from "../../store/categorySlice";
+import { setPageState } from "../../store/pageSlice";
+import { setOrderFilter } from "../../store/filterSlice";
 import "./CategoryPage.scss";
 
-const CategoryPage = () => {
+const CategoryPage = () => {console.log("Category page here!");
   const dispatch = useDispatch();
   const { id } = useParams();
   const { productsCategory: data, productsCategoryStatus: status } =
     useSelector((state) => state.category);
-    console.log("data at category page:", data);
+    console.log("productsCategory data la", data);
 
   const { data: dataFilter } = useSelector((state) => state.filter);
+  console.log("dataFilter la", dataFilter);
 
-  // useEffect(() => {
-  //   dispatch(fetchProducts(filterModel, 'POST'));
-  // }, [])
+
   useEffect(() => {
+    dispatch(setPageState({
+      IsCategoryPage: true,
+    }));
+    dispatch(setOrderFilter({
+      Offset: 1,
+      Limit: 10,
+      SearchText: "",
+      Keys: ["all", "all"],
+    }))
+  }, [])
+
+  useEffect(() => {
+    console.log("dispatch data at category page");
     dispatch(fetchProductsByCategoryId({
       Offset: dataFilter.Offset,
       Limit: dataFilter.Limit,
-      SearchText: dataFilter.SearchText !== null ? dataFilter.SearchText : "",
-      Keys: dataFilter.Keys !== null ? dataFilter.Keys : ["all", "all"],
+      SearchText: dataFilter.SearchText,
+      Keys: dataFilter.Keys,
+      CategoryId: id
+    }, "POST"));
+  }, []);
+
+  useEffect(() => {
+    console.log("dispatch data at category page");
+    dispatch(fetchProductsByCategoryId({
+      Offset: dataFilter.Offset,
+      Limit: dataFilter.Limit,
+      SearchText: dataFilter.SearchText,
+      Keys: dataFilter.Keys,
       CategoryId: id
     }, "POST"));
   }, [dataFilter, id]);
@@ -48,12 +73,12 @@ const CategoryPage = () => {
               </span>
             </li>
             <li>
-              {data.result && data.result[0].categoryName}
+              {data.result && data.result.length > 0 && data.result[0].categoryName}
             </li>
           </ul>
         </div>
       </div>
-      {data.result && data.filter.keys && <ProductList
+      {data.result && data.result.length > 0 && <ProductList
         data={data}
         status={status}
         name={data.result[0].categoryName}
