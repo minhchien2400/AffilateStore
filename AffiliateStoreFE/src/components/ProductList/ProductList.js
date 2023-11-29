@@ -27,11 +27,11 @@ const ProductList = ({
         <div className="product-content">
           <div className="section-title flex">
             <h3 className="text-uppercase fw-7 text-regal-blue ls-1">{name}</h3>
-            {hasFilter && <Filter data={data} />}
+            {hasFilter && data.filter && <Filter data={data} />}
           </div>
           <div className="product-items bg-white grid">
             {data.result.map((product) => (
-              <ProductCard product={product} />
+              <span key={product.id}><ProductCard product={product}/></span>
             ))}
           </div>
         </div>

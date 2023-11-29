@@ -8,8 +8,9 @@ import "./CategoryPage.scss";
 const CategoryPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { productsCategory: products, productsCategoryStatus: status } =
+  const { productsCategory: data, productsCategoryStatus: status } =
     useSelector((state) => state.category);
+    console.log("data at category page:", data);
 
   const { data: dataFilter } = useSelector((state) => state.filter);
 
@@ -20,8 +21,8 @@ const CategoryPage = () => {
     dispatch(fetchProductsByCategoryId({
       Offset: dataFilter.Offset,
       Limit: dataFilter.Limit,
-      SearchText: dataFilter.SearchText,
-      Keys: dataFilter.Keys,
+      SearchText: dataFilter.SearchText !== null ? dataFilter.SearchText : "",
+      Keys: dataFilter.Keys !== null ? dataFilter.Keys : ["all", "all"],
       CategoryId: id
     }, "POST"));
   }, [dataFilter, id]);
@@ -47,16 +48,16 @@ const CategoryPage = () => {
               </span>
             </li>
             <li>
-              {products && products.length > 0 && products[0].categoryName}
+              {data.result && data.result[0].categoryName}
             </li>
           </ul>
         </div>
       </div>
-      <ProductList
-        products={products}
+      {data.result && data.filter.keys && <ProductList
+        data={data}
         status={status}
-        name={products.result && products.result.length > 0 && products[0].categoryName}
-      />
+        name={data.result[0].categoryName}
+      />}
     </div>
   );
 };

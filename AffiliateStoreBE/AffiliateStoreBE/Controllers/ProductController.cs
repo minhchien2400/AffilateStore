@@ -177,6 +177,8 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
+                filter.SearchText = filter.SearchText != null ? filter.SearchText : "";
+                filter.Keys = filter.Keys != null ? filter.Keys : new List<string> { "all", "all" };
                 var products = new List<ProductModel>();
                 int totalCount = 1;
                 if (filter.CategoryId != Guid.Empty)
@@ -202,7 +204,26 @@ namespace AffiliateStoreBE.Controllers
                 }
                 if (filter.Keys != null)
                 {
-                    products = _productService.GetProductsByFilterKeys(products, filter.Keys);
+                    if (filter.Keys.Contains("over-3-stars"))
+                    {
+                        products = products.Where(a => (a.Stars / 10) - 3 >= 0).ToList();
+                    }
+                    else if (filter.Keys.Contains("over-4-stars"))
+                    {
+                        products = products.Where(a => (a.Stars / 10) - 4 >= 0).ToList();
+                    }
+                    if (filter.Keys.Contains("price-up"))
+                    {
+                        products = products.OrderBy(a => a.Price).ToList();
+                    }
+                    else if (filter.Keys.Contains("price-down"))
+                    {
+                        products = products.OrderByDescending(a => a.Price).ToList();
+                    }
+                    else if (filter.Keys.Contains("top-sale"))
+                    {
+                        products = products.OrderByDescending(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+                    }
                 }
                 if (products.Any())
                 {

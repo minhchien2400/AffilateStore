@@ -36,7 +36,6 @@ const Filter = ({ data }) => {
 
   return (
     <div className="container">
-      {console.log(data.filter.keys)}
       <div className="filter flex">
         <div className="filter-price flex">
           Price:

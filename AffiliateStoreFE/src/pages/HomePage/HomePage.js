@@ -16,6 +16,7 @@ const HomePage = () => {
 
   const { data: categoriesData, status: categoryStatus } =
   useSelector((state) => state.category);
+  console.log("categoriesData", categoriesData);
 
   const { topSale: topSale, topSaleStatus: topSaleStatus } =
     useSelector((state) => state.product);
