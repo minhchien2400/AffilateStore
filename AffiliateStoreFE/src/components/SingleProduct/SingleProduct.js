@@ -5,6 +5,7 @@ import { setIsModalVisible } from "../../store/modalSlice";
 import { addToCart } from "../../store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
+import { formatStars } from "../../utils/helpers";
 
 const SingleProduct = () => {
   const dispatch = useDispatch();
@@ -13,14 +14,6 @@ const SingleProduct = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { data: product } = useSelector((state) => state.modal);
-
-  const increaseQty = () => {
-    setQty((prevQty) => prevQty + 1);
-  };
-
-  const decreaseQty = () => {
-    setQty((prevQty) => Math.max(prevQty - 1, 1));
-  };
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -56,7 +49,6 @@ const SingleProduct = () => {
     setCurrentImageIndex(index);
   };
 
-
   return (
     <div className="overlay-bg" onClick={modalOverlayHandler}>
       <div className="product-details-modal bg-white">
@@ -69,7 +61,7 @@ const SingleProduct = () => {
         </button>
         <div className="details-content grid">
           {/* details left */}
-          <div className="details-right">
+          <div className="details-left">
             <div className="details-img">
               <img src={product.images[currentImageIndex]} alt={product.name} />
               {product.images.length > 1 && (
@@ -94,58 +86,66 @@ const SingleProduct = () => {
 
             <div className="details-imgs-bottom">
               {product.images.map((img, index) => (
-                  <img
+                <img
                   key={index}
                   src={img}
                   alt={product.name}
-                  className={index === currentImageIndex ? 'selected' : ''}
+                  className={index === currentImageIndex ? "selected" : ""}
                   onClick={() => selectImage(index)}
                 />
               ))}
             </div>
           </div>
           {/* details right */}
-          <div className="details-left">
-            <div className="details-info">
-              <h3 className="title text-regal-blue fs-22 fw-5">
-                {product.name}
-              </h3>
-              <p className="description text-pine-green">
-                {product.description}
-              </p>
-              <div className="price fw-7 fs-24">
-                Giá: {formatPrice(product.price)}
+          <div className="details-right">
+            <h3 className="title text-regal-blue fs-22 fw-5">
+              {product.productName}
+            </h3>
+            <div className="details-info flex">
+              <div className="details-info-left">
+                <div className="price-detail">
+                  <span className="price-sale">{`-${
+                    100 - Math.floor((product.price / product.cost) * 100)
+                  }%`}</span>
+                  <span className="price-cost fw-7 fs-24">
+                    {formatPrice(product.cost)}
+                  </span>
+                  <span className="price-price fw-7 fs-24">
+                    {formatPrice(product.price)}
+                  </span>
+                </div>
+                <div className="sold-stars-detail flex text-pine-green fw-5 fs-10">
+                  <div className="sold-detail">
+                    Sold: {product.totalSales <= 1000
+                      ? product.totalSales
+                      : `${product.totalSales / 1000}k`}
+                  </div>
+                  <div className="stars-detail">
+                    {formatStars(product.stars).map((star, index) => (
+                      <img src={star} alt="" key={index} />
+                    ))}
+                    {product.stars % 10 !== 0
+                      ? `(${product.stars / 10})`
+                      : `(${product.stars / 10}.0)`}
+                  </div>
+                </div>
+                <button className="btn-primary">Xem chi tiet</button>
               </div>
-              <div className="qty flex">
-                <span className="text-light-blue qty-text">Số lượng: </span>
-                <div className="qty-change flex">
-                  <button
-                    type="button"
-                    className="qty-dec fs-14"
-                    onClick={decreaseQty}
-                  >
-                    <i className="fas fa-minus text-light-blue"></i>
-                  </button>
-                  <span className="qty-value flex flex-center">{qty}</span>
-                  <button
-                    type="button"
-                    className="qty-inc fs-14 text-light-blue"
-                    onClick={increaseQty}
-                  >
-                    <i className="fas fa-plus"></i>
-                  </button>
+              <div className="details-info-right">
+                <button
+                  type="button"
+                  className="btn-primary add-to-cart-btn"
+                  onClick={addToCartHandler}
+                >
+                  <span className="btn-icon">
+                    <i className="fas fa-cart-shopping"></i>
+                  </span>
+                  <span className="btn-text">Thêm vào giỏ hàng</span>
+                </button>
+                <div className="detail-button-sold">
+                  <button className="btn-primary">Link mua hang</button>
                 </div>
               </div>
-              <button
-                type="button"
-                className="btn-primary add-to-cart-btn"
-                onClick={addToCartHandler}
-              >
-                <span className="btn-icon">
-                  <i className="fas fa-cart-shopping"></i>
-                </span>
-                <span className="btn-text">Thêm vào giỏ hàng</span>
-              </button>
             </div>
           </div>
         </div>

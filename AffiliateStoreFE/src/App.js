@@ -10,6 +10,8 @@ import store from "./store/store";
 import CategoryPage from "./pages/CategoryPage/CategoryPage";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
 
+import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
+
 function App() {
   return (
     <div className="App">
@@ -21,6 +23,7 @@ function App() {
             <Route path = "/category/:id" element = {<Category />} />
             <Route path = "/cart" element = {<Cart />} />
             <Route path = "/search=:searchText" element = {<ProductsPage />} />
+            <Route path = "/product/:id" element = {<ProductDetailPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>

@@ -95,13 +95,13 @@ namespace AffiliateStoreBE.Controllers
         }
 
 
-        [HttpGet("getproductbyid")]
+        [HttpGet("getproductbyid/{id}")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetProductById(Guid productId)
+        public async Task<IActionResult> GetProductById(Guid id)
         {
             try
             {
-                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Active).Select(a => new ProductModel
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == id && a.Status == Status.Active).Select(a => new ProductModel
                 {
                     ProductId = a.Id,
                     ProductName = a.Name,

@@ -3,6 +3,7 @@ import { formatPrice } from "../../utils/helpers";
 import { useDispatch } from "react-redux";
 import "./ProductCard.scss";
 import { formatStars } from "../../utils/helpers";
+import { Link } from "react-router-dom";
 
 const ProductCard = (props) => {
   const dispatch = useDispatch();
@@ -10,6 +11,10 @@ const ProductCard = (props) => {
     dispatch(setModalData(data));
     dispatch(setIsModalVisible(true));
   };
+
+  const handleClickDetail = () => {
+
+  }
 
   return (
     <div className="product-item">
@@ -28,7 +33,8 @@ const ProductCard = (props) => {
           {props.product.categoryName}
         </div>
       </div>
-      <div className="product-item-body">
+      <Link to={`product/${props.product.productId}`} key={props.product.productId}>
+      <div className="product-item-body" onClick={() => handleClickDetail(props.product.productId)}>
         <h6 className="product-item-title text-pine-green fw-4 fs-15">
           {props.product.productName}
         </h6>
@@ -61,6 +67,7 @@ const ProductCard = (props) => {
           </span>
         </div>
       </div>
+      </Link>
     </div>
   );
 };

@@ -7,12 +7,11 @@ import { setPageState } from "../../store/pageSlice";
 import { setOrderFilter } from "../../store/filterSlice";
 import "./CategoryPage.scss";
 
-const CategoryPage = () => {console.log("Category page here!");
+const CategoryPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const { productsCategory: data, productsCategoryStatus: status } =
     useSelector((state) => state.category);
-    console.log("productsCategory data la", data);
 
   const { data: dataFilter } = useSelector((state) => state.filter);
   console.log("dataFilter la", dataFilter);
@@ -31,7 +30,6 @@ const CategoryPage = () => {console.log("Category page here!");
   }, [])
 
   useEffect(() => {
-    console.log("dispatch data at category page");
     dispatch(fetchProductsByCategoryId({
       Offset: dataFilter.Offset,
       Limit: dataFilter.Limit,
@@ -42,7 +40,6 @@ const CategoryPage = () => {console.log("Category page here!");
   }, []);
 
   useEffect(() => {
-    console.log("dispatch data at category page");
     dispatch(fetchProductsByCategoryId({
       Offset: dataFilter.Offset,
       Limit: dataFilter.Limit,
