@@ -1,0 +1,121 @@
+@import "../../App.scss";
+.overlay-bg {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.container {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 4px;
+
+  .modal-close-btn {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    width: 24px;
+    height: 24px;
+    background-color: $clr-dark;
+    color: $clr-white;
+    transition: $transition;
+    border-radius: 50%;
+    &:hover {
+      color: $clr-gold;
+    }
+  }
+
+  .details-content {
+    overflow-y: scroll;
+    row-gap: 32px;
+    height: 70vh;
+    .details-left {
+      .details-img {
+        max-width: 500px;
+        position: relative;
+        img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        .image-navigation {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          z-index: 2;
+
+          button {
+            background-color: transparent;
+            border: none;
+            color: #aca5a5;
+            font-size: 44px;
+            cursor: pointer;
+            outline: none;
+
+            &:hover {
+              color: #00f; // Màu sắc khi nút được hover
+            }
+          }
+
+          .prev-image {
+            margin-left: 10px; // Khoảng cách giữa nút chuyển qua lại
+          }
+
+          .next-image {
+            margin-right: 10px; // Khoảng cách giữa nút chuyển qua lại
+          }
+        }
+      }
+
+      .details-imgs-bottom {
+        margin-top: 10px;
+        max-width: 60px;
+        display: inline-flex;
+        img {
+          margin-right: 5px;
+          border: 2px solid transparent;
+          cursor: pointer;
+        }
+        img.selected {
+          border-color: #ff0000; /* Màu viền đỏ khi được chọn */
+        }
+      }
+    }
+    .details-right {
+      .title {
+      }
+      .details-info {
+        .details-info-left {
+          .price-detail {
+            opacity: 0.7;
+            border-bottom: 1px dashed $clr-light-blue;
+            padding-bottom: 6px;
+          }
+          .sold-stars-detail {
+            .stars-detail {
+              display: flex;
+              height: 15px;
+              width: 15px;
+            }
+            .sold-detail {
+            }
+          }
+        }
+        .add-to-cart-btn {
+          margin-top: 22px;
+        }
+        .buttons {
+          .detail-button {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 800px) {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 40px;
+      height: auto;
+    }
+  }
+}

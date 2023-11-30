@@ -62,9 +62,8 @@ const ProductDetailPage = () => {
     if (product.length === 0) return <Loader />;
 
   return (
-    <div className="product-details-modal bg-white">
+    <div className="container">
       <div className="details-content grid">
-        {/* details left */}
         <div className="details-left">
           <div className="details-img">
             <img src={product.images[currentImageIndex]} alt={product.name} />

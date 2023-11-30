@@ -24,6 +24,7 @@ function App() {
             <Route path = "/cart" element = {<Cart />} />
             <Route path = "/search=:searchText" element = {<ProductsPage />} />
             <Route path = "/product/:id" element = {<ProductDetailPage />} />
+            <Route path = "/category/:categoryid/product/:id" element = {<ProductDetailPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>
