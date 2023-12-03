@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Status = AffiliateStoreBE.Common.Models.Status;
 using System.Linq;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -244,6 +245,7 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpGet("getproductinactive")]
         [SwaggerResponse(200)]
+        [Authorize("RequireAdminRole")]
         public async Task<IActionResult> GetProductsInactive(Guid productId)
         {
             try

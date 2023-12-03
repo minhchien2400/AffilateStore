@@ -1,0 +1,42 @@
+@import "../../App.scss";
+.sign-in {
+  .input-container {
+    display: flex;
+    input {
+      box-sizing: border-box;
+      width: 50%;
+      height: 50px;
+      color: #000;
+      font-family: "Oswald";
+      font-weight: 700;
+      font-size: 27px;
+      line-height: 40px;
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 0 17px;
+      ::placeholder {
+        color: #9f9f9f;
+      }
+      border: 1px solid #ccc;
+    }
+  }
+
+  .buttons {
+    button {
+      cursor: pointer;
+      width: 50%;
+      height: 65px;
+      font-family: "Oswald";
+      font-weight: 700;
+      font-size: 27px;
+      line-height: 40px;
+      text-align: center;
+      color: #ffffff;
+      background: #1877f2;
+      border-radius: 5px;
+      :disabled {
+        cursor: default;
+      }
+    }
+  }
+}

@@ -10,6 +10,8 @@ import store from "./store/store";
 import CategoryPage from "./pages/CategoryPage/CategoryPage";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
 
+import SignIn from "./components/SignIn/SignIn";
+
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 
 function App() {
@@ -17,7 +19,8 @@ function App() {
     <div className="App">
       <Provider store = {store}>
         <BrowserRouter>
-          <Navbar />
+        <SignIn/>
+          {/* <Navbar />
           <Routes>
             <Route path = "/" element = {<Home />} />
             <Route path = "/category/:id" element = {<Category />} />
@@ -26,7 +29,7 @@ function App() {
             <Route path = "/product/:id" element = {<ProductDetailPage />} />
             <Route path = "/category/:categoryid/product/:id" element = {<ProductDetailPage />} />
           </Routes>
-          <Footer />
+          <Footer /> */}
         </BrowserRouter>
       </Provider>
     </div>

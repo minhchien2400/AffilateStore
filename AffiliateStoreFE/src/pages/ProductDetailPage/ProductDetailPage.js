@@ -23,7 +23,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     console.log("co useEffect");
     dispatch(fetchProduct(id));
-  }, []);
+  }, [id]);
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -63,7 +63,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="container">
-      <div className="details-content grid">
+      <div className="details-top grid">
         <div className="details-left">
           <div className="details-img">
             <img src={product.images[currentImageIndex]} alt={product.name} />
@@ -152,6 +152,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="details-bottom">
+        
       </div>
     </div>
   );
