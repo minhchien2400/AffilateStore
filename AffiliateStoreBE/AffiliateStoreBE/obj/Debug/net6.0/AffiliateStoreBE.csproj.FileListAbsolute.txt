@@ -502,3 +502,8 @@ C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\D
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.pdb
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\AffiliateStoreBE.genruntimeconfig.cache
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\obj\Debug\net6.0\ref\AffiliateStoreBE.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll

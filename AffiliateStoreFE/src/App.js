@@ -11,6 +11,7 @@ import CategoryPage from "./pages/CategoryPage/CategoryPage";
 import ProductsPage from "./pages/ProductsPage/ProductsPage";
 
 import SignIn from "./components/SignIn/SignIn";
+import SignUp from "./components/SignUp/SignUp";
 
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 
@@ -19,7 +20,7 @@ function App() {
     <div className="App">
       <Provider store = {store}>
         <BrowserRouter>
-        <SignIn/>
+        <SignUp/>
           {/* <Navbar />
           <Routes>
             <Route path = "/" element = {<Home />} />

@@ -4,6 +4,7 @@ using AffiliateStoreBE.Common.Models;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace AffiliateStoreBE.Common
 {
@@ -111,5 +112,25 @@ namespace AffiliateStoreBE.Common
             return sb.ToString();
         }
 
+        public string GeneratePassword()
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_-+=<>?";
+
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] randomBytes = new byte[8]; // Đổi giá trị này nếu bạn muốn mật khẩu dài hơn
+
+                rng.GetBytes(randomBytes);
+
+                StringBuilder password = new StringBuilder();
+
+                foreach (byte b in randomBytes)
+                {
+                    password.Append(validChars[b % validChars.Length]);
+                }
+
+                return password.ToString();
+            }
+        }
     }
 }

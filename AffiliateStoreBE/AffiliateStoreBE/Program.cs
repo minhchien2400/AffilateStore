@@ -20,7 +20,6 @@ builder.Services.AddScoped<ImportCategoryService>();
 builder.Services.AddScoped<ImportVideoReviewService>();
 builder.Services.AddScoped<ICategoryService, CategorysService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
-builder.Services.AddScoped<ISearchStringFunction, SearchStringFunction>();
 
 
 builder.Services.AddDbContext<StoreDbContext>(option =>

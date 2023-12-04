@@ -13,11 +13,9 @@ namespace AffiliateStoreBE.Controllers
     public class HomeController : ApiBaseController
     {
         private readonly StoreDbContext _storeDbContext;
-        private readonly ISearchStringFunction _searchStringFunction;
-        public HomeController(StoreDbContext storeDbContext, ISearchStringFunction searchStringFunction)
+        public HomeController(StoreDbContext storeDbContext)
         {
             _storeDbContext = storeDbContext;
-            _searchStringFunction = searchStringFunction;
         }
 
         [HttpGet("topsale")]
