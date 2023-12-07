@@ -1,24 +1,41 @@
 ﻿using AffiliateStoreBE.Configurations;
 using AffiliateStoreBE.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using System.Reflection.Emit;
 
 namespace AffiliateStoreBE.DbConnect
 {
-    public class StoreDbContext : DbContext
+    public class StoreDbContext : IdentityDbContext<Account>
     {
-        public StoreDbContext(DbContextOptions options) : base(options)
+        public StoreDbContext(DbContextOptions<StoreDbContext> options) : base(options)
+            { }
+        protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+            SeedRoles(builder);
+            builder.ApplyConfiguration(new AccountConfiguration());
+            builder.ApplyConfiguration(new CartConfiguration());
+            builder.ApplyConfiguration(new CartProductConfiguration());
+            builder.ApplyConfiguration(new CategoryConfiguration());
+            builder.ApplyConfiguration(new ProductConfiguration());
+            builder.ApplyConfiguration(new VideoReviewConfiguration());
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            base.OnConfiguring(optionsBuilder);
+           // optionsBuilder.UseSqlServer(connectionString);
         }
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<VideoReview> videosReview { get; set; }
+        private void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole>().HasData(
+                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin"},
+                new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User"}
+                );
+        }
     }
 }

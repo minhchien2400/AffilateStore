@@ -1,12 +1,11 @@
 ﻿using AffiliateStoreBE.Common.Models;
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace AffiliateStoreBE.Models
 {
-    public class Account : BaseEntity
+    public class Account : IdentityUser
     {
-        public Guid Id { get; set; }
-        public string Email { get; set; }
-        public string Password  { get; set; }
         public int Age { get; set; }
         public Gender Gender { get; set; }
         public string Country { get; set; }

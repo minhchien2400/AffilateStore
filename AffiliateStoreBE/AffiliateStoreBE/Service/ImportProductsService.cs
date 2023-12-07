@@ -28,7 +28,7 @@ namespace AffiliateStoreBE.Service
             try
             {
                 // validate here
-                if(ValidateFileFormat(request.FileName))
+                if(!ValidateFileFormat(request.FileName))
                 {
                     return ImportStatus.Failed;    
                 }
@@ -92,48 +92,56 @@ namespace AffiliateStoreBE.Service
 
         private async Task InitDatas(List<ProductDetailModel> productsDetail)
         {
-            var timeNow = DateTime.UtcNow;
-            var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active && productsDetail.Select(e => e.ProductName).Distinct().ToList().Contains(a.Name)).ToListAsync();
-            var productsUpdate = new List<ProductDetailModel>();
-            if (productsInDb.Any())
+            try
             {
-                productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name).Equals(a.ProductName)).ToList();
-                var categorys = await _categoryService.GetCategoryByName(productsUpdate.Select(p => p.CategoryName).ToList());
-                foreach (var productDb in productsInDb)
+                var timeNow = DateTime.UtcNow;
+                var productsInDb = await _storeDbContext.Set<Product>().Where(a => a.Status == Status.Active && productsDetail.Select(e => e.ProductName).Distinct().ToList().Contains(a.Name)).ToListAsync();
+                var productsUpdate = new List<ProductDetailModel>();
+                if (productsInDb.Any())
                 {
-                    var productUpdate = productsUpdate.Where(a => a.ProductName.Equals(productDb.Name)).FirstOrDefault();
-                    productDb.Description = productUpdate.Description;
-                    productDb.Cost = productUpdate.Cost;
-                    productDb.Price = productUpdate.Price;
-                    productDb.Images = productUpdate.Image;
-                    productDb.CategoryId = categorys.Where(c => c.Name.Equals(productUpdate.CategoryName)).Select(c => c.Id).FirstOrDefault();
-                    productDb.Stars = productUpdate.Stars;
-                    productDb.AffLink = productUpdate.AffLink;
-                    productDb.TotalSales = productUpdate.TotalSales;
-                    productDb.ModifiedTime = timeNow;
+                    productsUpdate = productsDetail.Where(a => productsInDb.Select(p => p.Name).Equals(a.ProductName)).ToList();
+                    var categorys = await _categoryService.GetCategoryByName(productsUpdate.Select(p => p.CategoryName).ToList());
+                    foreach (var productDb in productsInDb)
+                    {
+                        var productUpdate = productsUpdate.Where(a => a.ProductName.Equals(productDb.Name)).FirstOrDefault();
+                        productDb.Description = productUpdate.Description;
+                        productDb.Cost = productUpdate.Cost;
+                        productDb.Price = productUpdate.Price;
+                        productDb.Images = productUpdate.Image;
+                        productDb.CategoryId = categorys.Where(c => c.Name.Equals(productUpdate.CategoryName)).Select(c => c.Id).FirstOrDefault();
+                        productDb.Stars = productUpdate.Stars;
+                        productDb.AffLink = productUpdate.AffLink;
+                        productDb.TotalSales = productUpdate.TotalSales;
+                        productDb.ModifiedTime = timeNow;
+                    }
                 }
-            }
-            var productsCreate = productsDetail.Except(productsUpdate).ToList();
-            if (productsCreate.Any())
-            {
-                var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
-                var productsCreateDb = productsCreate.Select(a => new Product
+                var productsCreate = productsDetail.Except(productsUpdate).ToList();
+                if (productsCreate.Any())
                 {
-                    Id = Guid.NewGuid(),
-                    Name = a.ProductName,
-                    Description = a.Description,
-                    Cost = a.Cost,
-                    Price = a.Price,
-                    Images = a.Image,
-                    CategoryId = categorys.Where(c => c.Name.Equals(a.CategoryName)).Select(c => c.Id).FirstOrDefault(),
-                    Stars = a.Stars,
-                    AffLink = a.AffLink,
-                    TotalSales = a.TotalSales,
-                    CreatedTime = timeNow,
-                }).ToList();
-                await _storeDbContext.AddRangeAsync(productsCreateDb);
+                    var categorys = await _categoryService.GetCategoryByName(productsCreate.Select(p => p.CategoryName).ToList());
+                    var productsCreateDb = productsCreate.Select(a => new Product
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = a.ProductName,
+                        Description = a.Description,
+                        Cost = a.Cost,
+                        Price = a.Price,
+                        Images = a.Image,
+                        CategoryId = categorys.Where(c => c.Name.Equals(a.CategoryName)).Select(c => c.Id).FirstOrDefault(),
+                        Stars = a.Stars,
+                        AffLink = a.AffLink,
+                        TotalSales = a.TotalSales,
+                        CreatedTime = timeNow,
+                    }).ToList();
+                    await _storeDbContext.AddRangeAsync(productsCreateDb);
+                }
+                await _storeDbContext.SaveChangesAsync();
             }
-            await _storeDbContext.SaveChangesAsync();
+            catch(Exception ex)
+            {
+                Console.WriteLine($"DbUpdateException: {ex.Message}");
+                Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
+            }
         }
 
         //private async Task GenerateReport(Workbook workbook, ImportReportInfo report, Dictionary<string, Worksheet> originalSheets, String language)

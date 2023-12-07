@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
 import { setOrderFilter } from "../../store/filterSlice";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const { data: categoriesData } = useSelector((state) => state.category);
 
-  const {data: dataFilter} = useSelector((state) => state.filter)
+  const { data: dataFilter } = useSelector((state) => state.filter);
 
   const { totalItems } = useSelector((state) => state.cart);
 
@@ -28,13 +28,15 @@ const Navbar = () => {
 
   const handleSearch = (newSearchText) => {
     console.log("click search");
-    dispatch(setOrderFilter({
-      Offset: dataFilter.Offset,
-      Limit: dataFilter.Limit,
-      SearchText: newSearchText,
-      Keys: dataFilter.Keys
-    },))
-    setSearchText('');
+    dispatch(
+      setOrderFilter({
+        Offset: dataFilter.Offset,
+        Limit: dataFilter.Limit,
+        SearchText: newSearchText,
+        Keys: dataFilter.Keys,
+      })
+    );
+    setSearchText("");
   };
 
   return (
@@ -54,14 +56,14 @@ const Navbar = () => {
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
               />
-              <Link to= {`search=${searchText}`} className="">
-              <button
-                type="submit"
-                className="navbar-search-btn"
-                onClick={() => handleSearch(searchText)}
-              >
-                <i className="fas fa-search"></i>
-              </button>
+              <Link to={`search=${searchText}`} className="">
+                <button
+                  type="submit"
+                  className="navbar-search-btn"
+                  onClick={() => handleSearch(searchText)}
+                >
+                  <i className="fas fa-search"></i>
+                </button>
               </Link>
             </form>
 
@@ -76,6 +78,12 @@ const Navbar = () => {
                 </div>
               </Link>
             </div>
+
+            <Link to="/login">
+              <div className="login-btn">
+                <button>Login</button>
+              </div>
+            </Link>
           </div>
         </div>
 
@@ -93,17 +101,18 @@ const Navbar = () => {
               >
                 <i className="fas fa-times"></i>
               </button>
-              {categoriesData.result && categoriesData.result.map((category) => (
-                <li key={category.id}>
-                  <Link
-                    to={`/category/${category.id}`}
-                    className="nav-link text-white"
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
+              {categoriesData.result &&
+                categoriesData.result.map((category) => (
+                  <li key={category.id}>
+                    <Link
+                      to={`/category/${category.id}`}
+                      className="nav-link text-white"
+                      onClick={() => setIsSidebarOpen(false)}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
             </ul>
 
             <button

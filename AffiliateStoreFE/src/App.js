@@ -18,19 +18,23 @@ import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 function App() {
   return (
     <div className="App">
-      <Provider store = {store}>
+      <Provider store={store}>
         <BrowserRouter>
-        <SignUp/>
-          {/* <Navbar />
+          <Navbar />
           <Routes>
-            <Route path = "/" element = {<Home />} />
-            <Route path = "/category/:id" element = {<Category />} />
-            <Route path = "/cart" element = {<Cart />} />
-            <Route path = "/search=:searchText" element = {<ProductsPage />} />
-            <Route path = "/product/:id" element = {<ProductDetailPage />} />
-            <Route path = "/category/:categoryid/product/:id" element = {<ProductDetailPage />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/category/:id" element={<Category />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/search=:searchText" element={<ProductsPage />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route
+              path="/category/:categoryid/product/:id"
+              element={<ProductDetailPage />}
+            />
+            <Route path="/login" element={<SignIn/>} />
+            <Route path="/signup" element={<SignUp/>} />
           </Routes>
-          <Footer /> */}
+          <Footer />
         </BrowserRouter>
       </Provider>
     </div>

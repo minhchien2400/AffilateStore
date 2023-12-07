@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import { ValidationEmail } from "../../utils/validation";
 import "./SignIn.scss";
+import { Link } from "react-router-dom";
 
 const SignIn = () => {
   const [emailInput, setEmailInput] = useState("");
@@ -9,10 +10,10 @@ const SignIn = () => {
 
   const handleSignIn = async () => {
     setValidEmail(true);
-    if(!ValidationEmail(emailInput));
+    if (!ValidationEmail(emailInput));
     {
-        setValidEmail(false);
-        return;
+      setValidEmail(false);
+      return;
     }
   };
   return (
@@ -43,10 +44,12 @@ const SignIn = () => {
         <button className="submit" type="submit" onClick={() => handleSignIn()}>
           SIGN IN
         </button>
-        {/* <button isGoogleSignIn={true}>
+        <Link to="/signup">
+          <button>
             {""}
-            SIGN IN With Google{""}
-          </button> */}
+            SIGN UP{""}
+          </button>
+        </Link>
       </div>
     </div>
   );

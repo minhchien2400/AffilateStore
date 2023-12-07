@@ -5,6 +5,7 @@ import { ValidationEmail, ValidationPassword } from "../../utils/validation";
 const SignUp = () => {
 
 const [inputSignUp, setInputSignUp] = useState({
+  UserName: '',
   Email: '',
   PassWord: '',
   RePassWord: ''
@@ -37,6 +38,18 @@ const [mesageFailed, setMesageFailed] = useState({
       <span>Sign in with your email and password</span>
 
       <div className="input-container flex">
+      <input
+          name="username"
+          type="text"
+          value={""}
+          onChange={(e) => setInputSignUp({
+            ...inputSignUp,
+            Email: e.target.value
+          })}
+          label="Email"
+          placeholder="Nhap Email"
+          required
+        />
         <input
           name="email"
           type="email"
