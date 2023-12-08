@@ -8,6 +8,11 @@ using AffiliateStoreBE.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using AffiliateStoreBE.Service.IService;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -17,14 +22,17 @@ namespace AffiliateStoreBE.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
-        public AccountController(StoreDbContext storeDbContext, RoleManager<IdentityRole> roleManager, UserManager<Account> userManager, IEmailService emailService)
+        private readonly IConfiguration _configuration;
+        public AccountController(StoreDbContext storeDbContext, RoleManager<IdentityRole> roleManager, UserManager<Account> userManager, IEmailService emailService, IConfiguration configuration)
         {
             _storeDbContext = storeDbContext;
             _roleManager = roleManager;
             _userManager = userManager;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
+        [Authorize]
         [HttpPost("getaccount")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetAccount()
@@ -56,13 +64,31 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
-                var accountExist = await _userManager.FindByEmailAsync(signIn.Email);
-                //var account = await _storeDbContext.Set<Account>().Where(a => a.Email.Equals(signIn.Email) && a.Password.Equals(signIn.Password)).FirstOrDefaultAsync();
-                //if (account != null)
-                //{
-                //    return Ok(true);
-                //}
-                return Ok(false);
+                //var account = await _userManager.FindByEmailAsync(signIn.Email);
+                var account = await _userManager.FindByNameAsync(signIn.Username);
+                if (account != null && await _userManager.CheckPasswordAsync(account, signIn.Password))
+                {
+                    var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, account.UserName),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    };
+                    var userRoles = await _userManager.GetRolesAsync(account);
+                    foreach (var role in userRoles)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+
+                    var jwtToken = GetToken(authClaims);
+
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                        expiration = jwtToken.ValidTo
+                    });
+                }
+
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -95,7 +121,7 @@ namespace AffiliateStoreBE.Controllers
                     Gender = signUp.Gender,
                     Country = signUp.Country
                 };
-                if(await _roleManager.RoleExistsAsync(signUp.Role))
+                if (await _roleManager.RoleExistsAsync(signUp.Role))
                 {
                     var result = await _userManager.CreateAsync(newAccount, signUp.Password);
                     if (result.Succeeded)
@@ -114,7 +140,7 @@ namespace AffiliateStoreBE.Controllers
                         });
                     }
 
-                    
+
                 }
                 else
                 {
@@ -136,38 +162,38 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpPost("forgotpassword")]
-        [SwaggerResponse(200)]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswprd acc)
-        {
-            try
-            {
-                //var account = await _storeDbContext.Set<Account>().Where(a => a.Email.Equals(acc.Email) && a.Password.Equals(acc.OldPassword)).FirstOrDefaultAsync();
-                //if (account != null)
-                //{
-                //    account.Password = acc.NewPassword;
-                //    await _storeDbContext.SaveChangesAsync();
-                //    return Ok(new
-                //    {
-                //        Result = true,
-                //        Message = "Doi mat khau thanh cong",
-                //    });
-                //}
-                return Ok(new
-                {
-                    Result = true,
-                    Message = "Email hoac mat khau khong chinh xac",
-                });
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        //[HttpPost("forgotpassword")]
+        //[SwaggerResponse(200)]
+        //public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswprd acc)
+        //{
+        //    try
+        //    {
+        //        var account = await _userManager.FindByEmailAsync(acc.Email);
+        //        if (account != null)
+        //        {
+        //            account.Password = acc.NewPassword;
+        //            await _storeDbContext.SaveChangesAsync();
+        //            return Ok(new
+        //            {
+        //                Result = true,
+        //                Message = "Doi mat khau thanh cong",
+        //            });
+        //        }
+        //        return Ok(new
+        //        {
+        //            Result = true,
+        //            Message = "Email hoac mat khau khong chinh xac",
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
 
         [HttpPost("resetpassword")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> SignUp([FromBody] string  email)
+        public async Task<IActionResult> SignUp([FromBody] string email)
         {
             try
             {
@@ -198,10 +224,10 @@ namespace AffiliateStoreBE.Controllers
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if(user != null)
+            if (user != null)
             {
                 var result = await _userManager.ConfirmEmailAsync(user, token);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     return Ok("Confirm email successfull!");
                 }
@@ -209,9 +235,24 @@ namespace AffiliateStoreBE.Controllers
             return Ok(false);
         }
 
+        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.UtcNow.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+            return token;
+        }
+
         public class SignInModel
         {
-            public string Email { get; set; }
+            public string Username { get; set; }
             public string Password { get; set; }
         }
         public class SignUpModel

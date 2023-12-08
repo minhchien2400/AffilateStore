@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AffiliateStoreBE.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +24,6 @@ builder.Services.AddScoped<ICategoryService, CategorysService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-
-//builder.Services.AddDbContext<StoreDbContext>(option =>
-//{
-//    option.UseSqlServer(builder.Configuration.GetConnectionString("StoreDatabase"));
-//});
-
-
 builder.Services.AddDbContext<StoreDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("StoreDatabase"));
@@ -40,9 +35,10 @@ builder.Services.AddIdentity<Account, IdentityRole>()
     .AddDefaultTokenProviders();
 
 
+var configuration = builder.Configuration;
 
 // Add email config
-var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig);
 
 // Add config for Required email 
@@ -50,11 +46,24 @@ builder.Services.Configure<IdentityOptions>(
     opts => opts.SignIn.RequireConfirmedEmail = true
     );
 
+// Add authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = configuration["JWT:ValidAudience"],
+        ValidIssuer = configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
+    };
 });
 
 builder.Services.AddCors(options =>
