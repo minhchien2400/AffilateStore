@@ -43,8 +43,23 @@ builder.Services.AddSingleton(emailConfig);
 
 // Add config for Required email 
 builder.Services.Configure<IdentityOptions>(
-    opts => opts.SignIn.RequireConfirmedEmail = true
-    );
+    opts =>
+    {
+
+        //
+        opts.SignIn.RequireConfirmedEmail = true; // phai xac thuc account moi dang nhap duoc
+        opts.SignIn.RequireConfirmedAccount = true;
+
+        // cau hinh Lockout khi nhap sai tk mk nhieu lan
+        opts.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        opts.Lockout.MaxFailedAccessAttempts = 5;
+        opts.Lockout.AllowedForNewUsers = true;
+
+        // cau hinh ve user 
+        opts.User.RequireUniqueEmail = true; // Email la duy nhat
+    });
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
 
 // Add authentication
 builder.Services.AddAuthentication(options =>

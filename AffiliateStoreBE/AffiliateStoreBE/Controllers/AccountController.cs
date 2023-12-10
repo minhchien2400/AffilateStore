@@ -13,6 +13,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Cryptography.Pkcs;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -21,15 +25,17 @@ namespace AffiliateStoreBE.Controllers
         private readonly StoreDbContext _storeDbContext;
         private readonly UserManager<Account> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<Account> _signInManager;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
-        public AccountController(StoreDbContext storeDbContext, RoleManager<IdentityRole> roleManager, UserManager<Account> userManager, IEmailService emailService, IConfiguration configuration)
+        public AccountController(StoreDbContext storeDbContext, RoleManager<IdentityRole> roleManager, UserManager<Account> userManager, IEmailService emailService, IConfiguration configuration, SignInManager<Account> signInManager)
         {
             _storeDbContext = storeDbContext;
             _roleManager = roleManager;
             _userManager = userManager;
             _emailService = emailService;
             _configuration = configuration;
+            _signInManager = signInManager;
         }
 
         [Authorize]
@@ -131,8 +137,14 @@ namespace AffiliateStoreBE.Controllers
                         // token verify email...
                         var token = await _userManager.GenerateEmailConfirmationTokenAsync(newAccount);
                         var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { token, email = newAccount.Email }, protocol: Request.Scheme);
-                        var message = new Message(new string[] { newAccount.Email! }, "Confirmation email link", confirmationLink!);
+                        var message = new Message(new string[] { newAccount.Email! }, "Confirmation email link", $"Bạn vừa tạo một tài khoản. Bấm vào liên kết sau để xác thực tài khoản: {confirmationLink}");
+
                         _emailService.SendEmail(message);
+                        if(!_userManager.Options.SignIn.RequireConfirmedAccount)
+                        {
+                            await _signInManager.SignInAsync(newAccount, isPersistent: true); //isPersistent giup luu lai cookie de duy tri dang nhap
+                            //LocalRedirect()
+                        }
                         return Ok(new
                         {
                             Result = true,
@@ -162,56 +174,60 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        //[HttpPost("forgotpassword")]
-        //[SwaggerResponse(200)]
-        //public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswprd acc)
-        //{
-        //    try
-        //    {
-        //        var account = await _userManager.FindByEmailAsync(acc.Email);
-        //        if (account != null)
-        //        {
-        //            account.Password = acc.NewPassword;
-        //            await _storeDbContext.SaveChangesAsync();
-        //            return Ok(new
-        //            {
-        //                Result = true,
-        //                Message = "Doi mat khau thanh cong",
-        //            });
-        //        }
-        //        return Ok(new
-        //        {
-        //            Result = true,
-        //            Message = "Email hoac mat khau khong chinh xac",
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
-
-        [HttpPost("resetpassword")]
+        [HttpPost("forgotpassword")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> SignUp([FromBody] string email)
+        public async Task<IActionResult> ForgotPassword([Required] string email)
         {
             try
             {
-                var account = await _storeDbContext.Set<Account>().Where(a => a.Email.Equals(email)).FirstOrDefaultAsync();
+                var account = await _userManager.FindByEmailAsync(email);
                 if (account != null)
                 {
-                    var newPassword = GeneratePassword();
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(account);
+                    token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                    var forgotPasswordLink = Url.Action("ResetPassword", "Account", new { token, email }, Request.Scheme);
+                    var message = new Message(new string[] { account.Email! }, "Confirm email link", forgotPasswordLink!);
+                    _emailService.SendEmail(message);
                     return Ok(new
                     {
                         Result = true,
                     });
                 }
-
                 return Ok(new
                 {
                     Result = false,
-                    Message = "Email khong chinh xac",
+                    Message = "Forgot password failed!",
                 });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("signout")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> SignOut(string token, string email)
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("resetpassword")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> ResetPassword(string token, string email)
+        {
+            try
+            {
+
+                return Ok(new ResetPasswordModel { Token = token, Email = email });
             }
             catch (Exception ex)
             {
@@ -226,6 +242,7 @@ namespace AffiliateStoreBE.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
+                token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
@@ -254,6 +271,7 @@ namespace AffiliateStoreBE.Controllers
         {
             public string Username { get; set; }
             public string Password { get; set; }
+            public bool RememberMe { get; set; } 
         }
         public class SignUpModel
         {
@@ -265,11 +283,13 @@ namespace AffiliateStoreBE.Controllers
             public string Country { get; set; }
             public string Role { get; set; }
         }
-        public class ForgotPasswprd
+        public class ResetPasswordModel
         {
-            public string Email { get; set; }
-            public string OldPassword { get; set; }
-            public string NewPassword { get; set; }
+            public string Password { get; set; } = null!;
+            [Compare("Password", ErrorMessage = "The password and confirmpassword not same")]
+            public string ConfirmPassword { get; set; } = null!;
+            public string Email { get; set; } = null!;
+            public string Token { get; set; } = null!;
         }
     }
 }

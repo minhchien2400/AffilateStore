@@ -512,3 +512,13 @@ C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\D
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\MimeKit.dll
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\NETCore.MailKit.dll
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\BouncyCastle.Crypto.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\MailKit.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\MimeKit.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\NETCore.MailKit.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\BouncyCastle.Crypto.dll
