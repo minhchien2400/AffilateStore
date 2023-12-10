@@ -103,6 +103,18 @@ builder.Services.ConfigureApplicationCookie(options =>
 //                    .AddEntityFrameworkStores<AppDbContext>()
 //                    .AddDefaultTokenProviders();
 
+
+//login voi cac dich vu ngoai
+builder.Services.AddAuthentication().AddGoogle(options =>
+{
+    var googleConfig = configuration.GetSection("Authentication:Google");
+    options.ClientId = googleConfig["ClientId"];
+    options.ClientSecret = googleConfig["ClientSecret"];
+
+    options.CallbackPath = "http://localhost:3000/login-google-account";
+
+});
+
 var app = builder.Build();
 app.UseCors("AllowOrigin");
 

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "90L3vzdQGShyTd8p0pX2jSZfWPZERAeYWh9nE3nMTlsrQILHFqC1rn1o2hG/9NnjF6F1F+d9600E4YlYOk00ig==",
+  "dgSpecHash": "/zJrOf0E8CvjwZX2KqHzNKKzQhlB4gDiFwDzSqw6DMMIuTVLUbGazGHamq/sZa44v9479joBYhqSoI3OMwoKTA==",
   "success": true,
   "projectFilePath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "C:\\Users\\84981\\.nuget\\packages\\jetbrains.annotations\\2022.1.0\\jetbrains.annotations.2022.1.0.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\linqtoexcel\\1.11.0\\linqtoexcel.1.11.0.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\mailkit\\3.2.0\\mailkit.3.2.0.nupkg.sha512",
+    "C:\\Users\\84981\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\6.0.25\\microsoft.aspnetcore.authentication.google.6.0.25.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.25\\microsoft.aspnetcore.authentication.jwtbearer.6.0.25.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.25\\microsoft.aspnetcore.cryptography.internal.6.0.25.nupkg.sha512",
