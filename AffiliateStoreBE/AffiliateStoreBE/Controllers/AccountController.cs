@@ -1,8 +1,6 @@
-﻿using AffiliateStoreBE.Common.Models;
-using AffiliateStoreBE.Common;
+﻿using AffiliateStoreBE.Common;
 using AffiliateStoreBE.DbConnect;
 using Microsoft.AspNetCore.Mvc;
-using static AffiliateStoreBE.Controllers.CategoryController;
 using Swashbuckle.AspNetCore.Annotations;
 using AffiliateStoreBE.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Security.Cryptography.Pkcs;
+using System.Security.Cryptography;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -74,23 +72,34 @@ namespace AffiliateStoreBE.Controllers
                 var account = await _userManager.FindByNameAsync(signIn.Username);
                 if (account != null && await _userManager.CheckPasswordAsync(account, signIn.Password))
                 {
-                    var authClaims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, account.UserName),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    };
-                    var userRoles = await _userManager.GetRolesAsync(account);
-                    foreach (var role in userRoles)
-                    {
-                        authClaims.Add(new Claim(ClaimTypes.Role, role));
-                    }
+                    //var authClaims = new List<Claim>
+                    //{
+                    //    new Claim(ClaimTypes.Name, account.UserName),
+                    //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    //};
+                    //var userRoles = await _userManager.GetRolesAsync(account);
+                    //foreach (var role in userRoles)
+                    //{
+                    //    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                    //}
 
-                    var jwtToken = GetToken(authClaims);
+                    var jwtToken = GenerateJwt(signIn.Username);
+
+                    var refreshToken = GenerateRefreshToken();
+
+                    await _storeDbContext.AddAsync(new RefreshToken
+                    {
+                        Id = Guid.NewGuid(),
+                        RefreshTokenStr = refreshToken,
+                        ExpireDate = DateTime.UtcNow.AddDays(60),
+                        AccountId = account.Id
+                    });
 
                     return Ok(new
                     {
-                        token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
-                        expiration = jwtToken.ValidTo
+                        Token = new JwtSecurityTokenHandler().WriteToken(jwtToken),
+                        Expiration = jwtToken.ValidTo,
+                        RefreshToken = refreshToken
                     });
                 }
 
@@ -136,11 +145,12 @@ namespace AffiliateStoreBE.Controllers
 
                         // token verify email...
                         var token = await _userManager.GenerateEmailConfirmationTokenAsync(newAccount);
+                        token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
                         var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { token, email = newAccount.Email }, protocol: Request.Scheme);
                         var message = new Message(new string[] { newAccount.Email! }, "Confirmation email link", $"Bạn vừa tạo một tài khoản. Bấm vào liên kết sau để xác thực tài khoản: {confirmationLink}");
 
                         _emailService.SendEmail(message);
-                        if(!_userManager.Options.SignIn.RequireConfirmedAccount)
+                        if (!_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
                             await _signInManager.SignInAsync(newAccount, isPersistent: true); //isPersistent giup luu lai cookie de duy tri dang nhap
                             //LocalRedirect()
@@ -252,6 +262,53 @@ namespace AffiliateStoreBE.Controllers
             return Ok(false);
         }
 
+        [HttpPost("refresh")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenModel tokens)
+        {
+            var principal = GetPrincipalFromExpiredToken(tokens.AccessToken);
+
+            if (principal?.Identity?.Name is null)
+                return Unauthorized();
+
+            var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+            var refreshTokenExist = await _storeDbContext.Set<RefreshToken>().AnyAsync(r => r.RefreshTokenStr.Equals(tokens.RefreshToken) && r.ExpireDate > DateTime.UtcNow);
+
+            if (user is null || !refreshTokenExist)
+                return Unauthorized();
+
+            var token = GenerateJwt(principal.Identity.Name);
+
+
+            return Ok(new
+            {
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo,
+                RefreshToken = tokens.RefreshToken
+            });
+        }
+
+        [Authorize]
+        [HttpDelete("Revoke")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Revoke(string refreshToken)
+        {
+            var username = HttpContext.User.Identity?.Name;
+
+            if (username is null)
+                return Unauthorized();
+
+            var user = await _userManager.FindByNameAsync(username);
+            var refreshTokenRovoke = await _storeDbContext.Set<RefreshToken>().Where(a => a.RefreshTokenStr.Equals(refreshToken)).Select(a => a.RefreshTokenStr).FirstOrDefaultAsync();
+            refreshTokenRovoke = null;
+            await _storeDbContext.SaveChangesAsync();
+            if (user is null)
+                return Unauthorized();
+
+            return Ok();
+        }
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -267,11 +324,59 @@ namespace AffiliateStoreBE.Controllers
             return token;
         }
 
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
+
+            var validation = new TokenValidationParameters
+            {
+                ValidIssuer = _configuration["JWT:ValidIssuer"],
+                ValidAudience = _configuration["JWT:ValidAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                ValidateLifetime = false
+            };
+
+            return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+        }
+
+        private JwtSecurityToken GenerateJwt(string username)
+        {
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured")));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.UtcNow.AddSeconds(30),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                );
+
+            return token;
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+
+            using var generator = RandomNumberGenerator.Create();
+
+            generator.GetBytes(randomNumber);
+
+            return Convert.ToBase64String(randomNumber);
+        }
+
         public class SignInModel
         {
             public string Username { get; set; }
             public string Password { get; set; }
-            public bool RememberMe { get; set; } 
+            public bool RememberMe { get; set; }
         }
         public class SignUpModel
         {
@@ -290,6 +395,11 @@ namespace AffiliateStoreBE.Controllers
             public string ConfirmPassword { get; set; } = null!;
             public string Email { get; set; } = null!;
             public string Token { get; set; } = null!;
+        }
+        public class RefreshTokenModel
+        {
+            public string AccessToken { get; set; }
+            public string RefreshToken { get; set; }
         }
     }
 }
