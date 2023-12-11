@@ -1,8 +1,14 @@
+import { useState } from "react";
+import { Button } from "react-bootstrap/lib/InputGroup";
 
 
 
 const SignIn = () => {
-  handleSubmit = (event) => {
+  const [dataLogin, setDataLogin] = useState({
+    UserNameOrEmail: "",
+    password: "",
+  })
+  handleSubmit = () => {
     event.preventDefault();
 
     this.setState({ email: "", password: "" });
@@ -20,23 +26,29 @@ const SignIn = () => {
       <span>Sign in with your email and password</span>
 
       <form onSubmit={this.handleSubmit}>
-        <FormInput
+        <input
           name="email"
           type="email"
-          handleChange={this.handleChange}
+          onChange={(e) => setDataLogin({
+            ...dataLogin,
+            UserNameOrEmail: e.target.value
+          })}
           value={this.state.email}
           label="email"
           required
         />
-        <FormInput
+        <input
           name="password"
           type="password"
           value={this.state.password}
-          handleChange={this.handleChange}
+          onChange={(e) => setDataLogin({
+            ...dataLogin,
+            password: e.target.value
+          })}
           label="password"
           required
         />
-        <CustomButton type="submit"> Sign in </CustomButton>
+        <Button type="submit" onSubmit = {() => handleSubmit()}> Sign in </Button>
       </form>
     </div>
   );
