@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AffiliateStoreBE.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20231212060415_AffiliateStoreDb")]
-    partial class AffiliateStoreDb
+    [Migration("20231212173930_AfifliateStoreDb")]
+    partial class AfifliateStoreDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,14 +328,14 @@ namespace AffiliateStoreBE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "428ffde8-bdd7-4e8c-b975-b0ca76f72faf",
+                            Id = "f2ea9ec8-ea54-4e5f-ae04-45048f4180b2",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "df42771e-a00d-4d37-b143-e29967e1e701",
+                            Id = "d92d2ed5-636a-4836-adcb-544d91927e9d",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"

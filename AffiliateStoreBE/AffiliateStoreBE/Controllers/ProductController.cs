@@ -13,6 +13,7 @@ using Status = AffiliateStoreBE.Common.Models.Status;
 using System.Linq;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Authorization;
+using AvePoint.Confucius.FeatureCommon.Service;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -21,10 +22,12 @@ namespace AffiliateStoreBE.Controllers
         private readonly StoreDbContext _storeContext;
         private readonly ICategoryService _categoryService;
         private readonly IProductsService _productService;
-        public ProductController(StoreDbContext storeContext, ICategoryService categoryService)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public ProductController(StoreDbContext storeContext, ICategoryService categoryService, IHttpContextAccessor contextAccessor)
         {
             _storeContext = storeContext;
             _categoryService = categoryService;
+            _contextAccessor = contextAccessor;
         }
 
         [HttpPost("getproducts")]
@@ -357,6 +360,26 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).FirstOrDefaultAsync();
+                if (product != null)
+                {
+                    product.Status = Status.Active;
+                }
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost("addtocart")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> AddToCart(Guid productId)
+        {
+            try
+            {
+                var currenUserId = _httpContextAccessor.HttpContext.CurrentClientId();
                 var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).FirstOrDefaultAsync();
                 if (product != null)
                 {

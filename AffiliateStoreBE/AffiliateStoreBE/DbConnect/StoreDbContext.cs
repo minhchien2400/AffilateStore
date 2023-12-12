@@ -17,7 +17,6 @@ namespace AffiliateStoreBE.DbConnect
             base.OnModelCreating(builder);
             SeedRoles(builder);
             builder.ApplyConfiguration(new AccountConfiguration());
-            builder.ApplyConfiguration(new CartConfiguration());
             builder.ApplyConfiguration(new CartProductConfiguration());
             builder.ApplyConfiguration(new CategoryConfiguration());
             builder.ApplyConfiguration(new ProductConfiguration());

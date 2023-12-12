@@ -9,12 +9,13 @@ namespace AffiliateStoreBE.Configurations
         public void Configure(EntityTypeBuilder<CartProduct> builder)
         {
             builder.ToTable("cartproduct-data");
-            builder.HasKey(a => a.CartProductId);
-            builder.Property(a => a.CartProductId).ValueGeneratedOnAdd();
+            builder.HasKey(a => a.Id);
+            builder.Property(a => a.Id).ValueGeneratedOnAdd();
             builder.Property(a => a.ProductId).IsRequired();
             builder.HasOne(a => a.Product).WithMany().HasForeignKey(a => a.ProductId).OnDelete(DeleteBehavior.Restrict);
-            builder.Property(a => a.CartId).IsRequired();
-            builder.HasOne(a => a.Cart).WithMany().HasForeignKey(a => a.CartId).OnDelete(DeleteBehavior.Restrict);
+            builder.Property(a => a.AccountId).IsRequired();
+            builder.HasOne(a => a.Cart).WithMany().HasForeignKey(a => a.AccountId).OnDelete(DeleteBehavior.Restrict);
+            builder.Property(a => a.Status).IsRequired();
         }
     }
 }

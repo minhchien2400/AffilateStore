@@ -2,8 +2,12 @@ import React, { Component, useState } from "react";
 import "./SignIn.scss";
 import { fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoggedIn } from "../../store/loginSlice";
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+
   const [dataLogin, setDataLogin] = useState({
     UsernameOrEmail: "",
     Password: "",
@@ -17,8 +21,13 @@ const SignIn = () => {
     const data = await fetchDataBody(`${BASE_URL}signin`, dataLogin, "POST");
 
     // luu jwt token va refresh token vao localstorage
-    localStorage.setItem("jwtToken", data.token);
-    localStorage.setItem("refreshToken", data.refreshToken);
+    if(data.token)
+    {
+      dispatch(setLoggedIn(true))
+      localStorage.setItem("jwtToken", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+    
     setDataLogin({
       UsernameOrEmail: "",
       Password: "",

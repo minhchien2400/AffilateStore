@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AffiliateStoreBE.Migrations
 {
     /// <inheritdoc />
-    public partial class AffiliateStoreDb : Migration
+    public partial class AfifliateStoreDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -302,8 +302,8 @@ namespace AffiliateStoreBE.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "428ffde8-bdd7-4e8c-b975-b0ca76f72faf", "1", "Admin", "Admin" },
-                    { "df42771e-a00d-4d37-b143-e29967e1e701", "2", "User", "User" }
+                    { "d92d2ed5-636a-4836-adcb-544d91927e9d", "2", "User", "User" },
+                    { "f2ea9ec8-ea54-4e5f-ae04-45048f4180b2", "1", "Admin", "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
