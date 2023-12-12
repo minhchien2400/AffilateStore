@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
 import { setOrderFilter } from "../../store/filterSlice";
-import { useParams } from "react-router-dom";
-
+import { DecodedJwtTokenData } from "../../utils/helpers";
 const Navbar = () => {
   const dispatch = useDispatch();
 
@@ -19,6 +18,14 @@ const Navbar = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
+  console.log("Navbar",isLoggedIn);
+
+  const storedToken = localStorage.getItem('jwtToken');
+
+  useEffect(() => {
+  }, [storedToken])
+
 
   // useEffect(() => {
   //   dispatch(fetchCategories(filterCategories, 'POST'));
@@ -27,7 +34,6 @@ const Navbar = () => {
   // }, []);
 
   const handleSearch = (newSearchText) => {
-    console.log("click search");
     dispatch(
       setOrderFilter({
         Offset: dataFilter.Offset,
@@ -38,6 +44,10 @@ const Navbar = () => {
     );
     setSearchText("");
   };
+
+  const handelClickBtn = () => {
+
+  }
 
   return (
     <nav className="navbar">
@@ -81,9 +91,12 @@ const Navbar = () => {
 
             <Link to="/login">
               <div className="login-btn">
-                <button>Login</button>
+                <button onClick={() => handelClickBtn()}>{isLoggedIn ? storedToken && DecodedJwtTokenData(storedToken).UserName: "Login"}</button>
               </div>
             </Link>
+
+            <button onClick={() => {localStorage.removeItem('jwtToken'); console.log("log out");}}>LogOut</button>
+
           </div>
         </div>
 

@@ -153,6 +153,26 @@ namespace AffiliateStoreBE.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "refresh-tokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RefreshTokenStr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_refresh-tokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_refresh-tokens_account-data_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "account-data",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -282,8 +302,8 @@ namespace AffiliateStoreBE.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "933b47b2-313f-468f-b190-e9654f4f33de", "2", "User", "User" },
-                    { "e2571970-42f4-48eb-a47d-101aaf785745", "1", "Admin", "Admin" }
+                    { "428ffde8-bdd7-4e8c-b975-b0ca76f72faf", "1", "Admin", "Admin" },
+                    { "df42771e-a00d-4d37-b143-e29967e1e701", "2", "User", "User" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -347,6 +367,11 @@ namespace AffiliateStoreBE.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_refresh-tokens_AccountId",
+                table: "refresh-tokens",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_videosreview-data_ProductId",
                 table: "videosreview-data",
                 column: "ProductId");
@@ -372,6 +397,9 @@ namespace AffiliateStoreBE.Migrations
 
             migrationBuilder.DropTable(
                 name: "cartproduct-data");
+
+            migrationBuilder.DropTable(
+                name: "refresh-tokens");
 
             migrationBuilder.DropTable(
                 name: "videosreview-data");

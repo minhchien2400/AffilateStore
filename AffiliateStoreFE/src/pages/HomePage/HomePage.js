@@ -24,6 +24,8 @@ const HomePage = () => {
     (state) => state.filter
   );
 
+  const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
+
   useEffect(() => {
     dispatch(setPageState({
       IsHomePage: true,

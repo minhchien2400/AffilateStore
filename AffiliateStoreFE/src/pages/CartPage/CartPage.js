@@ -8,6 +8,7 @@ import {formatPrice} from "../../utils/helpers";
 const CartPage = () => {
     const dispatch = useDispatch();
     const {data: cartProducts, totalItems, totalAmount, deliveryCharge} = useSelector(state => state.cart);
+    const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
 
     useEffect(() => {
         dispatch(getCartTotal());

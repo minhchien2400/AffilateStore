@@ -68,22 +68,15 @@ namespace AffiliateStoreBE.Controllers
         {
             try
             {
-                //var account = await _userManager.FindByEmailAsync(signIn.Email);
-                var account = await _userManager.FindByNameAsync(signIn.Username);
+                var account = await _userManager.FindByNameAsync(signIn.UsernameOrEmail);
+                if(account == null)
+                {
+                    account = await _userManager.FindByEmailAsync(signIn.UsernameOrEmail);
+                }
                 if (account != null && await _userManager.CheckPasswordAsync(account, signIn.Password))
                 {
-                    //var authClaims = new List<Claim>
-                    //{
-                    //    new Claim(ClaimTypes.Name, account.UserName),
-                    //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    //};
-                    //var userRoles = await _userManager.GetRolesAsync(account);
-                    //foreach (var role in userRoles)
-                    //{
-                    //    authClaims.Add(new Claim(ClaimTypes.Role, role));
-                    //}
-
-                    var jwtToken = GenerateJwt(signIn.Username);
+                    var userRoles = await _userManager.GetRolesAsync(account);
+                    var jwtToken = GenerateJwt(account, userRoles);
 
                     var refreshToken = GenerateRefreshToken();
 
@@ -94,6 +87,7 @@ namespace AffiliateStoreBE.Controllers
                         ExpireDate = DateTime.UtcNow.AddDays(60),
                         AccountId = account.Id
                     });
+                    await _storeDbContext.SaveChangesAsync();
 
                     return Ok(new
                     {
@@ -272,12 +266,13 @@ namespace AffiliateStoreBE.Controllers
                 return Unauthorized();
 
             var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+            var userRoles = await _userManager.GetRolesAsync(user);
             var refreshTokenExist = await _storeDbContext.Set<RefreshToken>().AnyAsync(r => r.RefreshTokenStr.Equals(tokens.RefreshToken) && r.ExpireDate > DateTime.UtcNow);
 
             if (user is null || !refreshTokenExist)
                 return Unauthorized();
 
-            var token = GenerateJwt(principal.Identity.Name);
+            var token = GenerateJwt(user, userRoles);
 
 
             return Ok(new
@@ -309,20 +304,6 @@ namespace AffiliateStoreBE.Controllers
 
             return Ok();
         }
-        private JwtSecurityToken GetToken(List<Claim> authClaims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.UtcNow.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-
-            return token;
-        }
 
         private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
@@ -339,13 +320,20 @@ namespace AffiliateStoreBE.Controllers
             return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
         }
 
-        private JwtSecurityToken GenerateJwt(string username)
+        private JwtSecurityToken GenerateJwt(Account account, IList<string> roles)
         {
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Name, account.UserName),
+                new Claim(ClaimTypes.Email, account.Email),
+                new Claim(ClaimTypes.Gender, GetEnumDescription(account.Gender)),
+                new Claim(ClaimTypes.Country, account.Country),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
+            foreach (var role in roles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured")));
@@ -372,11 +360,22 @@ namespace AffiliateStoreBE.Controllers
             return Convert.ToBase64String(randomNumber);
         }
 
+        // Hàm giải mã mật khẩu
+        private static string DecryptPassword(string hashedPassword)
+        {
+            byte[] hashedBytes = Convert.FromBase64String(hashedPassword);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] decryptedBytes = sha256.ComputeHash(hashedBytes);
+                return Encoding.UTF8.GetString(decryptedBytes);
+            }
+        }
+
         public class SignInModel
         {
-            public string Username { get; set; }
+            public string UsernameOrEmail { get; set; }
             public string Password { get; set; }
-            public bool RememberMe { get; set; }
+            // public bool RememberMe { get; set; }
         }
         public class SignUpModel
         {

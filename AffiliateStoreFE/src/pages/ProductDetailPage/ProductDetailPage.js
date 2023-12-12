@@ -18,10 +18,10 @@ const ProductDetailPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { productData: product } = useSelector((state) => state.product);
-  console.log("product o day la:", product);
+
+  const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
 
   useEffect(() => {
-    console.log("co useEffect");
     dispatch(fetchProduct(id));
   }, [id]);
 

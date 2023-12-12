@@ -1,5 +1,6 @@
 ﻿using AffiliateStoreBE.Common.Models;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace AffiliateStoreBE.Models
@@ -13,8 +14,11 @@ namespace AffiliateStoreBE.Models
 
     public enum Gender
     {
+        [Description("Male")]
         Male = 0,
+        [Description("Felmale")]
         Female = 1,
+        [Description("Other")]
         Other = 2,
     }
 }

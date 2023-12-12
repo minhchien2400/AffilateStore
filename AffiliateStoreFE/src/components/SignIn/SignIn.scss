@@ -1,7 +1,5 @@
 @import "../../App.scss";
 .sign-in {
-  .input-container {
-    display: flex;
     input {
       box-sizing: border-box;
       width: 50%;
@@ -19,7 +17,6 @@
       }
       border: 1px solid #ccc;
     }
-  }
 
   .buttons {
     button {

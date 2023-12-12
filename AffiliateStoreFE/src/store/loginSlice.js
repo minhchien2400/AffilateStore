@@ -1,50 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const jwtToken = localStorage.getItem('jwtToken');
+const CheckLoggedIn = (jwtToken) => {
+  return jwtToken !== null;
+}
 const loginSlice = createSlice({
   name: "login",
   initialState: {
-    signInData: {
-      Email: '',
-      Password: '',
-    },
-    signUpData: {
-        Email: '',
-        Password: '',
-        RePassword: ''
-    },
-    forgotPassword: {
-        Email: '',
-        OldPassword: '',
-        NewPassword: '',
-        ReNewPassword: ''
-    },
-    resetPassword: {
-      Email: '',
-      Code: ''
-    },
+    IsLoggedIn: CheckLoggedIn(),
   },
   reducers: {
-    setFilters(state, action) {
+    setLoggedIn(state, action) {
       state.data = action.payload;
-    },
-    setCategoryFilters(state, action) {
-      state.categoryData = action.payload;
     },
   },
 });
 
-export const { setFilters, setCategoryFilters } = filterSlice.actions;
-export default filterSlice.reducer;
+export const { setLoggedIn } = loginSlice.actions;
+export default loginSlice.reducer;
 
-export const setOrderFilter = (filter) => {
-  console.log("setOrderFilter", filter);
-  return async function setFilterThunk(dispatch) {
-    await dispatch(setFilters(filter));
-  };
-};
-
-export const setCategoryOrderFilter = (filter) => {
-  return async function setFilterThunk(dispatch) {
-    dispatch(setCategoryFilters(filter));
+export const setLoggedInStatus = (loginStatus) => {
+  return async function setUserInfoThunk(dispatch) {
+    dispatch(setLoggedIn(loginStatus))
   };
 };

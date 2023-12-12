@@ -12,6 +12,10 @@ const ProductsPage = () => {
   const {data: data, status: productStatus} = useSelector((state) => state.product);
   const { data: dataFilter } = useSelector((state) => state.filter);
 
+  const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
+
+  
+
   useEffect(() => {
     dispatch(setPageState({
       IsProductsPage: true,

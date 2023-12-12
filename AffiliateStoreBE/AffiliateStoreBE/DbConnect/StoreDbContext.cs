@@ -22,6 +22,7 @@ namespace AffiliateStoreBE.DbConnect
             builder.ApplyConfiguration(new CategoryConfiguration());
             builder.ApplyConfiguration(new ProductConfiguration());
             builder.ApplyConfiguration(new VideoReviewConfiguration());
+            builder.ApplyConfiguration(new RefreshTokenConfiguration());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

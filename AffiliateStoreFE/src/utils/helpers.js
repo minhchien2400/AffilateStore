@@ -30,27 +30,21 @@ export const formatStars = (stars) => {
   return starIcons;
 };
 
-// export const setupGlobalSetting = () => {
-//   // Kiểm tra xem đã lưu global setting hay chưa
-//   const storedSetting = localStorage.getItem('globalSetting');
+const NAME_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
+const EMAIL_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email';
+const GENDER_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender';
+const COUNTRY_CLAIM = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country';
+const ROLE_CLAIM = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
 
-//   if (!storedSetting) {
-//     // Nếu chưa có global setting, lấy kích thước màn hình và cài đặt
-//     const screenSize = {
-//       width: window.innerWidth,
-//       height: window.innerHeight
-//     };
-
-//     // Thực hiện cài đặt global setting dựa trên kích thước màn hình
-//     const globalSetting = {
-//       // ...thêm các thuộc tính global setting khác dựa trên kích thước màn hình
-//       screenSize,
-//       // Ví dụ: có thể cài đặt theme, font size, etc.
-//     };
-
-//     // Lưu global setting vào localStorage
-//     localStorage.setItem('globalSetting', JSON.stringify(globalSetting));
-//   }
-// }
-
-// // Gọi hàm khi trang web được tải
+export const DecodedJwtTokenData = (jwtToken) => {
+  const decodedPayload = atob(jwtToken.split('.')[1]);
+  console.log("decodedPaload", decodedPayload);
+  const decodedToken = JSON.parse(decodedPayload);
+  return {
+    UserName: decodedToken[NAME_CLAIM],
+    Email: decodedToken[EMAIL_CLAIM],
+    Gender: decodedToken[GENDER_CLAIM],
+    Country: decodedToken[COUNTRY_CLAIM],
+    Roles: decodedToken[ROLE_CLAIM]
+  }
+}

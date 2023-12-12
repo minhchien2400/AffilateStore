@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AffiliateStoreBE.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20231207061242_AffiliateStoreDb")]
+    [Migration("20231212060415_AffiliateStoreDb")]
     partial class AffiliateStoreDb
     {
         /// <inheritdoc />
@@ -238,6 +238,30 @@ namespace AffiliateStoreBE.Migrations
                     b.ToTable("products-data", (string)null);
                 });
 
+            modelBuilder.Entity("AffiliateStoreBE.Models.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshTokenStr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("refresh-tokens", (string)null);
+                });
+
             modelBuilder.Entity("AffiliateStoreBE.Models.VideoReview", b =>
                 {
                     b.Property<Guid>("Id")
@@ -304,14 +328,14 @@ namespace AffiliateStoreBE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e2571970-42f4-48eb-a47d-101aaf785745",
+                            Id = "428ffde8-bdd7-4e8c-b975-b0ca76f72faf",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "933b47b2-313f-468f-b190-e9654f4f33de",
+                            Id = "df42771e-a00d-4d37-b143-e29967e1e701",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -463,6 +487,17 @@ namespace AffiliateStoreBE.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("AffiliateStoreBE.Models.RefreshToken", b =>
+                {
+                    b.HasOne("AffiliateStoreBE.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("AffiliateStoreBE.Models.VideoReview", b =>

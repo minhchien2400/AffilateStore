@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Security.Cryptography;
+using System.ComponentModel;
 
 namespace AffiliateStoreBE.Common
 {
@@ -56,11 +57,11 @@ namespace AffiliateStoreBE.Common
                 }
             }
 
-            foreach(var str in resultList)
+            foreach (var str in resultList)
             {
-                foreach(var name in listNamesConvert)
+                foreach (var name in listNamesConvert)
                 {
-                    if(RemoveSpaceAndConvert(name).Contains(str.ToLower()))
+                    if (RemoveSpaceAndConvert(name).Contains(str.ToLower()))
                     {
                         listNamesReturn.Add(name);
                     }
@@ -131,6 +132,16 @@ namespace AffiliateStoreBE.Common
 
                 return password.ToString();
             }
+        }
+
+
+        public string GetEnumDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+
+            var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+
+            return attribute == null ? value.ToString() : attribute.Description;
         }
     }
 }
