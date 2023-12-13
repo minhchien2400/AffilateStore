@@ -18,14 +18,12 @@ const Navbar = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
-  console.log("Navbar",isLoggedIn);
+  const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
+  console.log("Navbar", isLoggedIn);
 
-  const storedToken = localStorage.getItem('jwtToken');
-
-  useEffect(() => {
-  }, [storedToken])
-
+  const storedToken = localStorage.getItem("jwtToken");
+  console.log("storedToken", storedToken);
+  console.log("isLoggedIn", isLoggedIn);
 
   // useEffect(() => {
   //   dispatch(fetchCategories(filterCategories, 'POST'));
@@ -45,9 +43,7 @@ const Navbar = () => {
     setSearchText("");
   };
 
-  const handelClickBtn = () => {
-
-  }
+  const handelClickBtn = () => {};
 
   return (
     <nav className="navbar">
@@ -91,12 +87,20 @@ const Navbar = () => {
 
             <Link to="/login">
               <div className="login-btn">
-                <button onClick={() => handelClickBtn()}>{isLoggedIn ? storedToken && DecodedJwtTokenData(storedToken).UserName: "Login"}</button>
+                <button onClick={() => handelClickBtn()}>
+                  {storedToken ? DecodedJwtTokenData(storedToken).UserName : "Login"}
+                </button>
               </div>
             </Link>
 
-            <button onClick={() => {localStorage.removeItem('jwtToken'); console.log("log out");}}>LogOut</button>
-
+            <button
+              onClick={() => {
+                localStorage.removeItem("jwtToken");
+                console.log("log out");
+              }}
+            >
+              LogOut
+            </button>
           </div>
         </div>
 

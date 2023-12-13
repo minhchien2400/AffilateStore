@@ -14,7 +14,7 @@ namespace AffiliateStoreBE.Configurations
             builder.Property(a => a.ProductId).IsRequired();
             builder.HasOne(a => a.Product).WithMany().HasForeignKey(a => a.ProductId).OnDelete(DeleteBehavior.Restrict);
             builder.Property(a => a.AccountId).IsRequired();
-            builder.HasOne(a => a.Cart).WithMany().HasForeignKey(a => a.AccountId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(a => a.Account).WithMany().HasForeignKey(a => a.AccountId).OnDelete(DeleteBehavior.Restrict);
             builder.Property(a => a.Status).IsRequired();
         }
     }

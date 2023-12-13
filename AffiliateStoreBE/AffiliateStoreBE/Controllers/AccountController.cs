@@ -307,17 +307,26 @@ namespace AffiliateStoreBE.Controllers
 
         private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
-            var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
-
-            var validation = new TokenValidationParameters
+            try
             {
-                ValidIssuer = _configuration["JWT:ValidIssuer"],
-                ValidAudience = _configuration["JWT:ValidAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                ValidateLifetime = false
-            };
+                var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
 
-            return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+                var validation = new TokenValidationParameters
+                {
+                    ValidIssuer = _configuration["JWT:ValidIssuer"],
+                    ValidAudience = _configuration["JWT:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                    ValidateLifetime = false
+                };
+
+                var principal = new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+                return principal;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         private JwtSecurityToken GenerateJwt(Account account, IList<string> roles)

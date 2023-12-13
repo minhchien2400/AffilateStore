@@ -524,3 +524,4 @@ D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\NETCore.MailKit.d
 D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\BouncyCastle.Crypto.dll
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
 D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\IdentityModel.dll

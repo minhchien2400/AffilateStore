@@ -8,7 +8,7 @@ namespace AffiliateStoreBE.Models
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
         public String AccountId { get; set; }
-        public Account Cart { get; set; }
+        public Account Account { get; set; }
         public CartStatus Status { get; set; }
     }
 

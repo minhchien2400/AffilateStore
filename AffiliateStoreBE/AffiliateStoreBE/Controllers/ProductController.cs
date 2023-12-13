@@ -14,6 +14,12 @@ using System.Linq;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Authorization;
 using AvePoint.Confucius.FeatureCommon.Service;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AffiliateStoreBE.Controllers
 {
@@ -23,11 +29,15 @@ namespace AffiliateStoreBE.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IProductsService _productService;
         private readonly IHttpContextAccessor _contextAccessor;
-        public ProductController(StoreDbContext storeContext, ICategoryService categoryService, IHttpContextAccessor contextAccessor)
+        private readonly UserManager<Account> _userManager;
+        private readonly IConfiguration _configuration;
+        public ProductController(StoreDbContext storeContext, ICategoryService categoryService, IHttpContextAccessor contextAccessor, UserManager<Account> userManager, IConfiguration configuration)
         {
             _storeContext = storeContext;
             _categoryService = categoryService;
             _contextAccessor = contextAccessor;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         [HttpPost("getproducts")]
@@ -375,17 +385,24 @@ namespace AffiliateStoreBE.Controllers
 
         [HttpPost("addtocart")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> AddToCart(Guid productId)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartModel addToCart)
         {
             try
             {
-                var currenUserId = _httpContextAccessor.HttpContext.CurrentClientId();
-                var product = await _storeContext.Set<Product>().Where(a => a.Id == productId && a.Status == Status.Inactive).FirstOrDefaultAsync();
-                if (product != null)
+                var principal = GetPrincipalFromExpiredToken(addToCart.AccessToken);
+                if (principal?.Identity?.Name is null)
+                    return Unauthorized();
+
+                var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+                await _storeContext.AddAsync(new CartProduct
                 {
-                    product.Status = Status.Active;
-                }
-                return Ok(product);
+                    Id = Guid.NewGuid(),
+                    ProductId = addToCart.productId,
+                    AccountId = user.Id,
+                    Status = CartStatus.Added
+                });
+                await _storeContext.SaveChangesAsync();
+                return Ok(true);
             }
             catch (Exception ex)
             {
@@ -393,6 +410,67 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
+        [HttpPost("removeorpurchase")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> RemoveOrPurchase(RemoveOrPurchaseModel action)
+        {
+            try
+            {
+                //var userId = _httpContextAccessor.HttpContext.CurrentUserId().ToString();
+                //var productCart = await _storeContext.Set<CartProduct>().Where(a => a.AccountId == userId && a.ProductId == action.productId).FirstOrDefaultAsync();
+                //productCart.Status = action.CartStatus;
+                //await _storeContext.SaveChangesAsync();
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost("getcountproductcart")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetCountProductCart(string accessToken)
+        {
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(accessToken);
+                if (principal?.Identity?.Name is null)
+                    return Unauthorized();
+
+                var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+                var count = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status == CartStatus.Added).CountAsync();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            try
+            {
+                var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret not configured");
+
+                var validation = new TokenValidationParameters
+                {
+                    ValidIssuer = _configuration["JWT:ValidIssuer"],
+                    ValidAudience = _configuration["JWT:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                    ValidateLifetime = false
+                };
+
+                var principal = new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+                return principal;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
     public class ProductModel
     {
@@ -422,5 +500,17 @@ namespace AffiliateStoreBE.Controllers
     public class ProductsCategoryNameFilter : FilterModel
     {
         public string CategoryName { get; set; }
+    }
+
+    public class RemoveOrPurchaseModel
+    {
+        public Guid productId { get; set; }
+        public CartStatus CartStatus { get; set; }
+    }
+
+    public class AddToCartModel
+    {
+        public Guid productId { get; set; }
+        public string AccessToken { get; set; }
     }
 }

@@ -6,6 +6,8 @@ import { addToCart } from "../../store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { formatStars } from "../../utils/helpers";
+import { fetchData, fetchDataBody } from "../../utils/fetchData";
+import { BASE_URL } from "../../utils/apiURL";
 
 const SingleProduct = () => {
   const dispatch = useDispatch();
@@ -27,16 +29,13 @@ const SingleProduct = () => {
     );
   };
 
-  const addToCartHandler = () => {
-    let totalPrice = qty * product.price;
-    const tempProduct = {
-      ...product,
-      quantity: qty,
-      totalPrice,
-    };
-    dispatch(addToCart(tempProduct));
-    dispatch(setIsModalVisible(false));
-    navigate("/cart");
+  const addToCartHandler = async (productId) => {
+    console.log("Click addtocart", productId);
+    const response = await fetchDataBody(`${BASE_URL}addtocart`, {ProductId: productId, AccessToken : localStorage.getItem('jwtToken')},"POST")
+    console.log(response);
+    // dispatch(addToCart(tempProduct));
+    // dispatch(setIsModalVisible(false));
+    //navigate("/cart");
   };
 
   const modalOverlayHandler = (e) => {
@@ -135,7 +134,7 @@ const SingleProduct = () => {
                 <button
                   type="button"
                   className="btn-primary add-to-cart-btn"
-                  onClick={addToCartHandler}
+                  onClick={() => addToCartHandler(product.productId)}
                 >
                   <span className="btn-icon">
                     <i className="fas fa-cart-shopping"></i>

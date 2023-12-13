@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 
 const ProductCard = (props) => {
   const dispatch = useDispatch();
-  const viewModalHandler = (data) => {
-    dispatch(setModalData(data));
+  const viewModalHandler = (product) => {
+    dispatch(setModalData(product));
     dispatch(setIsModalVisible(true));
   };
 

@@ -8,6 +8,7 @@ import { formatPrice, formatStars } from "../../utils/helpers";
 import { fetchProduct } from "../../store/productSlice";
 import Loader from "../../components/Loader/Loader";
 import { useParams } from "react-router-dom";
+import { fetchRefreshToken } from "../../store/loginSlice";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -20,6 +21,10 @@ const ProductDetailPage = () => {
   const { productData: product } = useSelector((state) => state.product);
 
   const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
+
+  useEffect(() =>{
+    
+  },[])
 
   useEffect(() => {
     dispatch(fetchProduct(id));

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Slider from "../../components/Slider/Slider";
 import Category from "../../components/Category/Category";
 import ProductList from "../../components/ProductList/ProductList";
@@ -8,6 +8,7 @@ import { fetchCategories } from "../../store/categorySlice";
 import { setPageState } from "../../store/pageSlice";
 import { setOrderFilter } from "../../store/filterSlice";
 import "./HomePage.scss";
+import { fetchRefreshToken } from "../../store/loginSlice";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,14 @@ const HomePage = () => {
 
   const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
 
-  useEffect(() => {
+  // check login
+
+
+  useEffect(async () => {
+    //checklogin
+    // if(isLoggedIn)
+    // {
+    dispatch(fetchRefreshToken());
     dispatch(setPageState({
       IsHomePage: true,
     }));

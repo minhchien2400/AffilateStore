@@ -3,7 +3,7 @@ import "./SignIn.scss";
 import { fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
 import { useSelector, useDispatch } from "react-redux";
-import { setLoggedIn } from "../../store/loginSlice";
+import { setLoggedInStatus } from "../../store/loginSlice";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -14,16 +14,19 @@ const SignIn = () => {
   });
   const handleSubmit = async (e) => {
 
+    console.log("click sigin");
     // bo default get data tu url
     e.preventDefault();
 
     // fetch api login
     const data = await fetchDataBody(`${BASE_URL}signin`, dataLogin, "POST");
+    console.log("datalogin", dataLogin);
 
     // luu jwt token va refresh token vao localstorage
     if(data.token)
     {
-      dispatch(setLoggedIn(true))
+      console.log("data.token", data.token);
+      dispatch(setLoggedInStatus(true))
       localStorage.setItem("jwtToken", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
     }

@@ -1,7 +1,4 @@
 ﻿using IdentityModel;
-using Microsoft.VisualBasic;
-using System.Reflection;
-using System.Security.Claims;
 
 namespace AvePoint.Confucius.FeatureCommon.Service
 {
@@ -26,7 +23,7 @@ namespace AvePoint.Confucius.FeatureCommon.Service
             return GetClaimValue(context, JwtClaimTypes.Name);
         }
 
-       
+
         public static string GetHostUrl(this HttpContext context)
         {
             return $"{context.Request.Scheme}://{context.GetHost()}";
@@ -38,10 +35,6 @@ namespace AvePoint.Confucius.FeatureCommon.Service
             return strs.First();
         }
 
-        public static string CurrentClientId(this HttpContext context)
-        {
-            return GetClaimValue(context, JwtClaimTypes.ClientId);
-        }
 
         private static String GetClaimValue(HttpContext context, String claimType)
         {
