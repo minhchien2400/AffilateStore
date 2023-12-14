@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AffiliateStoreBE.Migrations
 {
     /// <inheritdoc />
-    public partial class AfifliateStoreDb : Migration
+    public partial class AffiliateStoreDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -133,26 +133,6 @@ namespace AffiliateStoreBE.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "cart-data",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_cart-data", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_cart-data_account-data_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "account-data",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "refresh-tokens",
                 columns: table => new
                 {
@@ -250,19 +230,20 @@ namespace AffiliateStoreBE.Migrations
                 name: "cartproduct-data",
                 columns: table => new
                 {
-                    CartProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_cartproduct-data", x => x.CartProductId);
+                    table.PrimaryKey("PK_cartproduct-data", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_cartproduct-data_cart-data_CartId",
-                        column: x => x.CartId,
-                        principalTable: "cart-data",
+                        name: "FK_cartproduct-data_account-data_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "account-data",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -302,8 +283,8 @@ namespace AffiliateStoreBE.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "d92d2ed5-636a-4836-adcb-544d91927e9d", "2", "User", "User" },
-                    { "f2ea9ec8-ea54-4e5f-ae04-45048f4180b2", "1", "Admin", "Admin" }
+                    { "10b9b211-db68-4b6b-b3b4-bd6568f0bd3f", "2", "User", "User" },
+                    { "8f0b8e9e-02ef-4330-b3bf-6ca1680c89f3", "1", "Admin", "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -346,15 +327,9 @@ namespace AffiliateStoreBE.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_cart-data_AccountId",
-                table: "cart-data",
-                column: "AccountId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_cartproduct-data_CartId",
+                name: "IX_cartproduct-data_AccountId",
                 table: "cartproduct-data",
-                column: "CartId");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_cartproduct-data_ProductId",
@@ -408,13 +383,10 @@ namespace AffiliateStoreBE.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "cart-data");
+                name: "account-data");
 
             migrationBuilder.DropTable(
                 name: "products-data");
-
-            migrationBuilder.DropTable(
-                name: "account-data");
 
             migrationBuilder.DropTable(
                 name: "categorys-data");

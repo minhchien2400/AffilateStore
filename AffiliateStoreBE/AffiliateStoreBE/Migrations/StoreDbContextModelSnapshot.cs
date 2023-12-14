@@ -305,14 +305,14 @@ namespace AffiliateStoreBE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10aa317d-d8bb-4c64-bd57-e0a9a9756359",
+                            Id = "8f0b8e9e-02ef-4330-b3bf-6ca1680c89f3",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "1a21fe61-7184-4e7d-8903-d8b700fd5093",
+                            Id = "10b9b211-db68-4b6b-b3b4-bd6568f0bd3f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"

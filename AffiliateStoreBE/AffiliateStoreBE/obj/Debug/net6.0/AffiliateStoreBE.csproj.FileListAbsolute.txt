@@ -525,3 +525,4 @@ D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\BouncyCastle.Cryp
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
 D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
 C:\Users\leon.tran\Desktop\AffilateStore\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\IdentityModel.dll
+D:\storeweb\AffiliateStoreBE\AffiliateStoreBE\bin\Debug\net6.0\IdentityModel.dll

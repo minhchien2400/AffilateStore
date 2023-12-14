@@ -397,7 +397,7 @@ namespace AffiliateStoreBE.Controllers
                 await _storeContext.AddAsync(new CartProduct
                 {
                     Id = Guid.NewGuid(),
-                    ProductId = addToCart.productId,
+                    ProductId = addToCart.ProductId,
                     AccountId = user.Id,
                     Status = CartStatus.Added
                 });
@@ -428,7 +428,7 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpPost("getcountproductcart")]
+        [HttpGet("getcountproductcart/{accessToken}")]
         [SwaggerResponse(200)]
         public async Task<IActionResult> GetCountProductCart(string accessToken)
         {
@@ -510,7 +510,7 @@ namespace AffiliateStoreBE.Controllers
 
     public class AddToCartModel
     {
-        public Guid productId { get; set; }
+        public Guid ProductId { get; set; }
         public string AccessToken { get; set; }
     }
 }

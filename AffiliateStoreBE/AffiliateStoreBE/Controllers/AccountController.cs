@@ -263,14 +263,14 @@ namespace AffiliateStoreBE.Controllers
             var principal = GetPrincipalFromExpiredToken(tokens.AccessToken);
 
             if (principal?.Identity?.Name is null)
-                return Unauthorized();
+                return Unauthorized(false);
 
             var user = await _userManager.FindByNameAsync(principal.Identity.Name);
             var userRoles = await _userManager.GetRolesAsync(user);
             var refreshTokenExist = await _storeDbContext.Set<RefreshToken>().AnyAsync(r => r.RefreshTokenStr.Equals(tokens.RefreshToken) && r.ExpireDate > DateTime.UtcNow);
 
             if (user is null || !refreshTokenExist)
-                return Unauthorized();
+                return Unauthorized(false);
 
             var token = GenerateJwt(user, userRoles);
 
@@ -279,7 +279,7 @@ namespace AffiliateStoreBE.Controllers
             {
                 JwtToken = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = token.ValidTo,
-                RefreshToken = tokens.RefreshToken
+                RefreshToken = tokens.RefreshToken,
             });
         }
 

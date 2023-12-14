@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AffiliateStoreBE.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20231212173930_AfifliateStoreDb")]
-    partial class AfifliateStoreDb
+    [Migration("20231213163338_AffiliateStoreDb")]
+    partial class AffiliateStoreDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,7 @@ namespace AffiliateStoreBE.Migrations
                     b.ToTable("account-data", (string)null);
                 });
 
-            modelBuilder.Entity("AffiliateStoreBE.Models.Cart", b =>
+            modelBuilder.Entity("AffiliateStoreBE.Models.CartProduct", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,35 +120,15 @@ namespace AffiliateStoreBE.Migrations
                     b.Property<DateTimeOffset>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId")
-                        .IsUnique();
-
-                    b.ToTable("cart-data", (string)null);
-                });
-
-            modelBuilder.Entity("AffiliateStoreBE.Models.CartProduct", b =>
-                {
-                    b.Property<Guid>("CartProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("ModifiedTime")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("CartProductId");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CartId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("ProductId");
 
@@ -328,14 +308,14 @@ namespace AffiliateStoreBE.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f2ea9ec8-ea54-4e5f-ae04-45048f4180b2",
+                            Id = "8f0b8e9e-02ef-4330-b3bf-6ca1680c89f3",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "d92d2ed5-636a-4836-adcb-544d91927e9d",
+                            Id = "10b9b211-db68-4b6b-b3b4-bd6568f0bd3f",
                             ConcurrencyStamp = "2",
                             Name = "User",
                             NormalizedName = "User"
@@ -448,22 +428,11 @@ namespace AffiliateStoreBE.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AffiliateStoreBE.Models.Cart", b =>
-                {
-                    b.HasOne("AffiliateStoreBE.Models.Account", "Account")
-                        .WithOne()
-                        .HasForeignKey("AffiliateStoreBE.Models.Cart", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("AffiliateStoreBE.Models.CartProduct", b =>
                 {
-                    b.HasOne("AffiliateStoreBE.Models.Cart", "Cart")
+                    b.HasOne("AffiliateStoreBE.Models.Account", "Account")
                         .WithMany()
-                        .HasForeignKey("CartId")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -473,7 +442,7 @@ namespace AffiliateStoreBE.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Cart");
+                    b.Navigation("Account");
 
                     b.Navigation("Product");
                 });

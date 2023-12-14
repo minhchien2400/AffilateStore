@@ -5,6 +5,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
 import { setOrderFilter } from "../../store/filterSlice";
 import { DecodedJwtTokenData } from "../../utils/helpers";
+import { fetchData, fetchDataBody } from "../../utils/fetchData";
+import { BASE_URL } from "../../utils/apiURL";
+
 const Navbar = () => {
   const dispatch = useDispatch();
 
@@ -21,15 +24,16 @@ const Navbar = () => {
   const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
   console.log("Navbar", isLoggedIn);
 
-  const storedToken = localStorage.getItem("jwtToken");
-  console.log("storedToken", storedToken);
-  console.log("isLoggedIn", isLoggedIn);
+  const accessToken = localStorage.getItem("jwtToken");
 
   // useEffect(() => {
   //   dispatch(fetchCategories(filterCategories, 'POST'));
   //   dispatch(getCartTotal());
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
+  useEffect(() => {
+    fetchData(`${BASE_URL}getcountproductcart/${accessToken}`)
+  })
 
   const handleSearch = (newSearchText) => {
     dispatch(
@@ -88,7 +92,7 @@ const Navbar = () => {
             <Link to="/login">
               <div className="login-btn">
                 <button onClick={() => handelClickBtn()}>
-                  {storedToken ? DecodedJwtTokenData(storedToken).UserName : "Login"}
+                  {accessToken ? DecodedJwtTokenData(accessToken).UserName : "Login"}
                 </button>
               </div>
             </Link>
