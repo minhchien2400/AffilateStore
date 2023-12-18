@@ -75,6 +75,7 @@ namespace AffiliateStoreBE.Controllers
                 }
                 if (account != null && await _userManager.CheckPasswordAsync(account, signIn.Password))
                 {
+                    await _signInManager.SignInAsync(account, isPersistent:true);
                     var userRoles = await _userManager.GetRolesAsync(account);
                     var jwtToken = GenerateJwt(account, userRoles);
 

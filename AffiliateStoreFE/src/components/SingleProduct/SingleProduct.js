@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./SingleProduct.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsModalVisible } from "../../store/modalSlice";
-import { addToCart } from "../../store/cartSlice";
+import { addToCart, fetchCartAction } from "../../store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { formatStars } from "../../utils/helpers";
@@ -17,6 +17,8 @@ const SingleProduct = () => {
 
   const { data: product } = useSelector((state) => state.modal);
 
+  const { productsAdded: productsAdded } = useSelector((state) => state.cart);
+
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) =>
       prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
@@ -29,10 +31,17 @@ const SingleProduct = () => {
     );
   };
 
-  const addToCartHandler = async (productId) => {
-    console.log("Click addtocart", productId);
-    const response = await fetchDataBody(`${BASE_URL}addtocart`, {ProductId: productId, AccessToken : localStorage.getItem('jwtToken')},"POST")
-    console.log(response);
+  const addToCartHandler = async (product) => {
+    console.log("Click addtocart", product.ProductId);
+    const productExist = productsAdded.find(item => item.ProductId === product.ProductId);
+    if(productExist)
+    {
+      console.log("Sp da co trong gio hang");
+    }
+    else
+    {
+      dispatch(fetchCartAction(product, {ProductId: product.ProductId, AccessToken: localStorage.getItem("jwtToken")}, "POST"))
+    }
     // dispatch(addToCart(tempProduct));
     // dispatch(setIsModalVisible(false));
     //navigate("/cart");

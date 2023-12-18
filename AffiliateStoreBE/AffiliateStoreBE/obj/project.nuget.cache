@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "r/5MRYB2T+ywaSmpTbBdxZqxoiF9wpMqPELRjMo8C0B8AzE5mwgum8Ll0hYsIwaJAQFB8jTNZAAxIGIYRH1R4w==",
+  "dgSpecHash": "1RaKXRK3dD4TXVnQ6wmxP2QNy0vG9EWHJJ057xDdLx6vzB52EFhmDioey0M2aQrxxqjHi3vje7m/l1YvBLvLRg==",
   "success": true,
-  "projectFilePath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+  "projectFilePath": "C:\\Users\\84981\\Desktop\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\84981\\.nuget\\packages\\aspose.cells\\23.10.0\\aspose.cells.23.10.0.nupkg.sha512",
     "C:\\Users\\84981\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",

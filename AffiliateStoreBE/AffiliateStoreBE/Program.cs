@@ -1,4 +1,4 @@
-using AffiliateStoreBE.DbConnect;
+﻿using AffiliateStoreBE.DbConnect;
 using AffiliateStoreBE.Service;
 using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AffiliateStoreBE.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,7 +80,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
-});
+}) ;
 
 builder.Services.AddCors(options =>
 {
@@ -96,8 +97,8 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "http://localhost:3000/login";
-    options.LogoutPath = "";
+    options.LoginPath = "/login";
+    options.LogoutPath = "/";
 });
 //builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //                    .AddEntityFrameworkStores<AppDbContext>()
@@ -105,17 +106,18 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 //login voi cac dich vu ngoai
-builder.Services.AddAuthentication().AddGoogle(options =>
-{
-    var googleConfig = configuration.GetSection("Authentication:Google");
-    options.ClientId = googleConfig["ClientId"];
-    options.ClientSecret = googleConfig["ClientSecret"];
+//builder.Services.AddAuthentication().AddGoogle(options =>
+//{
+//    var googleConfig = configuration.GetSection("Authentication:Google");
+//    options.ClientId = googleConfig["ClientId"];
+//    options.ClientSecret = googleConfig["ClientSecret"];
 
-    options.CallbackPath = "http://localhost:3000/login-google-account";
+//    options.CallbackPath = "http://localhost:3000/login-google-account";
 
-});
+//});
 
 var app = builder.Build();
+app.UseAuthentication();
 app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.

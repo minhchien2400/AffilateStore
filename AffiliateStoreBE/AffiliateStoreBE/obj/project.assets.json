@@ -7844,11 +7844,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+      "projectUniqueName": "C:\\Users\\84981\\Desktop\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
       "projectName": "AffiliateStoreBE",
-      "projectPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
+      "projectPath": "C:\\Users\\84981\\Desktop\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\AffiliateStoreBE.csproj",
       "packagesPath": "C:\\Users\\84981\\.nuget\\packages\\",
-      "outputPath": "D:\\storeweb\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
+      "outputPath": "C:\\Users\\84981\\Desktop\\AffilateStore\\AffiliateStoreBE\\AffiliateStoreBE\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

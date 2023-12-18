@@ -13,7 +13,6 @@ const SignIn = () => {
     Password: "",
   });
   const handleSubmit = async (e) => {
-
     console.log("click sigin");
     // bo default get data tu url
     e.preventDefault();
@@ -23,14 +22,18 @@ const SignIn = () => {
     console.log("datalogin", dataLogin);
 
     // luu jwt token va refresh token vao localstorage
-    if(data.token)
-    {
+    if (data.token) {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 7); // Số ngày cookie tồn tại
       console.log("data.token", data.token);
-      dispatch(setLoggedInStatus(true))
+      dispatch(setLoggedInStatus(true));
       localStorage.setItem("jwtToken", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
+      document.cookie = `myCookie=${encodeURIComponent(
+        data.token
+      )}; expires=${expires.toUTCString()}; path=/`;
     }
-    
+
     setDataLogin({
       UsernameOrEmail: "",
       Password: "",

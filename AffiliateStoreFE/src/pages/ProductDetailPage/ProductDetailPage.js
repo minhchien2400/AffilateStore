@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./ProductDetailPage.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsModalVisible } from "../../store/modalSlice";
-import { addToCart } from "../../store/cartSlice";
+// import { addToCart } from "../../store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { formatPrice, formatStars } from "../../utils/helpers";
 import { fetchProduct } from "../../store/productSlice";
@@ -49,7 +49,7 @@ const ProductDetailPage = () => {
       quantity: qty,
       totalPrice,
     };
-    dispatch(addToCart(tempProduct));
+    //dispatch(addToCart(tempProduct));
     dispatch(setIsModalVisible(false));
     navigate("/cart");
   };
