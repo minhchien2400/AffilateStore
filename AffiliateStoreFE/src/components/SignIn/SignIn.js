@@ -4,6 +4,8 @@ import { fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
 import { useSelector, useDispatch } from "react-redux";
 import { setLoggedInStatus } from "../../store/loginSlice";
+import { setGetCartProducts } from "../../store/cartSlice";
+import { setAddToCart } from "../../store/cartSlice";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -32,6 +34,8 @@ const SignIn = () => {
       document.cookie = `myCookie=${encodeURIComponent(
         data.token
       )}; expires=${expires.toUTCString()}; path=/`;
+      const cartData = fetchDataBody(`${BASE_URL}getcartproducs/${data.token}`)
+      dispatch(setGetCartProducts(cartData.productsAdded))
     }
 
     setDataLogin({

@@ -9,30 +9,46 @@ const storeInLocalStorage = (data) => {
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    productsAdded: {},
-    totalAdded: 0,
-    productsPurchased: {},
-    totalPurchased: 0,
+    ProductsAdded: [],
+    TotalAdded: 0,
+    ProductsPurchased: [],
+    TotalPurchased: 0,
   },
   reducers: {
+    setProductsAdded(state, action) {
+      state.ProductsAdded = action.payload;
+      const cartData = localStorage.getItem('cart');
+      var dataObject = JSON.parse(cartData);
+      dataObject.ProductsAdded = action.payload;
+      state.TotalAdded = dataObject.ProductsAdded.length;
+      storeInLocalStorage(dataObject);
+    },
+    
+    setProductsPurchased(state, action) {
+      state.ProductsPurchased = action.payload;
+      const cartData = localStorage.getItem('cart');
+      var dataObject = JSON.parse(cartData);
+      dataObject.ProductsPurchased = action.payload;
+      state.TotalPurchased = dataObject.ProductsPurchased.length;
+      storeInLocalStorage(dataObject);
+    },
+
+
     setAddToCart(state, action) {
-      state.data.push(action.payload);
-      const response = fetchDataBody(
-        `${BASE_URL}addtocart`,
-        {
-          ProductId: action.payload.ProductId,
-          AccessToken: localStorage.getItem("jwtToken"),
-        },
-        "POST"
-      );
+      state.ProductsAdded.push(action.payload);
     },
     setRemoveFromCart(state, action) {
-      const tempCart = state.data.filter((item) => item.id !== action.payload);
-      state.data = tempCart;
-      storeInLocalStorage(state.data);
+      const tempCart = state.ProductsAdded.filter((item) => item.id !== action.payload);
+      state.ProductsAdded = tempCart;
+      const cartData = localStorage.getItem('cart');
+      var dataObject = JSON.parse(cartData);
+      dataObject.ProductsAdded = tempCart;
+      state.TotalAdded = dataObject.ProductsAdded.length;
+      storeInLocalStorage(dataObject);
     },
     setClearCart(state) {
-      state.data = [];
+      state.ProductsAdded = [];
+      localStorage.removeItem('cart');
     },
   },
 });
