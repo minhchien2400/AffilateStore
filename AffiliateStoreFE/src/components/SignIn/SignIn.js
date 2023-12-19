@@ -4,8 +4,9 @@ import { fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
 import { useSelector, useDispatch } from "react-redux";
 import { setLoggedInStatus } from "../../store/loginSlice";
-import { setGetCartProducts } from "../../store/cartSlice";
 import { setAddToCart } from "../../store/cartSlice";
+import { setProductsAdded } from "../../store/cartSlice";
+import { setProductsPurchased } from "../../store/cartSlice";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -35,7 +36,9 @@ const SignIn = () => {
         data.token
       )}; expires=${expires.toUTCString()}; path=/`;
       const cartData = fetchDataBody(`${BASE_URL}getcartproducs/${data.token}`)
-      dispatch(setGetCartProducts(cartData.productsAdded))
+      localStorage.setItem('cart', cartData);
+      dispatch(setProductsAdded(cartData.productsAdded));
+      dispatch(setProductsPurchased(cartData.productsPurchased))
     }
 
     setDataLogin({

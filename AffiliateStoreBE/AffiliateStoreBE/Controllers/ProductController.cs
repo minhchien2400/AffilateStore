@@ -438,14 +438,14 @@ namespace AffiliateStoreBE.Controllers
 
                 var user = await _userManager.FindByNameAsync(principal.Identity.Name);
                 var cartProducts = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status != CartStatus.Removed).ToListAsync();
-                var cartProductAdded = cartProducts.Select(c => c.Status == CartStatus.Added);
-                var cartProductPurchased = cartProducts.Select(c => c.Status == CartStatus.Purchased);
+                var cartProductAdded = cartProducts.Where(c => c.Status == CartStatus.Added).ToList();
+                var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).ToList();
                 return Ok(new
                 {
                     ProductsAdded = cartProductAdded,
-                    CountAdded = cartProductPurchased.Count(),
+                    TotalAdded = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
                     ProductsPurchased = cartProductPurchased,
-                    CountPurchased = cartProductPurchased.Count()
+                    TotalPurchased = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
                 });
             }
             catch (Exception ex)
