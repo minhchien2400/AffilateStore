@@ -7,6 +7,7 @@ import { setOrderFilter } from "../../store/filterSlice";
 import { DecodedJwtTokenData } from "../../utils/helpers";
 import { fetchData, fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
+import { fetchTotalAdded } from "../../store/cartSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const Navbar = () => {
 
   const { data: dataFilter } = useSelector((state) => state.filter);
 
-  const { totalItems } = useSelector((state) => state.cart);
+  const { TotalAdded: totalItems } = useSelector((state) => state.cart);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -32,8 +33,8 @@ const Navbar = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
   useEffect(() => {
-    fetchData(`${BASE_URL}getcountproductcart/${accessToken}`)
-  })
+    dispatch(fetchTotalAdded())
+  },[])
 
   const handleSearch = (newSearchText) => {
     dispatch(

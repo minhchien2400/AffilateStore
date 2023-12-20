@@ -408,13 +408,16 @@ namespace AffiliateStoreBE.Controllers
                 else
                 {
                     var cartProduct = await _storeContext.Set<CartProduct>().Where(a => a.ProductId == addToCart.ProductId && a.Status == CartStatus.Added).FirstOrDefaultAsync();
-                    if(addToCart.ActionType == ActionType.Remove)
+                    if(cartProduct != null)
                     {
-                        cartProduct.Status = CartStatus.Removed;
-                    }
-                    else
-                    {
-                        cartProduct.Status = CartStatus.Purchased;
+                        if (addToCart.ActionType == ActionType.Remove)
+                        {
+                            cartProduct.Status = CartStatus.Removed;
+                        }
+                        else
+                        {
+                            cartProduct.Status = CartStatus.Purchased;
+                        }
                     }
                 }
                 await _storeContext.SaveChangesAsync();
@@ -426,9 +429,9 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpGet("getcartproducs/{accessToken}")]
+        [HttpPost("getcartproducs")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetCartProducts(string accessToken)
+        public async Task<IActionResult> GetCartProducts([FromBody] string accessToken)
         {
             try
             {
@@ -437,16 +440,45 @@ namespace AffiliateStoreBE.Controllers
                     return Unauthorized();
 
                 var user = await _userManager.FindByNameAsync(principal.Identity.Name);
-                var cartProducts = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status != CartStatus.Removed).ToListAsync();
+                var cartProducts = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status != CartStatus.Removed).Select(c => new
+                {
+                    c.ProductId,
+                    c.Status,
+                    c.Product.Name,
+                    c.Product.Cost,
+                    c.Product.Price,
+                    c.Product.Images,
+                    c.Product.AffLink,
+                }).ToListAsync();
                 var cartProductAdded = cartProducts.Where(c => c.Status == CartStatus.Added).ToList();
                 var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).ToList();
                 return Ok(new
                 {
                     ProductsAdded = cartProductAdded,
-                    TotalAdded = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
+                    TotalAdded = cartProductAdded != null ? cartProductAdded.Count() : 0,
                     ProductsPurchased = cartProductPurchased,
                     TotalPurchased = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
                 });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost("gettotalcart")]
+        [SwaggerResponse(200)]
+        public async Task<IActionResult> GetTotalCarts([FromBody] string accessToken)
+        {
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(accessToken);
+                if (principal?.Identity?.Name is null)
+                    return Unauthorized();
+
+                var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+                var totalAded = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status == CartStatus.Added).CountAsync();
+                return Ok(totalAded);
             }
             catch (Exception ex)
             {

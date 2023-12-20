@@ -6,8 +6,7 @@ import { addToCart, fetchCartAction } from "../../store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { formatStars } from "../../utils/helpers";
-import { fetchData, fetchDataBody } from "../../utils/fetchData";
-import { BASE_URL } from "../../utils/apiURL";
+import { ActionTypeCart } from "../../utils/const";
 
 const SingleProduct = () => {
   const dispatch = useDispatch();
@@ -17,7 +16,7 @@ const SingleProduct = () => {
 
   const { data: product } = useSelector((state) => state.modal);
 
-  const { productsAdded: productsAdded } = useSelector((state) => state.cart);
+  const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -31,20 +30,24 @@ const SingleProduct = () => {
     );
   };
 
-  const addToCartHandler = async (product) => {
-    console.log("Click addtocart", product.ProductId);
-    const productExist = productsAdded.find(item => item.ProductId === product.ProductId);
+
+  const handleAddToCart = (product) => {
+    const productExist = productsAdded.find(item => item.productId === product.productId);
     if(productExist)
     {
       console.log("Sp da co trong gio hang");
     }
     else
     {
-      dispatch(fetchCartAction(product, {ProductId: product.ProductId, AccessToken: localStorage.getItem("jwtToken")}, "POST"))
+      console.log("dispatch fetchCartAction", product);
+      dispatch(
+        fetchCartAction(product, {
+          ProductId: product.productId,
+          AccessToken: localStorage.getItem("jwtToken"),
+          ActionType: ActionTypeCart.Add,
+        }, "POST")
+      );
     }
-    // dispatch(addToCart(tempProduct));
-    // dispatch(setIsModalVisible(false));
-    //navigate("/cart");
   };
 
   const modalOverlayHandler = (e) => {
@@ -143,7 +146,7 @@ const SingleProduct = () => {
                 <button
                   type="button"
                   className="btn-primary add-to-cart-btn"
-                  onClick={() => addToCartHandler(product.productId)}
+                  onClick={() => handleAddToCart(product)}
                 >
                   <span className="btn-icon">
                     <i className="fas fa-cart-shopping"></i>
