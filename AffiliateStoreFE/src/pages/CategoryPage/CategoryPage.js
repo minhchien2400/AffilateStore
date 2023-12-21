@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { fetchProductsByCategoryId } from "../../store/categorySlice";
 import { setPageState } from "../../store/pageSlice";
-import { setOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
+import { SET_PRODUCTS_FILTER as type} from "../../utils/const";
 import "./CategoryPage.scss";
 
 const CategoryPage = () => {
@@ -20,7 +21,7 @@ const CategoryPage = () => {
     dispatch(setPageState({
       IsCategoryPage: true,
     }));
-    dispatch(setOrderFilter({
+    dispatch(setFilterAction(type, {
       Offset: 1,
       Limit: 10,
       SearchText: "",

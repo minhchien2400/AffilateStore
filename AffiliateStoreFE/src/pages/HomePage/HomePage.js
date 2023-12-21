@@ -6,9 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts, fetchTopSale } from "../../store/productSlice";
 import { fetchCategories } from "../../store/categorySlice";
 import { setPageState } from "../../store/pageSlice";
-import { setOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
 import "./HomePage.scss";
 import { fetchRefreshToken } from "../../store/loginSlice";
+import { SET_PRODUCTS_FILTER as type } from "../../utils/const";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const HomePage = () => {
     dispatch(setPageState({
       IsHomePage: true,
     }));
-    dispatch(setOrderFilter({
+    dispatch(setFilterAction(type, {
       Offset: 1,
       Limit: 10,
       SearchText: "",

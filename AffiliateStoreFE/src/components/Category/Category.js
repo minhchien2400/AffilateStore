@@ -4,20 +4,20 @@ import "./Category.scss";
 import { Link } from "react-router-dom";
 import Error from "../Error/Error";
 import Loader from "../Loader/Loader";
-import { setCategoryOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
 import { useDispatch } from "react-redux";
-import { setOrderFilter } from "../../store/filterSlice";
-
+import { SET_CATEGORY_FILTER } from "../../utils/const";
 const Category = ({ data, status }) => {
   const dispatch = useDispatch();
 
   const showButton = data.totalCount > 1 ? true : false;
+  const type = SET_CATEGORY_FILTER;
 
   // switch filter status "a-z" -> "z-a" -> "all"
   const handleClickFilter = () => {
     if (data.filter.keys[0] === "a-z") {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction(type, {
           Offset: data.filter.offset,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -26,7 +26,7 @@ const Category = ({ data, status }) => {
       );
     } else if (data.filter.keys[0] === "z-a") {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction(type, {
           Offset: data.filter.offset,
           Limit: data.filter.limit,
           SearchText: "",
@@ -35,7 +35,7 @@ const Category = ({ data, status }) => {
       );
     } else {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction(type, {
           Offset: data.filter.offset,
           Limit: data.filter.limit,
           SearchText: "",
@@ -50,7 +50,7 @@ const Category = ({ data, status }) => {
     const selectedValue = event.target.value;
 
     dispatch(
-      setCategoryOrderFilter({
+      setFilterAction({
         Offset: 1,
         Limit: selectedValue,
         SearchText: data.filter.searchText,
@@ -64,7 +64,7 @@ const Category = ({ data, status }) => {
     // Xử lý khi người dùng nhấn vào nút "Previous Page"
     if (data.filter.offset > 1) {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction({
           Offset: data.filter.offset - 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -73,7 +73,7 @@ const Category = ({ data, status }) => {
       );
     } else {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction({
           Offset: data.totalCount,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -87,7 +87,7 @@ const Category = ({ data, status }) => {
     // Xử lý khi người dùng nhấn vào nút "Next Page"
     if (data.filter.offset < data.totalCount) {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction({
           Offset: data.filter.offset + 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -96,7 +96,7 @@ const Category = ({ data, status }) => {
       );
     } else {
       dispatch(
-        setCategoryOrderFilter({
+        setFilterAction({
           Offset: 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,

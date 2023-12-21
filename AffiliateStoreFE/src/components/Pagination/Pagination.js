@@ -1,21 +1,20 @@
 import React from "react";
 import "./Pagination.scss";
 import { useDispatch } from "react-redux";
-import { setOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
 
-const Pagination = ({ data }) => {
+const Pagination = ({ type, data }) => {
   const dispatch = useDispatch();
   const pages = Array.from(
     { length: data.totalCount },
     (_, index) => index + 1
   );
 
-
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
 
     dispatch(
-      setOrderFilter({
+      setFilterAction(type, {
         Offset: 1,
         Limit: selectedValue,
         SearchText: data.filter.searchText,
@@ -26,7 +25,7 @@ const Pagination = ({ data }) => {
 
   const handleOffsetChange = (page) => {
     dispatch(
-      setOrderFilter({
+      setFilterAction(type, {
         Offset: page,
         Limit: data.filter.limit,
         SearchText: data.filter.searchText,

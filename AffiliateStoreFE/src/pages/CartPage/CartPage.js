@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { fetchCartProducts, fetchCartAction } from "../../store/cartSlice";
 import Pagination from "../../components/Pagination/Pagination";
+import { CART_ADDED_FILTER, CartStatus } from "../../utils/const";
 import {
   ActionTypeCart,
 } from "../../utils/const";
@@ -13,22 +14,20 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
   //   const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
-
+  const { cartAddedFilter: filter } = useSelector((state) => state.filter);
   console.log("ProductsAdded in CartPage", productsAdded);
 
   useEffect(() => {
-    dispatch(fetchCartProducts(localStorage.getItem("jwtToken"), "POST"));
-  }, []);
-
-  // const handleAddToCart = (product) => {
-  //   dispatch(
-  //     fetchCartAction(product, {
-  //       ProductId: product.productId,
-  //       AccessToken: localStorage.getItem("jwtToken"),
-  //       ActionType: ActionTypeCart.Add,
-  //     })
-  //   );
-  // };
+    const dataSend = {
+      AccessToken: localStorage.getItem("jwtToken"),
+      CartStatus: CartStatus.Added,
+      Offset: filter.Offset,
+      Limit: filter.Limit,
+      SearchText: filter.SearchText,
+      Keys: filter.Keys
+    }
+    dispatch(fetchCartProducts(dataSend, "POST"));
+  }, [filter]);
 
   const handleRemoveFromCart = (productId) => {
     dispatch(
@@ -137,7 +136,7 @@ const CartPage = () => {
           )}
         </div>
       </div>
-      <Pagination data={productsAdded}/>
+      <Pagination type={CART_ADDED_FILTER} data={productsAdded}/>
     </div>
   );
 };

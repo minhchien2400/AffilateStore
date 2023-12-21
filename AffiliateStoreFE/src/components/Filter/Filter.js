@@ -1,7 +1,8 @@
 import "./Filter.scss";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
+import { SET_PRODUCTS_FILTER as filterType} from "../../utils/const";
 
 const Filter = ({ data }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const Filter = ({ data }) => {
     console.log("CLICK SET FILTER", orderValue);
     if (type === 0) {
       dispatch(
-        setOrderFilter({
+        setFilterAction(filterType, {
           Offset: data.filter.offset,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -25,7 +26,7 @@ const Filter = ({ data }) => {
       );
     } else if (type === 1) {
       dispatch(
-        setOrderFilter({
+        setFilterAction(filterType, {
           Offset: data.filter.offset,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,

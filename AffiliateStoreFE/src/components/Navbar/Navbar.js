@@ -3,11 +3,12 @@ import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getCartTotal } from "../../store/cartSlice";
-import { setOrderFilter } from "../../store/filterSlice";
+import { setFilterAction } from "../../store/filterSlice";
 import { DecodedJwtTokenData } from "../../utils/helpers";
 import { fetchData, fetchDataBody } from "../../utils/fetchData";
 import { BASE_URL } from "../../utils/apiURL";
 import { fetchTotalAdded } from "../../store/cartSlice";
+import { SET_PRODUCTS_FILTER as type} from "../../utils/const";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const Navbar = () => {
 
   const handleSearch = (newSearchText) => {
     dispatch(
-      setOrderFilter({
+      setFilterAction(type, {
         Offset: dataFilter.Offset,
         Limit: dataFilter.Limit,
         SearchText: newSearchText,
