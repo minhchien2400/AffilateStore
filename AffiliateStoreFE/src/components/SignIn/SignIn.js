@@ -35,7 +35,7 @@
 //       document.cookie = `myCookie=${encodeURIComponent(
 //         data.token
 //       )}; expires=${expires.toUTCString()}; path=/`;
-//       const cartData = fetchDataBody(`${BASE_URL}getcartproducs/${data.token}`)
+//       const cartData = fetchDataBody(`${BASE_URL}getcartproducts/${data.token}`)
 //       localStorage.setItem('cart', cartData);
 //       dispatch(setProductsAdded(cartData.productsAdded));
 //       dispatch(setProductsPurchased(cartData.productsPurchased))

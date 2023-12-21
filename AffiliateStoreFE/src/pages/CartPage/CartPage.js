@@ -4,13 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { fetchCartProducts, fetchCartAction } from "../../store/cartSlice";
+import Pagination from "../../components/Pagination/Pagination";
 import {
-  SET_CART_PRODUCTS,
-  SET_PRODUCTS_ADDED,
-  SET_TOTAL_ADDED,
-  SET_PRODUCTS_PURCHASED,
-  SET_TOTAL_PURCHASED,
-  SET_REMOVE_ADDED,
   ActionTypeCart,
 } from "../../utils/const";
 
@@ -35,10 +30,10 @@ const CartPage = () => {
   //   );
   // };
 
-  const handleRemoveFromCart = (product) => {
+  const handleRemoveFromCart = (productId) => {
     dispatch(
-      fetchCartAction(product, {
-        ProductId: product.productId,
+      fetchCartAction({
+        ProductId: productId,
         AccessToken: localStorage.getItem("jwtToken"),
         ActionType: ActionTypeCart.Remove,
       }, "POST")
@@ -48,9 +43,9 @@ const CartPage = () => {
   const handleMarkPurchased = (product) => {
     dispatch(
       fetchCartAction(product, {
-        ProductId: product.ProductId,
+        ProductId: product.productId,
         AccessToken: localStorage.getItem("jwtToken"),
-        ActionType: ActionTypeCart.P,
+        ActionType: ActionTypeCart.Purchase,
       })
     );
   };
@@ -83,6 +78,9 @@ const CartPage = () => {
               My Cart
             </h3>
           </div>
+          <div className="search-product">
+            <input className="search-product-input"/>
+          </div>
           {(productsAdded && productsAdded.length) === 0 ? (
             emptyCartMsg
           ) : (
@@ -100,7 +98,7 @@ const CartPage = () => {
                           <button
                             type="button"
                             className="btn-square rmv-from-cart-btn"
-                            onClick={() => handleRemoveFromCart(cartProduct)}
+                            onClick={() => handleRemoveFromCart(cartProduct.productId)}
                           >
                             <span className="btn-square-icon">
                               <i className="fas fa-trash"></i>
@@ -112,52 +110,14 @@ const CartPage = () => {
                           <h6 className="fs-16 fw-5 text-light-blue">
                             {cartProduct.title}
                           </h6>
-                          {/* <div className="qty flex">
-                          <span className="text-light-blue qty-text">
-                            Qty:{" "}
-                          </span>
-                          <div className="qty-change flex">
-                            <button
-                              type="button"
-                              className="qty-dec fs-14"
-                              onClick={() =>
-                                dispatch(
-                                  toggleCartQty({
-                                    id: cartProduct.id,
-                                    type: "DEC",
-                                  })
-                                )
-                              }
-                            >
-                              <i className="fas fa-minus text-light-blue"></i>
-                            </button>
-                            <span className="qty-value flex flex-center">
-                              {cartProduct.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              className="qty-inc fs-14 text-light-blue"
-                              onClick={() =>
-                                dispatch(
-                                  toggleCartQty({
-                                    id: cartProduct.id,
-                                    type: "INC",
-                                  })
-                                )
-                              }
-                            >
-                              <i className="fas fa-plus"></i>
-                            </button>
-                          </div>
-                        </div> */}
                           <div className="flex flex-between">
                             <div className="text-pine-green fw-4 fs-15 price">
-                              Price : {formatPrice(cartProduct.price)}.00
+                              Cost : {formatPrice(cartProduct.cost)}
                             </div>
                             <div className="sub-total fw-6 fs-18 text-regal-blue">
-                              <span>Sub Total: </span>
+                              <span>Price: </span>
                               <span className="">
-                                {formatPrice(cartProduct.totalPrice)}
+                                {formatPrice(cartProduct.price)}
                               </span>
                             </div>
                           </div>
@@ -165,7 +125,7 @@ const CartPage = () => {
                         <button
                           type="button"
                           className="btn-danger"
-                          onClick={() => handleMarkPurchased(cartProduct)}
+                          onClick={() => handleMarkPurchased(cartProduct.productId)}
                         >
                           <span className="fs-16">Mark purchase</span>
                         </button>
@@ -177,6 +137,7 @@ const CartPage = () => {
           )}
         </div>
       </div>
+      <Pagination data={productsAdded}/>
     </div>
   );
 };

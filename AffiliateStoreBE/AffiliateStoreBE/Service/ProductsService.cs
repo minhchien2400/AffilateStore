@@ -49,6 +49,22 @@ namespace AffiliateStoreBE.Service
             }
             return products;
         }
+        public List<CartActionResponeModel> GetCartProductsByFilterKeys(List<CartActionResponeModel> products, List<string> keys)
+        {
+            if (keys.Contains("create-time"))
+            {
+                products = products.OrderBy(p => p.CreatedTime).ToList();
+            }
+            else if (keys.Contains("descending-create-time"))
+            {
+                products = products.OrderByDescending(p => p.CreatedTime).ToList();
+            }
+            else if (keys.Contains("top-sale"))
+            {
+                products = products.OrderByDescending(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+            }
+            return products;
+        }
         public class ValidateProductName
         {
             public Guid ProductId { get; set; }

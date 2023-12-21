@@ -34,7 +34,7 @@ const Navbar = () => {
   // }, []);
   useEffect(() => {
     dispatch(fetchTotalAdded())
-  },[])
+  },[useSelector((state) => state.cart)])
 
   const handleSearch = (newSearchText) => {
     dispatch(

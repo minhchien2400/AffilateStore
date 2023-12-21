@@ -31,23 +31,14 @@ const SingleProduct = () => {
   };
 
 
-  const handleAddToCart = (product) => {
-    const productExist = productsAdded.find(item => item.productId === product.productId);
-    if(productExist)
-    {
-      console.log("Sp da co trong gio hang");
-    }
-    else
-    {
-      console.log("dispatch fetchCartAction", product);
+  const handleAddToCart = (productId) => {
       dispatch(
-        fetchCartAction(product, {
-          ProductId: product.productId,
+        fetchCartAction({
+          ProductId: productId,
           AccessToken: localStorage.getItem("jwtToken"),
           ActionType: ActionTypeCart.Add,
         }, "POST")
       );
-    }
   };
 
   const modalOverlayHandler = (e) => {
@@ -146,7 +137,7 @@ const SingleProduct = () => {
                 <button
                   type="button"
                   className="btn-primary add-to-cart-btn"
-                  onClick={() => handleAddToCart(product)}
+                  onClick={() => handleAddToCart(product.productId)}
                 >
                   <span className="btn-icon">
                     <i className="fas fa-cart-shopping"></i>

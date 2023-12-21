@@ -2,7 +2,6 @@ import React from "react";
 import "./Pagination.scss";
 import { useDispatch } from "react-redux";
 import { setOrderFilter } from "../../store/filterSlice";
-import { useSelector } from "react-redux";
 
 const Pagination = ({ data }) => {
   const dispatch = useDispatch();

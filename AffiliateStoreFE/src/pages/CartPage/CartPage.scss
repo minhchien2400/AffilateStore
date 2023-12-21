@@ -2,30 +2,6 @@
 .cart-page{
     min-height: 50vh;
 }
-.qty{
-    margin: 12px 0 6px 0;
-
-    &-text{
-        margin-right: 10px;
-    }
-
-    &-change{
-        .qty-inc, .qty-dec{
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            width: 32px;
-            height: 32px;
-            transition: $transition;
-
-            &:hover{
-                border: 1px solid rgba(0, 0, 0, 0.3);
-            }
-        }
-
-        .qty-value{
-            width: 40px;
-        }
-    }
-}
 
 .cart-content{
     row-gap: 40px;
@@ -75,44 +51,6 @@
                     .sub-total{
                         padding: 6px 0;
                     }
-                }
-            }
-        }
-    }
-
-    .cart-right{
-        margin: 24px 0;
-        .cart-summary{
-            display: flex;
-            flex-direction: column;
-            min-height: 420px;
-
-            > &{
-                padding: 16px;
-            }
-            &-title{
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                padding-bottom: 12px;
-            }
-
-            &-info{
-                padding-top: 16px;
-                padding-bottom: 16px;
-                li{
-                    margin: 6px 0;
-                }
-            }
-
-            &-total{
-                margin-top: auto;
-                margin-bottom: 16px;
-                padding-top: 12px;
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
-            }
-
-            &-btn{
-                .btn-secondary{
-                    width: 100%;
                 }
             }
         }

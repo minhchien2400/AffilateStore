@@ -395,33 +395,79 @@ namespace AffiliateStoreBE.Controllers
                     return Unauthorized();
 
                 var user = await _userManager.FindByNameAsync(principal.Identity.Name);
-                if (addToCart.ActionType == ActionType.Add)
+                var product = await _storeContext.Set<Product>().Where(a => a.Id == addToCart.ProductId && a.Status == Status.Active).Select(a => new CartActionResponeModel
                 {
-                    await _storeContext.AddAsync(new CartProduct
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductId = addToCart.ProductId,
-                        AccountId = user.Id,
-                        Status = CartStatus.Added
-                    });
-                }
-                else
+                    ProductId = a.Id,
+                    ProductName = a.Name,
+                    Cost = a.Cost,
+                    Price = a.Price,
+                    Images = a.Images,
+                    AffLink = a.AffLink,
+                }).FirstOrDefaultAsync();
+                if (product != null)
                 {
                     var cartProduct = await _storeContext.Set<CartProduct>().Where(a => a.ProductId == addToCart.ProductId && a.Status == CartStatus.Added).FirstOrDefaultAsync();
-                    if(cartProduct != null)
+                    if (addToCart.ActionType == ActionType.Add)
                     {
-                        if (addToCart.ActionType == ActionType.Remove)
+                        if (cartProduct != null)
                         {
-                            cartProduct.Status = CartStatus.Removed;
+                            return Ok(new ApiRespone<CartActionResponeModel>
+                            {
+                                IsSuccess = false,
+                                Message = "SP da co trong gio hang",
+                            });
                         }
-                        else
+                        await _storeContext.AddAsync(new CartProduct
                         {
+                            Id = Guid.NewGuid(),
+                            ProductId = addToCart.ProductId,
+                            AccountId = user.Id,
+                            Status = CartStatus.Added
+                        });
+                        await _storeContext.SaveChangesAsync();
+                        return Ok(new ApiRespone<CartActionResponeModel>
+                        {
+                            IsSuccess = true,
+                            Message = "1 SP da duoc them vao gio hang",
+                            Result = product
+                        });
+                    }
+                    else
+                    {
+                        if (cartProduct != null)
+                        {
+                            if (addToCart.ActionType == ActionType.Remove)
+                            {
+                                cartProduct.Status = CartStatus.Removed;
+                                await _storeContext.SaveChangesAsync();
+                                return Ok(new ApiRespone<CartActionResponeModel>
+                                {
+                                    IsSuccess = true,
+                                    Message = "Da go SP khoi gio hang",
+                                    Result = product
+                                });
+                            }
                             cartProduct.Status = CartStatus.Purchased;
+                            await _storeContext.SaveChangesAsync();
+                            return Ok(new ApiRespone<CartActionResponeModel>
+                            {
+                                IsSuccess = true,
+                                Message = "Danh dau da mua SP",
+                                Result = product
+                            });
                         }
+                        return Ok(new ApiRespone<CartActionResponeModel>
+                        {
+                            IsSuccess = false,
+                            Message = "SP khong co trong gio hang",
+                        });
                     }
                 }
-                await _storeContext.SaveChangesAsync();
-                return Ok(true);
+                return Ok(new ApiRespone<CartActionResponeModel>
+                {
+                    IsSuccess = false,
+                    Message = "SP khong ton tai hoac da bi xoa",
+                });
             }
             catch (Exception ex)
             {
@@ -429,35 +475,88 @@ namespace AffiliateStoreBE.Controllers
             }
         }
 
-        [HttpPost("getcartproducs")]
+        //[HttpPost("getcartproducts")]
+        //[SwaggerResponse(200)]
+        //public async Task<IActionResult> GetCartProducts([FromBody] CartProductFilterModel filter)
+        //{
+        //    try
+        //    {
+        //        var principal = GetPrincipalFromExpiredToken(filter.AccessToken);
+        //        if (principal?.Identity?.Name is null)
+        //            return Unauthorized();
+
+        //        var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+        //        var cartProducts = await _storeContext.Set<CartProduct>().Include(a => a.Product).Where(a => a.AccountId.Equals(user.Id) && a.Status == CartStatus.Added).ToListAsync();
+        //        var cartProductAdded = cartProducts.Where(c => c.Status == CartStatus.Added).Select(c => new 
+        //        {
+        //            c.ProductId,
+        //            c.Product.Name,
+        //            c.Product.Cost,
+        //            c.Product.Price,
+        //            c.Product.Images,
+        //            c.Product.AffLink,
+        //        }).ToList();
+        //        var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).Select(c => new
+        //        {
+        //            c.ProductId,
+        //            c.Product.Name,
+        //            c.Product.Cost,
+        //            c.Product.Price,
+        //            c.Product.Images,
+        //            c.Product.AffLink,
+        //        }).ToList();
+        //        return Ok(new
+        //        {
+        //            ProductsAdded = cartProductAdded,
+        //            TotalAdded = cartProductAdded != null ? cartProductAdded.Count() : 0,
+        //            ProductsPurchased = cartProductPurchased,
+        //            TotalPurchased = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        [HttpPost("getcartproducts")]
         [SwaggerResponse(200)]
-        public async Task<IActionResult> GetCartProducts([FromBody] string accessToken)
+        public async Task<IActionResult> GetProductsPurchased([FromBody] CartProductFilterModel filter)
         {
             try
             {
-                var principal = GetPrincipalFromExpiredToken(accessToken);
+                int totalCount = 1;
+                var principal = GetPrincipalFromExpiredToken(filter.AccessToken);
                 if (principal?.Identity?.Name is null)
                     return Unauthorized();
 
                 var user = await _userManager.FindByNameAsync(principal.Identity.Name);
-                var cartProducts = await _storeContext.Set<CartProduct>().Where(a => a.AccountId.Equals(user.Id) && a.Status != CartStatus.Removed).Select(c => new
+                var cartProduct = await _storeContext.Set<CartProduct>().Include(a => a.Product).Where(a => a.AccountId.Equals(user.Id) && a.Status == filter.CartStatus).Select(c => new CartActionResponeModel
                 {
-                    c.ProductId,
-                    c.Status,
-                    c.Product.Name,
-                    c.Product.Cost,
-                    c.Product.Price,
-                    c.Product.Images,
-                    c.Product.AffLink,
+                    ProductId = c.ProductId,
+                    ProductName = c.Product.Name,
+                    Cost = c.Product.Cost,
+                    Price = c.Product.Price,
+                    Images = c.Product.Images,
+                    AffLink = c.Product.AffLink,
+                    CreatedTime = c.CreatedTime,
                 }).ToListAsync();
-                var cartProductAdded = cartProducts.Where(c => c.Status == CartStatus.Added).ToList();
-                var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).ToList();
+
+                if (filter.Keys != null)
+                {
+                    cartProduct = _productService.GetCartProductsByFilterKeys(cartProduct, filter.Keys);
+                }
+                if (cartProduct.Any())
+                {
+                    totalCount = (int)Math.Ceiling(cartProduct.Count() / (decimal)filter.Limit);
+                    cartProduct = DoTake(cartProduct.AsQueryable(), filter).ToList();
+                }
                 return Ok(new
                 {
-                    ProductsAdded = cartProductAdded,
-                    TotalAdded = cartProductAdded != null ? cartProductAdded.Count() : 0,
-                    ProductsPurchased = cartProductPurchased,
-                    TotalPurchased = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
+                    Products = cartProduct,
+                    TotalProducts = cartProduct != null ? cartProduct.Count() : 0,
+                    Filter = filter,
+                    TotalCount = totalCount == 0 ? 1 : totalCount,
                 });
             }
             catch (Exception ex)
@@ -558,5 +657,21 @@ namespace AffiliateStoreBE.Controllers
         Add = 0,
         Purchase = 1,
         Remove = 2,
+    }
+
+    public class CartActionResponeModel : BaseEntity
+    {
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; }
+        public float Cost { get; set; }
+        public float Price { get; set; }
+        public string Images { get; set; }
+        public string AffLink { get; set; }
+    }
+
+    public class CartProductFilterModel : FilterModel
+    {
+        public string AccessToken { get; set; }
+        public CartStatus CartStatus { get; set; }
     }
 }

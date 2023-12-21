@@ -15,6 +15,12 @@ const filterSlice = createSlice({
       SearchText: "",
       Keys: ["all"],
     },
+    cartPageFilter: {
+      Offset: 1,
+      Limit: 10,
+      SearchText: "",
+      Keys: ["all"]
+    }
   },
   reducers: {
     setFilters(state, action) {
