@@ -15,46 +15,42 @@ import {
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    ProductsAdded: [],
-    TotalAdded: 0,
-    ProductsPurchased: [],
-    TotalPurchased: 0,
+    ProductsAdded: {},
+    ProductsPurchased: {},
   },
   reducers: {
     setCartProducts(state, action) {
-      console.log("reducer: setCartProducts", action);
       switch (action.payload.type) {
         case SET_ADD_PRODUCTS:
-          state.ProductsAdded = action.payload.value.products;
-          state.TotalAdded = action.payload.value.totalProducts;
+          state.ProductsAdded = action.payload.value;
           return;
         case SET_PURCHASED_PRODUCTS:
-          state.ProductsPurchased = action.payload.value.products;
-          state.TotalPurchased = action.payload.value.totalProducts;
+          state.ProductsPurchased = action.payload.value;
           return;
         case ADD_TO_CART:
-          state.ProductsAdded.push(action.payload.value);
-          state.TotalAdded = state.TotalAdded + 1;
+          state.ProductsAdded.products.push(action.payload.value);
+          state.ProductsAdded.totalProducts =
+            state.ProductsAdded.totalProducts + 1;
           return;
         case SET_TOTAL_ADDED:
-          state.TotalAdded = action.payload.value;
+          state.ProductsAdded.totalProducts = action.payload.value;
           return;
         case SET_MARK_PURCHASED:
-          state.ProductsPurchased.push(action.payload.value);
-          state.ProductsAdded = state.ProductsAdded.filter(
+          state.ProductsPurchased.products.push(action.payload.value);
+          state.ProductsAdded.products = state.ProductsAdded.products.filter(
             (item) => item.productId !== action.payload.value.productId
           );
-          state.TotalAdded = state.ProductsAdded.length;
-          state.TotalPurchased = state.ProductsPurchased.length;
-          return;
-        case SET_TOTAL_PURCHASED:
-          state.TotalPurchased = action.payload.value;
+          state.ProductsAdded.totalProducts =
+            state.ProductsAdded.totalProducts - 1;
+          state.TotalPurchased.totalProducts =
+            state.ProductsPurchased.totalProducts + 1;
           return;
         case SET_REMOVE_ADDED:
-          state.ProductsAdded = state.ProductsAdded.filter(
+          state.ProductsAdded.products = state.ProductsAdded.products.filter(
             (item) => item.productId !== action.payload.value.productId
           );
-          state.TotalAdded = state.ProductsAdded.length;
+          state.ProductsAdded.totalProducts =
+            state.ProductsAdded.totalProducts - 1;
         default:
           return;
       }

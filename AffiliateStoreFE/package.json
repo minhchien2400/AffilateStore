@@ -36,7 +36,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:https": "cross-env HTTPS=true react-scripts start"
   },
   "eslintConfig": {
     "extends": [
@@ -57,6 +58,7 @@
     ]
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "https": "^1.0.0"
   }
 }

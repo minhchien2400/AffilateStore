@@ -22,7 +22,7 @@ const HomePage = () => {
     (state) => state.product
   );
 
-  const { data: dataFilter, categoryData: categoryFilter } = useSelector(
+  const { ProductsFilter: productFilter, CategoryFilter: categoryFilter } = useSelector(
     (state) => state.filter
   );
 
@@ -48,8 +48,8 @@ const HomePage = () => {
   }, [])
 
   useEffect(() => {
-    dispatch(fetchTopSale(dataFilter, "POST"));
-  }, [dataFilter]);
+    dispatch(fetchTopSale(productFilter, "POST"));
+  }, [productFilter]);
 
   useEffect(() => {
     dispatch(fetchCategories(categoryFilter, "POST"));

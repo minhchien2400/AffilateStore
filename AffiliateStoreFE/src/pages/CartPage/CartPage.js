@@ -6,16 +6,13 @@ import { formatPrice } from "../../utils/helpers";
 import { fetchCartProducts, fetchCartAction } from "../../store/cartSlice";
 import Pagination from "../../components/Pagination/Pagination";
 import { CART_ADDED_FILTER, CartStatus } from "../../utils/const";
-import {
-  ActionTypeCart,
-} from "../../utils/const";
+import { ActionTypeCart } from "../../utils/const";
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
   //   const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
-  const { cartAddedFilter: filter } = useSelector((state) => state.filter);
-  console.log("ProductsAdded in CartPage", productsAdded);
+  const { CartAddedFilter: filter } = useSelector((state) => state.filter);
 
   useEffect(() => {
     const dataSend = {
@@ -24,18 +21,21 @@ const CartPage = () => {
       Offset: filter.Offset,
       Limit: filter.Limit,
       SearchText: filter.SearchText,
-      Keys: filter.Keys
-    }
+      Keys: filter.Keys,
+    };
     dispatch(fetchCartProducts(dataSend, "POST"));
   }, [filter]);
 
   const handleRemoveFromCart = (productId) => {
     dispatch(
-      fetchCartAction({
-        ProductId: productId,
-        AccessToken: localStorage.getItem("jwtToken"),
-        ActionType: ActionTypeCart.Remove,
-      }, "POST")
+      fetchCartAction(
+        {
+          ProductId: productId,
+          AccessToken: localStorage.getItem("jwtToken"),
+          ActionType: ActionTypeCart.Remove,
+        },
+        "POST"
+      )
     );
   };
 
@@ -49,9 +49,7 @@ const CartPage = () => {
     );
   };
 
-  const emptyCartMsg = (
-    <h4 className="text-red fw-6">No items found!!!</h4>
-  );
+  const emptyCartMsg = <h4 className="text-red fw-6">No items found!!!</h4>;
 
   return (
     <div className="cart-page">
@@ -78,17 +76,20 @@ const CartPage = () => {
             </h3>
           </div>
           <div className="search-product">
-            <input className="search-product-input"/>
+            <input className="search-product-input" />
           </div>
-          {(productsAdded && productsAdded.length) === 0 ? (
+          {(productsAdded.products && productsAdded.products.length) === 0 ? (
             emptyCartMsg
           ) : (
             <div className="cart-content grid">
               <div className="cart-left">
                 <div className="cart-items grid">
-                  {productsAdded &&
-                    productsAdded.map((cartProduct) => (
-                      <div className="cart-item grid" key={cartProduct.productId}>
+                  {productsAdded.products &&
+                    productsAdded.products.map((cartProduct) => (
+                      <div
+                        className="cart-item grid"
+                        key={cartProduct.productId}
+                      >
                         <div className="cart-item-img flex flex-column bg-white">
                           <img
                             src={cartProduct.images}
@@ -97,7 +98,9 @@ const CartPage = () => {
                           <button
                             type="button"
                             className="btn-square rmv-from-cart-btn"
-                            onClick={() => handleRemoveFromCart(cartProduct.productId)}
+                            onClick={() =>
+                              handleRemoveFromCart(cartProduct.productId)
+                            }
                           >
                             <span className="btn-square-icon">
                               <i className="fas fa-trash"></i>
@@ -124,7 +127,9 @@ const CartPage = () => {
                         <button
                           type="button"
                           className="btn-danger"
-                          onClick={() => handleMarkPurchased(cartProduct.productId)}
+                          onClick={() =>
+                            handleMarkPurchased(cartProduct.productId)
+                          }
                         >
                           <span className="fs-16">Mark purchase</span>
                         </button>
@@ -136,7 +141,7 @@ const CartPage = () => {
           )}
         </div>
       </div>
-      <Pagination type={CART_ADDED_FILTER} data={productsAdded}/>
+      <Pagination type={CART_ADDED_FILTER} data={productsAdded} />
     </div>
   );
 };

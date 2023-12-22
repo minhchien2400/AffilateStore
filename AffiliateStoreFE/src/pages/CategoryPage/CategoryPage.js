@@ -14,7 +14,7 @@ const CategoryPage = () => {
   const { productsCategory: data, productsCategoryStatus: status } =
     useSelector((state) => state.category);
 
-  const { data: dataFilter } = useSelector((state) => state.filter);
+  const { ProductsFilter: dataFilter } = useSelector((state) => state.filter);
   const {IsLoggedIn: isLoggedIn} = useSelector(state => state.login);
 
   useEffect(() => {

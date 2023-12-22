@@ -31,8 +31,8 @@ function App() {
               path="/category/:categoryid/product/:id"
               element={<ProductDetailPage />}
             />
-            <Route path="/login" element={<SignIn/>} />
-            <Route path="/signup" element={<SignUp/>} />
+            {/* <Route path="/login" element={<SignIn/>} />
+            <Route path="/signup" element={<SignUp/>} /> */}
           </Routes>
           <Footer />
         </BrowserRouter>

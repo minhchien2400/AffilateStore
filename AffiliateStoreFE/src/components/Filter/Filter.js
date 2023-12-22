@@ -1,5 +1,4 @@
 import "./Filter.scss";
-import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setFilterAction } from "../../store/filterSlice";
 import { SET_PRODUCTS_FILTER as filterType} from "../../utils/const";

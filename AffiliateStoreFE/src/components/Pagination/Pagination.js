@@ -9,6 +9,8 @@ const Pagination = ({ type, data }) => {
     { length: data.totalCount },
     (_, index) => index + 1
   );
+  console.log("data-pagination",data);
+  console.log("page-pagination",pages);
 
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;

@@ -542,7 +542,7 @@ namespace AffiliateStoreBE.Controllers
                     CreatedTime = c.CreatedTime,
                 }).ToListAsync();
 
-                if (filter.Keys != null)
+                if (filter.Keys != null && !filter.Keys.Contains("all"))
                 {
                     cartProduct = _productService.GetCartProductsByFilterKeys(cartProduct, filter.Keys);
                 }

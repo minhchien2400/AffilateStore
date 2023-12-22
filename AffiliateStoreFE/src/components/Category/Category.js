@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { STATUS } from "../../utils/status";
 import "./Category.scss";
 import { Link } from "react-router-dom";

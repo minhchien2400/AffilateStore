@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { STATUS } from "../../utils/status";
 import "./ProductList.scss";
 import SingleProduct from "../SingleProduct/SingleProduct";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import ProductCard from "../ProductCard/ProductCard";
 import Filter from "../Filter/Filter";
 import Pagination from "../Pagination/Pagination";
+import { SET_PRODUCTS_FILTER } from "../../utils/const";
 
 const ProductList = ({
   data,
@@ -30,13 +31,13 @@ const ProductList = ({
             {hasFilter && data.filter && <Filter data={data} />}
           </div>
           <div className="product-items bg-white grid">
-            {data.result.map((product) => (
-              <span key={product.id}><ProductCard product={product}/></span>
+            {data.result.map((product, index) => (
+              <span key={index}><ProductCard product={product}/></span>
             ))}
           </div>
         </div>
       </div>
-      <Pagination data={data} />
+      <Pagination type={SET_PRODUCTS_FILTER} data={data} />
     </section>
   );
 };

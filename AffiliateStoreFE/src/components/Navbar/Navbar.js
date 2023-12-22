@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./Navbar.scss";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getCartTotal } from "../../store/cartSlice";
 import { setFilterAction } from "../../store/filterSlice";
 import { DecodedJwtTokenData } from "../../utils/helpers";
-import { fetchData, fetchDataBody } from "../../utils/fetchData";
-import { BASE_URL } from "../../utils/apiURL";
 import { fetchTotalAdded } from "../../store/cartSlice";
 import { SET_PRODUCTS_FILTER as type} from "../../utils/const";
 
@@ -17,14 +14,13 @@ const Navbar = () => {
 
   const { data: categoriesData } = useSelector((state) => state.category);
 
-  const { data: dataFilter } = useSelector((state) => state.filter);
+  const { ProductsFilter: dataFilter } = useSelector((state) => state.filter);
 
   const { TotalAdded: totalItems } = useSelector((state) => state.cart);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
-  console.log("Navbar", isLoggedIn);
 
   const accessToken = localStorage.getItem("jwtToken");
 
@@ -35,7 +31,7 @@ const Navbar = () => {
   // }, []);
   useEffect(() => {
     dispatch(fetchTotalAdded())
-  },[useSelector((state) => state.cart)])
+  },[totalItems])
 
   const handleSearch = (newSearchText) => {
     dispatch(
@@ -46,7 +42,7 @@ const Navbar = () => {
         Keys: dataFilter.Keys,
       })
     );
-    setSearchText("");
+    //setSearchText("");
   };
 
   const handelClickBtn = () => {};
