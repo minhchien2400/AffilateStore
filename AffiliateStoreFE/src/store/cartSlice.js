@@ -10,6 +10,7 @@ import {
   SET_TOTAL_PURCHASED,
   SET_REMOVE_ADDED,
   ActionTypeCart,
+  CartStatus,
 } from "../utils/const";
 
 const cartSlice = createSlice({
@@ -63,6 +64,7 @@ export default cartSlice.reducer;
 
 export const fetchCartProducts = (dataSend, method) => {
   return async function fetchCartActionThunk(dispatch) {
+    const isAdded = dataSend.CartStatus === CartStatus.Added
     try {
       const data = await fetchDataBody(
         `${BASE_URL}getcartproducts`,
@@ -72,7 +74,7 @@ export const fetchCartProducts = (dataSend, method) => {
       if (data.hasError) {
       }
       console.log("fetchCartProducts", data);
-      dispatch(setCartProducts({ type: SET_ADD_PRODUCTS, value: data }));
+      dispatch(setCartProducts({ type: isAdded ? SET_ADD_PRODUCTS : SET_PURCHASED_PRODUCTS, value: data }));
     } catch (error) {}
   };
 };

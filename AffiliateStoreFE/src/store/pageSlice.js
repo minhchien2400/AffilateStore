@@ -8,6 +8,8 @@ const pageSlice = createSlice({
       IsCategoryPage: false,
       IsProductsPage: false,
       IsSingleProductPage: false,
+      IsCartAddedPage: false,
+      IsCartPurchasedPage: false
     },
   },
   reducers: {

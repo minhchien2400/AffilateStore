@@ -1,30 +1,54 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./CartPage.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../../utils/helpers";
 import { fetchCartProducts, fetchCartAction } from "../../store/cartSlice";
 import Pagination from "../../components/Pagination/Pagination";
-import { CART_ADDED_FILTER, CartStatus } from "../../utils/const";
+import {
+  CART_ADDED_FILTER,
+  CART_PURCHASED_FILTER,
+  CartStatus,
+} from "../../utils/const";
 import { ActionTypeCart } from "../../utils/const";
+import { setPageState } from "../../store/pageSlice";
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
+  const { ProductsPurchased: productsPurchased } = useSelector(
+    (state) => state.cart
+  );
+
   //   const { IsLoggedIn: isLoggedIn } = useSelector((state) => state.login);
-  const { CartAddedFilter: filter } = useSelector((state) => state.filter);
+  const { CartAddedFilter: addedFilter } = useSelector((state) => state.filter);
+  const { CartPurchasedFilter: purchasedFilter } = useSelector(
+    (state) => state.filter
+  );
+  const [isCart, setIsCart] = useState(true);
+  let products = productsAdded;
+  let filter = addedFilter;
+
+  console.log("Cart page:", productsAdded);
 
   useEffect(() => {
+    dispatch(
+      setPageState({
+        IsCartAddedPage: true,
+        //IsCartPurchasedPage
+      })
+    );
+
     const dataSend = {
       AccessToken: localStorage.getItem("jwtToken"),
-      CartStatus: CartStatus.Added,
+      CartStatus: isCart ? CartStatus.Added : CartStatus.Purchased,
       Offset: filter.Offset,
       Limit: filter.Limit,
       SearchText: filter.SearchText,
       Keys: filter.Keys,
     };
     dispatch(fetchCartProducts(dataSend, "POST"));
-  }, [filter]);
+  }, []);
 
   const handleRemoveFromCart = (productId) => {
     dispatch(
@@ -49,6 +73,28 @@ const CartPage = () => {
     );
   };
 
+  const handleCLickBtn = (cart) => {
+    console.log("cart la", cart);
+    console.log("iscart la", isCart);
+    if (isCart !== cart) {
+
+      setIsCart(cart, () => {
+        products = cart ? productsAdded : productsPurchased;
+        filter = cart ? addedFilter : purchasedFilter;
+      
+      dispatch(fetchCartProducts({
+        AccessToken: localStorage.getItem("jwtToken"),
+        CartStatus: cart ? CartStatus.Added : CartStatus.Purchased,
+        Offset: filter.Offset,
+        Limit: filter.Limit,
+        SearchText: filter.SearchText,
+        Keys: filter.Keys,
+      }, "POST"));
+
+      });
+    }
+  };
+
   const emptyCartMsg = <h4 className="text-red fw-6">No items found!!!</h4>;
 
   return (
@@ -64,7 +110,23 @@ const CartPage = () => {
                 </span>
               </Link>
             </li>
-            <li>Cart</li>
+            <li
+              style={{
+                backgroundColor: isCart ? "red" : "initial",
+              }}
+              onClick={() => handleCLickBtn(true)}
+            >
+              Added
+            </li>
+            <li
+              style={{
+                backgroundColor:
+                  !isCart ? "red" : "initial",
+              }}
+              onClick={() => handleCLickBtn(false)}
+            >
+              Purchased
+            </li>
           </ul>
         </div>
       </div>
@@ -78,14 +140,14 @@ const CartPage = () => {
           <div className="search-product">
             <input className="search-product-input" />
           </div>
-          {(productsAdded.products && productsAdded.products.length) === 0 ? (
+          {products.products && products.products.length === 0 ? (
             emptyCartMsg
           ) : (
             <div className="cart-content grid">
               <div className="cart-left">
                 <div className="cart-items grid">
-                  {productsAdded.products &&
-                    productsAdded.products.map((cartProduct) => (
+                  {products.products &&
+                    products.products.map((cartProduct) => (
                       <div
                         className="cart-item grid"
                         key={cartProduct.productId}
@@ -141,7 +203,13 @@ const CartPage = () => {
           )}
         </div>
       </div>
-      <Pagination type={CART_ADDED_FILTER} data={productsAdded} />
+      {products.products && products.products.length > 0 && (
+        <Pagination
+          type={isCart ? CART_ADDED_FILTER : CART_PURCHASED_FILTER}
+          filter={products.filter}
+          totalCount={products.totalCount}
+        />
+      )}
     </div>
   );
 };

@@ -24,7 +24,7 @@ const filterSlice = createSlice({
     },
     CartAddedFilter: {
       Offset: 1,
-      Limit: 10,
+      Limit: 2,
       SearchText: "",
       Keys: ["all"],
     },

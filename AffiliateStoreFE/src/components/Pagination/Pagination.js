@@ -3,24 +3,23 @@ import "./Pagination.scss";
 import { useDispatch } from "react-redux";
 import { setFilterAction } from "../../store/filterSlice";
 
-const Pagination = ({ type, data }) => {
+const Pagination = ({ type, filter, totalCount }) => {
   const dispatch = useDispatch();
-  const pages = Array.from(
-    { length: data.totalCount },
-    (_, index) => index + 1
-  );
-  console.log("data-pagination",data);
-  console.log("page-pagination",pages);
+  const pages = Array.from({ length: totalCount }, (_, index) => index + 1);
+  //const limit = filter.offset;
+  console.log("data-pagination", filter);
+  console.log("page-pagination", pages);
+  //console.log("limit", limit);
 
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
 
     dispatch(
       setFilterAction(type, {
-        Offset: 1,
+        Offset: filter.offset,
         Limit: selectedValue,
-        SearchText: data.filter.searchText,
-        Keys: data.filter.keys,
+        SearchText: filter.searchText,
+        Keys: filter.keys,
       })
     );
   };
@@ -29,9 +28,9 @@ const Pagination = ({ type, data }) => {
     dispatch(
       setFilterAction(type, {
         Offset: page,
-        Limit: data.filter.limit,
-        SearchText: data.filter.searchText,
-        Keys: data.filter.keys,
+        Limit: filter.limit,
+        SearchText: filter.searchText,
+        Keys: filter.keys,
       })
     );
   };
@@ -42,7 +41,7 @@ const Pagination = ({ type, data }) => {
         {pages.map((page) => (
           <li
             key={page}
-            className={page === data.filter.offset ? "selected" : ""}
+            className={page === filter.offset ? "selected" : ""}
             onClick={() => handleOffsetChange(page)}
           >
             {page}
@@ -52,7 +51,7 @@ const Pagination = ({ type, data }) => {
       <select
         className="limit-items"
         name="selectedNumber"
-        value={data.filter.limit}
+        value={filter.limit}
         onChange={handleLimitChange}
       >
         <option value="10">10</option>
