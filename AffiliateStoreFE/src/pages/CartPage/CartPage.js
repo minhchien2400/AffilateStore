@@ -14,8 +14,10 @@ import { ActionTypeCart } from "../../utils/const";
 import { setPageState } from "../../store/pageSlice";
 import { setFilterAction } from "../../store/filterSlice";
 import CartFilter from "../../components/Filter/CartFilter";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
   const { ProductsPurchased: productsPurchased } = useSelector(
@@ -54,7 +56,7 @@ const CartPage = () => {
   }, [filter, isCart]);
 
   const handleRemoveFromCart = async (productId) => {
-    dispatch(
+    await dispatch(
       fetchCartAction(
         {
           ProductId: productId,
@@ -65,11 +67,11 @@ const CartPage = () => {
         "POST"
       )
     );
-    dispatch(fetchCartProducts(dataSend, "POST"));
+    await dispatch(fetchCartProducts(dataSend, "POST"));
   };
 
-  const handleMarkPurchased = (productId) => {
-    dispatch(
+  const handleMarkPurchased = async (productId) => {
+    await dispatch(
       fetchCartAction(
         {
           ProductId: productId,
@@ -80,7 +82,7 @@ const CartPage = () => {
         "POST"
       )
     );
-    dispatch(fetchCartProducts(dataSend, "POST"));
+    await dispatch(fetchCartProducts(dataSend, "POST"));
   };
 
   const handleClickBtn = (cart) => {
@@ -90,6 +92,21 @@ const CartPage = () => {
   };
 
   const handleSearch = (newSearchText) => {
+    const currentQueryString = window.location.search;
+
+    // Kiểm tra xem có tham số tìm kiếm trong URL hay không
+    const hasSearchParam = currentQueryString.includes('search=');
+
+    // Xóa đi tham số tìm kiếm cũ nếu có
+    const updatedQueryString = hasSearchParam
+      ? currentQueryString.replace(/search=[^&]+/, '')
+      : currentQueryString;
+
+    // Tạo đường dẫn mới với tham số tìm kiếm mới
+    const newURL = `/cart${updatedQueryString ? updatedQueryString + '&' : '/'}search=${encodeURIComponent(newSearchText)}`;
+
+    // Chuyển hướng đến đường dẫn mới
+    navigate(newURL);
     dispatch(
       setFilterAction(isCart ? CART_ADDED_FILTER : CART_PURCHASED_FILTER, {
         Offset: filter.Offset,
@@ -149,7 +166,7 @@ const CartPage = () => {
                 value={searchCart}
                 onChange={(e) => setSearchCart(e.target.value)}
               />
-              <Link to={`search=${searchCart}`} className="">
+              {/* <Link to={`search=${searchCart}`} className=""> */}
                 <button
                   type="submit"
                   className="navbar-search-btn"
@@ -157,7 +174,7 @@ const CartPage = () => {
                 >
                   <i className="fas fa-search"></i>
                 </button>
-              </Link>
+              {/* </Link> */}
             </form>
           </div>
           <div className="search-product">
