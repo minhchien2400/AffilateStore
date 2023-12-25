@@ -16,7 +16,7 @@ const Pagination = ({ type, filter, totalCount }) => {
 
     dispatch(
       setFilterAction(type, {
-        Offset: filter.offset,
+        Offset: 1,
         Limit: selectedValue,
         SearchText: filter.searchText,
         Keys: filter.keys,

@@ -12,6 +12,8 @@ import {
 } from "../../utils/const";
 import { ActionTypeCart } from "../../utils/const";
 import { setPageState } from "../../store/pageSlice";
+import { setFilterAction } from "../../store/filterSlice";
+import CartFilter from "../../components/Filter/CartFilter";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -25,74 +27,78 @@ const CartPage = () => {
   const { CartPurchasedFilter: purchasedFilter } = useSelector(
     (state) => state.filter
   );
-  const [isCart, setIsCart] = useState(true);
-  let products = productsAdded;
-  let filter = addedFilter;
 
-  console.log("Cart page:", productsAdded);
+  const [isCart, setIsCart] = useState(true);
+  const products = isCart ? productsAdded : productsPurchased;
+  const filter = isCart ? addedFilter : purchasedFilter;
+
+  const [searchCart, setSearchCart] = useState("");
+
+  const dataSend = {
+    AccessToken: localStorage.getItem("jwtToken"),
+    CartStatus: isCart ? CartStatus.Added : CartStatus.Purchased,
+    Offset: filter.Offset,
+    Limit: filter.Limit,
+    SearchText: filter.SearchText,
+    Keys: filter.Keys,
+  };
 
   useEffect(() => {
     dispatch(
       setPageState({
-        IsCartAddedPage: true,
-        //IsCartPurchasedPage
+        IsCartPage: true,
       })
     );
-
-    const dataSend = {
-      AccessToken: localStorage.getItem("jwtToken"),
-      CartStatus: isCart ? CartStatus.Added : CartStatus.Purchased,
-      Offset: filter.Offset,
-      Limit: filter.Limit,
-      SearchText: filter.SearchText,
-      Keys: filter.Keys,
-    };
+    
     dispatch(fetchCartProducts(dataSend, "POST"));
-  }, []);
+  }, [filter, isCart]);
 
-  const handleRemoveFromCart = (productId) => {
+  const handleRemoveFromCart = async (productId) => {
     dispatch(
       fetchCartAction(
         {
           ProductId: productId,
           AccessToken: localStorage.getItem("jwtToken"),
           ActionType: ActionTypeCart.Remove,
+          IsCart: isCart,
         },
         "POST"
       )
     );
+    dispatch(fetchCartProducts(dataSend, "POST"));
   };
 
-  const handleMarkPurchased = (product) => {
+  const handleMarkPurchased = (productId) => {
     dispatch(
-      fetchCartAction(product, {
-        ProductId: product.productId,
-        AccessToken: localStorage.getItem("jwtToken"),
-        ActionType: ActionTypeCart.Purchase,
-      })
+      fetchCartAction(
+        {
+          ProductId: productId,
+          AccessToken: localStorage.getItem("jwtToken"),
+          ActionType: ActionTypeCart.Purchase,
+          IsCart: isCart,
+        },
+        "POST"
+      )
     );
+    dispatch(fetchCartProducts(dataSend, "POST"));
   };
 
-  const handleCLickBtn = (cart) => {
-    console.log("cart la", cart);
-    console.log("iscart la", isCart);
+  const handleClickBtn = (cart) => {
     if (isCart !== cart) {
+      setIsCart(cart, () => {});
+    }
+  };
 
-      setIsCart(cart, () => {
-        products = cart ? productsAdded : productsPurchased;
-        filter = cart ? addedFilter : purchasedFilter;
-      
-      dispatch(fetchCartProducts({
-        AccessToken: localStorage.getItem("jwtToken"),
-        CartStatus: cart ? CartStatus.Added : CartStatus.Purchased,
+  const handleSearch = (newSearchText) => {
+    dispatch(
+      setFilterAction(isCart ? CART_ADDED_FILTER : CART_PURCHASED_FILTER, {
         Offset: filter.Offset,
         Limit: filter.Limit,
-        SearchText: filter.SearchText,
+        SearchText: newSearchText,
         Keys: filter.Keys,
-      }, "POST"));
-
-      });
-    }
+      })
+    );
+    setSearchCart("");
   };
 
   const emptyCartMsg = <h4 className="text-red fw-6">No items found!!!</h4>;
@@ -114,16 +120,15 @@ const CartPage = () => {
               style={{
                 backgroundColor: isCart ? "red" : "initial",
               }}
-              onClick={() => handleCLickBtn(true)}
+              onClick={() => handleClickBtn(true)}
             >
               Added
             </li>
             <li
               style={{
-                backgroundColor:
-                  !isCart ? "red" : "initial",
+                backgroundColor: !isCart ? "red" : "initial",
               }}
-              onClick={() => handleCLickBtn(false)}
+              onClick={() => handleClickBtn(false)}
             >
               Purchased
             </li>
@@ -136,6 +141,24 @@ const CartPage = () => {
             <h3 className="text-uppercase fw-7 text-regal-blue ls-1">
               My Cart
             </h3>
+            <CartFilter filter={filter} isCart={isCart} />
+            <form className="cart-search flex">
+              <input
+                type="text"
+                placeholder="Search here !"
+                value={searchCart}
+                onChange={(e) => setSearchCart(e.target.value)}
+              />
+              <Link to={`search=${searchCart}`} className="">
+                <button
+                  type="submit"
+                  className="navbar-search-btn"
+                  onClick={() => handleSearch(searchCart)}
+                >
+                  <i className="fas fa-search"></i>
+                </button>
+              </Link>
+            </form>
           </div>
           <div className="search-product">
             <input className="search-product-input" />

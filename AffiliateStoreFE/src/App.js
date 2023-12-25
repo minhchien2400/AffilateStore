@@ -15,6 +15,8 @@ import SignUp from "./components/SignUp/SignUp";
 
 import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 
+import CartFilter from "./components/Filter/CartFilter";
+
 function App() {
   return (
     <div className="App">
@@ -31,8 +33,9 @@ function App() {
               path="/category/:categoryid/product/:id"
               element={<ProductDetailPage />}
             />
-            {/* <Route path="/login" element={<SignIn/>} />
-            <Route path="/signup" element={<SignUp/>} /> */}
+            <Route path="cart/search=:searchCart" element={<Cart />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
           </Routes>
           <Footer />
         </BrowserRouter>

@@ -1,0 +1,19 @@
+@import "../../App.scss";
+.container {
+  display: flex;
+  .filter {
+    .filter-time {
+      button {
+        padding: 1px 5px; /* Kích thước padding của nút, điều chỉnh theo mong muốn */
+        border: 1px solid #ccc; /* Viền của nút */
+        background-color: #f8f8f8; /* Màu nền của nút */
+        cursor: pointer;
+        outline: none; /* Loại bỏ đường viền khi focus */
+        border-radius: 5px;
+      }
+      button.filter-time-selected {
+        background-color: #ff0000; /* Màu viền đỏ khi được chọn */
+      }
+    }
+  }
+}

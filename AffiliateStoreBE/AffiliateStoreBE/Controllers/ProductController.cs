@@ -406,10 +406,10 @@ namespace AffiliateStoreBE.Controllers
                 }).FirstOrDefaultAsync();
                 if (product != null)
                 {
-                    var cartProduct = await _storeContext.Set<CartProduct>().Where(a => a.ProductId == addToCart.ProductId && a.Status == CartStatus.Added).FirstOrDefaultAsync();
+                    var cartProducts = await _storeContext.Set<CartProduct>().Where(a => a.ProductId == addToCart.ProductId).ToListAsync();
                     if (addToCart.ActionType == ActionType.Add)
                     {
-                        if (cartProduct != null)
+                        if (cartProducts.Where(c => c.Status == CartStatus.Added).Any())
                         {
                             return Ok(new ApiRespone<CartActionResponeModel>
                             {
@@ -434,11 +434,15 @@ namespace AffiliateStoreBE.Controllers
                     }
                     else
                     {
-                        if (cartProduct != null)
+                        //if (cartProducts.Where(c => c.Status != CartStatus.Removed).Any())
+                        //{
+                        var hasCartAdded = cartProducts.Where(c => c.Status == CartStatus.Added).Any();
+                        var hasCartPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).Any();
+                        if (addToCart.ActionType == ActionType.Remove)
                         {
-                            if (addToCart.ActionType == ActionType.Remove)
+                            if (addToCart.IsCart && hasCartAdded)
                             {
-                                cartProduct.Status = CartStatus.Removed;
+                                cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault().Status = CartStatus.Removed;
                                 await _storeContext.SaveChangesAsync();
                                 return Ok(new ApiRespone<CartActionResponeModel>
                                 {
@@ -447,7 +451,21 @@ namespace AffiliateStoreBE.Controllers
                                     Result = product
                                 });
                             }
-                            cartProduct.Status = CartStatus.Purchased;
+                            if (!addToCart.IsCart && hasCartPurchased)
+                            {
+                                cartProducts.Where(c => c.Status == CartStatus.Purchased).FirstOrDefault().Status = CartStatus.Removed;
+                                await _storeContext.SaveChangesAsync();
+                                return Ok(new ApiRespone<CartActionResponeModel>
+                                {
+                                    IsSuccess = true,
+                                    Message = "Da go SP khoi danh sach san pham da mua",
+                                    Result = product
+                                });
+                            }
+                        }
+                        else if(hasCartAdded)
+                        {
+                            cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault().Status = CartStatus.Purchased;
                             await _storeContext.SaveChangesAsync();
                             return Ok(new ApiRespone<CartActionResponeModel>
                             {
@@ -456,6 +474,7 @@ namespace AffiliateStoreBE.Controllers
                                 Result = product
                             });
                         }
+                        
                         return Ok(new ApiRespone<CartActionResponeModel>
                         {
                             IsSuccess = false,
@@ -474,50 +493,6 @@ namespace AffiliateStoreBE.Controllers
                 throw;
             }
         }
-
-        //[HttpPost("getcartproducts")]
-        //[SwaggerResponse(200)]
-        //public async Task<IActionResult> GetCartProducts([FromBody] CartProductFilterModel filter)
-        //{
-        //    try
-        //    {
-        //        var principal = GetPrincipalFromExpiredToken(filter.AccessToken);
-        //        if (principal?.Identity?.Name is null)
-        //            return Unauthorized();
-
-        //        var user = await _userManager.FindByNameAsync(principal.Identity.Name);
-        //        var cartProducts = await _storeContext.Set<CartProduct>().Include(a => a.Product).Where(a => a.AccountId.Equals(user.Id) && a.Status == CartStatus.Added).ToListAsync();
-        //        var cartProductAdded = cartProducts.Where(c => c.Status == CartStatus.Added).Select(c => new 
-        //        {
-        //            c.ProductId,
-        //            c.Product.Name,
-        //            c.Product.Cost,
-        //            c.Product.Price,
-        //            c.Product.Images,
-        //            c.Product.AffLink,
-        //        }).ToList();
-        //        var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Purchased).Select(c => new
-        //        {
-        //            c.ProductId,
-        //            c.Product.Name,
-        //            c.Product.Cost,
-        //            c.Product.Price,
-        //            c.Product.Images,
-        //            c.Product.AffLink,
-        //        }).ToList();
-        //        return Ok(new
-        //        {
-        //            ProductsAdded = cartProductAdded,
-        //            TotalAdded = cartProductAdded != null ? cartProductAdded.Count() : 0,
-        //            ProductsPurchased = cartProductPurchased,
-        //            TotalPurchased = cartProductPurchased != null ? cartProductPurchased.Count() : 0,
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-        //}
 
         [HttpPost("getcartproducts")]
         [SwaggerResponse(200)]
@@ -542,12 +517,28 @@ namespace AffiliateStoreBE.Controllers
                     CreatedTime = c.CreatedTime,
                 }).ToListAsync();
 
-                if (filter.Keys != null && !filter.Keys.Contains("all"))
-                {
-                    cartProduct = _productService.GetCartProductsByFilterKeys(cartProduct, filter.Keys);
-                }
                 if (cartProduct.Any())
                 {
+                    if (filter.SearchText != String.Empty && filter.SearchText != null)
+                    {
+                        var listProductsName = SearchString(filter.SearchText, cartProduct.Select(p => p.ProductName).ToList());
+                        cartProduct = cartProduct.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
+                    }
+                    if (filter.Keys != null && filter.Keys.Any(a => a != null) && !filter.Keys.Contains("all"))
+                    {
+                        if (filter.Keys.Contains("time-up"))
+                        {
+                            cartProduct = cartProduct.OrderBy(a => a.CreatedTime).ToList();
+                        }
+                        else if (filter.Keys.Contains("time-down"))
+                        {
+                            cartProduct = cartProduct.OrderByDescending(a => a.CreatedTime).ToList();
+                        }
+                        else if (filter.Keys.Contains("top-sale"))
+                        {
+                            cartProduct = cartProduct.OrderBy(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+                        }
+                    }
                     totalCount = (int)Math.Ceiling(cartProduct.Count() / (decimal)filter.Limit);
                     cartProduct = DoTake(cartProduct.AsQueryable(), filter).ToList();
                 }
@@ -650,6 +641,7 @@ namespace AffiliateStoreBE.Controllers
         public Guid ProductId { get; set; }
         public string AccessToken { get; set; }
         public ActionType ActionType { get; set; }
+        public bool IsCart { get; set; } = true;
     }
 
     public enum ActionType
