@@ -9,7 +9,7 @@ const Filter = ({ data }) => {
   const orderPriceValues = ["all", "price-up", "price-down", "top-sale"];
   const orderStarsValues = ["all", "over-3-stars", "over-4-stars"];
 
-  const orderPriceDisplay = ["All", "Increasing", "Descending", "Flash sale"];
+  const orderPriceDisplay = ["All", "Increase", "Decrease", "Flash sale"];
   const orderStarsDisplay = ["All", "Over 3 stars", "Over 4 stars"];
 
   const handleSetOrder = (type, orderValue) => {
@@ -55,7 +55,8 @@ const Filter = ({ data }) => {
                 <i class="fa-solid fa-arrow-down" />
               ) : (
                 ""
-              )}{" "}
+              )}
+              {orderPriceValue === "top-sale" && <i class="fa-solid fa-bolt-lightning"/>}{" "}
             </button>
           ))}
         </div>

@@ -26,13 +26,13 @@ const filterSlice = createSlice({
       Offset: 1,
       Limit: 2,
       SearchText: "",
-      Keys: ["all"],
+      Keys: ["time-up"],
     },
     CartPurchasedFilter: {
       Offset: 1,
       Limit: 10,
       SearchText: "",
-      Keys: ["all"],
+      Keys: ["time-up"],
     },
   },
   reducers: {
@@ -54,27 +54,11 @@ const filterSlice = createSlice({
           return;
       }
     },
-    setCategoryFilters(state, action) {
-      state.categoryData = action.payload;
-    },
   },
 });
 
-export const { setFilters, setCategoryFilters } = filterSlice.actions;
+export const { setFilters } = filterSlice.actions;
 export default filterSlice.reducer;
-
-// export const setOrderFilter = (filter) => {
-//   console.log("setOrderFilter", filter);
-//   return async function setFilterThunk(dispatch) {
-//     await dispatch(setFilters(filter));
-//   };
-// };
-
-// export const setCategoryOrderFilter = (filter) => {
-//   return async function setFilterThunk(dispatch) {
-//     dispatch(setCategoryFilters(filter));
-//   };
-// };
 
 export const setFilterAction = (type, filter) => {
   return async function setFilterThunk(dispatch) {

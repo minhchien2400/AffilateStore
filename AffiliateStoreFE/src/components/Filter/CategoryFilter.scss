@@ -2,16 +2,15 @@
 .container {
   display: flex;
   .filter {
-    .filter-time {
       button {
         appearance: button;
         background-color: #dbd1d1;
         background-image: none;
-        border: 1px solid #000000;
+        border: 1px solid #000;
         border-radius: 4px;
         box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
         box-sizing: border-box;
-        color: #0b0a0a;
+        color: #fff;
         cursor: pointer;
         display: inline-block;
         font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
@@ -32,6 +31,5 @@
       button.filter-time-selected {
         background-color: #21b9cd; /* Màu viền đỏ khi được chọn */
       }
-    }
   }
 }

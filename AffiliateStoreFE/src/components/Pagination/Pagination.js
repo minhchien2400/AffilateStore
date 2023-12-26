@@ -3,13 +3,9 @@ import "./Pagination.scss";
 import { useDispatch } from "react-redux";
 import { setFilterAction } from "../../store/filterSlice";
 
-const Pagination = ({ type, filter, totalCount }) => {
+const Pagination = ({ type, filter, totalCount, limitValues }) => {
   const dispatch = useDispatch();
   const pages = Array.from({ length: totalCount }, (_, index) => index + 1);
-  //const limit = filter.offset;
-  console.log("data-pagination", filter);
-  console.log("page-pagination", pages);
-  //console.log("limit", limit);
 
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
@@ -54,9 +50,7 @@ const Pagination = ({ type, filter, totalCount }) => {
         value={filter.limit}
         onChange={handleLimitChange}
       >
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
+        {limitValues.map((limitValue) =><option key={limitValue} value={`${limitValue}`}>{limitValue}</option>)}
       </select>
     </div>
   );

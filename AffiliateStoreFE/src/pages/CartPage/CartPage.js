@@ -51,7 +51,7 @@ const CartPage = () => {
         IsCartPage: true,
       })
     );
-    
+
     dispatch(fetchCartProducts(dataSend, "POST"));
   }, [filter, isCart]);
 
@@ -91,65 +91,42 @@ const CartPage = () => {
     }
   };
 
-  const handleSearch = (newSearchText) => {
-    const currentQueryString = window.location.search;
-
-    // Kiểm tra xem có tham số tìm kiếm trong URL hay không
-    const hasSearchParam = currentQueryString.includes('search=');
-
-    // Xóa đi tham số tìm kiếm cũ nếu có
-    const updatedQueryString = hasSearchParam
-      ? currentQueryString.replace(/search=[^&]+/, '')
-      : currentQueryString;
-
-    // Tạo đường dẫn mới với tham số tìm kiếm mới
-    const newURL = `/cart${updatedQueryString ? updatedQueryString + '&' : '/'}search=${encodeURIComponent(newSearchText)}`;
-
-    // Chuyển hướng đến đường dẫn mới
-    navigate(newURL);
-    dispatch(
-      setFilterAction(isCart ? CART_ADDED_FILTER : CART_PURCHASED_FILTER, {
-        Offset: filter.Offset,
-        Limit: filter.Limit,
-        SearchText: newSearchText,
-        Keys: filter.Keys,
-      })
-    );
-    setSearchCart("");
-  };
-
   const emptyCartMsg = <h4 className="text-red fw-6">No items found!!!</h4>;
 
   return (
     <div className="cart-page">
       <div className="container">
         <div className="breadcrumb">
-          <ul className="breadcrumb-items flex">
-            <li className="breadcrumb-item">
+          <div className="breadcrumb-items flex">
+            <button className="breadcrumb-item">
               <Link to="/">
                 <i className="fas fa-home"></i>
                 <span className="breadcrumb-separator">
                   <i className="fas fa-chevron-right"></i>
                 </span>
               </Link>
-            </li>
-            <li
+            </button>
+            {">"}
+            <button
+              className="breadcrumb-item"
               style={{
-                backgroundColor: isCart ? "red" : "initial",
+                backgroundColor: isCart ? "#0aea67" : "#dbd1d1",
               }}
               onClick={() => handleClickBtn(true)}
             >
               Added
-            </li>
-            <li
+            </button>
+            {">"}
+            <button
+              className="breadcrumb-item"
               style={{
-                backgroundColor: !isCart ? "red" : "initial",
+                backgroundColor: !isCart ? "#0aea67" : "#dbd1d1",
               }}
               onClick={() => handleClickBtn(false)}
             >
               Purchased
-            </li>
-          </ul>
+            </button>
+          </div>
         </div>
       </div>
       <div className="bg-ghost-white py-5">
@@ -159,23 +136,6 @@ const CartPage = () => {
               My Cart
             </h3>
             <CartFilter filter={filter} isCart={isCart} />
-            <form className="cart-search flex">
-              <input
-                type="text"
-                placeholder="Search here !"
-                value={searchCart}
-                onChange={(e) => setSearchCart(e.target.value)}
-              />
-              {/* <Link to={`search=${searchCart}`} className=""> */}
-                <button
-                  type="submit"
-                  className="navbar-search-btn"
-                  onClick={() => handleSearch(searchCart)}
-                >
-                  <i className="fas fa-search"></i>
-                </button>
-              {/* </Link> */}
-            </form>
           </div>
           <div className="search-product">
             <input className="search-product-input" />
@@ -248,6 +208,7 @@ const CartPage = () => {
           type={isCart ? CART_ADDED_FILTER : CART_PURCHASED_FILTER}
           filter={products.filter}
           totalCount={products.totalCount}
+          limitValues={[5, 10, 15]}
         />
       )}
     </div>

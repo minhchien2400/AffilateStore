@@ -25,11 +25,9 @@ const cartSlice = createSlice({
         case SET_ADD_PRODUCTS:
           state.ProductsAdded = action.payload.value;
           state.ProductsAdded = action.payload.value;
-          console.log("SET_ADD_PRODUCTS", action.payload.value);
           return;
         case SET_PURCHASED_PRODUCTS:
           state.ProductsPurchased = action.payload.value;
-          console.log("SET_PURCHASED_PRODUCTS", action.payload.value);
           return;
         case ADD_TO_CART:
           state.ProductsAdded.products.push(action.payload.value);
@@ -38,6 +36,7 @@ const cartSlice = createSlice({
           return;
         case SET_TOTAL_ADDED:
           state.ProductsAdded.totalProducts = action.payload.value;
+          console.log("SET_TOTAL_ADDED", action.payload.value);
           return;
         case SET_MARK_PURCHASED:
           state.ProductsPurchased.products.push(action.payload.value);

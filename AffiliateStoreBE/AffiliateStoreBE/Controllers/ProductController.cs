@@ -422,7 +422,8 @@ namespace AffiliateStoreBE.Controllers
                             Id = Guid.NewGuid(),
                             ProductId = addToCart.ProductId,
                             AccountId = user.Id,
-                            Status = CartStatus.Added
+                            Status = CartStatus.Added,
+                            CreatedTime = DateTime.UtcNow,
                         });
                         await _storeContext.SaveChangesAsync();
                         return Ok(new ApiRespone<CartActionResponeModel>
@@ -442,7 +443,9 @@ namespace AffiliateStoreBE.Controllers
                         {
                             if (addToCart.IsCart && hasCartAdded)
                             {
-                                cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault().Status = CartStatus.Removed;
+                                var cartProductRemove =  cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault();
+                                cartProductRemove.Status = CartStatus.Removed;
+                                cartProductRemove.ModifiedTime = DateTime.UtcNow;
                                 await _storeContext.SaveChangesAsync();
                                 return Ok(new ApiRespone<CartActionResponeModel>
                                 {
@@ -451,9 +454,11 @@ namespace AffiliateStoreBE.Controllers
                                     Result = product
                                 });
                             }
-                            if (!addToCart.IsCart && hasCartPurchased)
+                            else if (!addToCart.IsCart && hasCartPurchased)
                             {
-                                cartProducts.Where(c => c.Status == CartStatus.Purchased).FirstOrDefault().Status = CartStatus.Removed;
+                                var cartProductRemove = cartProducts.Where(c => c.Status == CartStatus.Purchased).FirstOrDefault();
+                                cartProductRemove.Status = CartStatus.Removed;
+                                cartProductRemove.ModifiedTime = DateTime.UtcNow;
                                 await _storeContext.SaveChangesAsync();
                                 return Ok(new ApiRespone<CartActionResponeModel>
                                 {
@@ -465,7 +470,9 @@ namespace AffiliateStoreBE.Controllers
                         }
                         else if(hasCartAdded)
                         {
-                            cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault().Status = CartStatus.Purchased;
+                            var cartProductPurchased = cartProducts.Where(c => c.Status == CartStatus.Added).FirstOrDefault();
+                            cartProductPurchased.Status = CartStatus.Purchased;
+                            cartProductPurchased.ModifiedTime = DateTime.UtcNow;
                             await _storeContext.SaveChangesAsync();
                             return Ok(new ApiRespone<CartActionResponeModel>
                             {
@@ -516,6 +523,7 @@ namespace AffiliateStoreBE.Controllers
                     AffLink = c.Product.AffLink,
                     CreatedTime = c.CreatedTime,
                 }).ToListAsync();
+                cartProduct = filter.CartStatus == CartStatus.Added ? cartProduct.OrderBy(a => a.CreatedTime).ToList() : cartProduct.OrderBy(a => a.ModifiedTime).ToList();
 
                 if (cartProduct.Any())
                 {
@@ -524,19 +532,23 @@ namespace AffiliateStoreBE.Controllers
                         var listProductsName = SearchString(filter.SearchText, cartProduct.Select(p => p.ProductName).ToList());
                         cartProduct = cartProduct.Where(a => listProductsName.Contains(a.ProductName)).OrderBy(a => listProductsName.IndexOf(a.ProductName)).ToList();
                     }
-                    if (filter.Keys != null && filter.Keys.Any(a => a != null) && !filter.Keys.Contains("all"))
+                    if (filter.Keys != null && filter.Keys.Any(a => a != null) && !filter.Keys.Contains("time-up"))
                     {
-                        if (filter.Keys.Contains("time-up"))
+                        if (filter.Keys.Contains("time-down"))
                         {
-                            cartProduct = cartProduct.OrderBy(a => a.CreatedTime).ToList();
-                        }
-                        else if (filter.Keys.Contains("time-down"))
-                        {
-                            cartProduct = cartProduct.OrderByDescending(a => a.CreatedTime).ToList();
+                            cartProduct = filter.CartStatus == CartStatus.Added ? cartProduct.OrderByDescending(a => a.CreatedTime).ToList() : cartProduct.OrderByDescending(a => a.ModifiedTime).ToList();
                         }
                         else if (filter.Keys.Contains("top-sale"))
                         {
                             cartProduct = cartProduct.OrderBy(a => (int)((a.Price / a.Cost) * 100)).ThenByDescending(a => a.Price).ToList();
+                        }
+                        else if (filter.Keys.Contains("a-z"))
+                        {
+                            cartProduct = cartProduct.OrderBy(a => a.ProductName).ToList();
+                        }
+                        else if (filter.Keys.Contains("z-a"))
+                        {
+                            cartProduct = cartProduct.OrderByDescending(a => a.ProductName).ToList();
                         }
                     }
                     totalCount = (int)Math.Ceiling(cartProduct.Count() / (decimal)filter.Limit);

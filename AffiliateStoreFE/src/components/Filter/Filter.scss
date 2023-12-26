@@ -4,29 +4,65 @@
   .filter {
     .filter-price {
       button {
-        padding: 1px 5px; /* Kích thước padding của nút, điều chỉnh theo mong muốn */
-        border: 1px solid #ccc; /* Viền của nút */
-        background-color: #f8f8f8; /* Màu nền của nút */
+        appearance: button;
+        background-color: #dbd1d1;
+        background-image: none;
+        border: 1px solid #000;
+        border-radius: 4px;
+        box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
+        box-sizing: border-box;
+        color: #fff;
         cursor: pointer;
-        outline: none; /* Loại bỏ đường viền khi focus */
-        border-radius: 5px;
-      }
+        display: inline-block;
+        font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        margin: 0 5px 10px 0;
+        overflow: visible;
+        padding: 12px 12px;
+        text-align: center;
+        text-transform: none;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
       button.filter-price-selected {
-        background-color: #ff0000; /* Màu viền đỏ khi được chọn */
+        background-color: #21b9cd;  /* Màu viền đỏ khi được chọn */
       }
     }
     .filter-stars {
       margin-left: 30px;
       button {
-        padding: 1px 5px; /* Kích thước padding của nút, điều chỉnh theo mong muốn */
-        border: 1px solid #ccc; /* Viền của nút */
-        background-color: #f8f8f8; /* Màu nền của nút */
+        appearance: button;
+        background-color: #dbd1d1;
+        background-image: none;
+        border: 1px solid #000;
+        border-radius: 4px;
+        box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
+        box-sizing: border-box;
+        color: #0b0a0a;
         cursor: pointer;
-        outline: none; /* Loại bỏ đường viền khi focus */
-        border-radius: 5px;
-      }
+        display: inline-block;
+        font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        margin: 0 5px 10px 0;
+        overflow: visible;
+        padding: 12px 12px;
+        text-align: center;
+        text-transform: none;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
       button.filter-stars-selected {
-        background-color: #ff0000; /* Màu viền đỏ khi được chọn */
+        background-color: #21b9cd; /* Màu viền đỏ khi được chọn */
       }
     }
   }

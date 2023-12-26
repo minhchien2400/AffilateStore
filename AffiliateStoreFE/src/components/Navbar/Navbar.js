@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const { ProductsFilter: dataFilter } = useSelector((state) => state.filter);
 
-  const { TotalAdded: totalItems } = useSelector((state) => state.cart);
+  const { ProductsAdded: productsAdded } = useSelector((state) => state.cart);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -31,7 +31,7 @@ const Navbar = () => {
   // }, []);
   useEffect(() => {
     dispatch(fetchTotalAdded())
-  },[totalItems])
+  },[productsAdded.totalProducts])
 
   const handleSearch = (newSearchText) => {
     dispatch(
@@ -42,7 +42,7 @@ const Navbar = () => {
         Keys: dataFilter.Keys,
       })
     );
-    //setSearchText("");
+    setSearchText("");
   };
 
   const handelClickBtn = () => {};
@@ -82,7 +82,7 @@ const Navbar = () => {
                 </span>
                 <div className="btn-txt fw-5">
                   Cart
-                  <span className="cart-count-value">{totalItems}</span>
+                  <span className="cart-count-value">{productsAdded.totalProducts}</span>
                 </div>
               </Link>
             </div>

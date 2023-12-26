@@ -15,27 +15,58 @@ $pagination-hover-color: #555;
     display: flex;
 
     li {
-      padding: 2px 8px;
-      margin: 0 5px;
-      background-color: rgb(207, 170, 170);
+      font-family: "Open Sans", sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-decoration: none;
+      text-transform: uppercase;
+      color: #000;
       cursor: pointer;
-      border: 2px solid rgb(4, 4, 4);
-
+      border: 3px solid;
+      padding: 0.25em 0.5em;
+      box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px,
+        4px 4px 0px 0px, 5px 5px 0px 0px;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      margin-right: 5px;
       &:hover {
-        color: $pagination-hover-color;
+          color: #555;
+        }
+      li:active {
+        box-shadow: 0px 0px 0px 0px;
+        top: 5px;
+        left: 5px;
       }
+      // @media (min-width: 768px) {
+      //   .button-54 {
+      //     padding: 0.25em 0.75em;
+      //   }
+      // }
     }
-    li.selected{
-      border-color: #ff0000; /* Màu viền đỏ khi được chọn */
+    li.selected {
+      border-color: #3d06f0; /* Màu viền đỏ khi được chọn */
+      background-color: #21b9cd;
     }
   }
   .limit-items {
-    padding: 5px;
-    background-color: rgb(207, 170, 170);
+    margin-left: 10px;
+    background-color: #21b9cd;
+    border: 2px solid #422800;
+    border-radius: 10px;
+    box-shadow: #422800 4px 4px 0 0;
+    color: #422800;
     cursor: pointer;
-    border: 2px solid rgb(4, 4, 4);
-    &:hover {
-      color: $pagination-hover-color;
-    }
+    display: inline-block;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 10 12px;
+    line-height: 50px;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
 }

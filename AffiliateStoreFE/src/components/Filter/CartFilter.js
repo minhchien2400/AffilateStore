@@ -1,28 +1,28 @@
 import { useDispatch } from "react-redux";
 import { setFilterAction } from "../../store/filterSlice";
-import { CART_ADDED_FILTER as addedFilter} from "../../utils/const";
-import { CART_PURCHASED_FILTER as purchasedFilter} from "../../utils/const";
-import "./CartFilter.scss"; 
+import { CART_ADDED_FILTER as addedFilter } from "../../utils/const";
+import { CART_PURCHASED_FILTER as purchasedFilter } from "../../utils/const";
+import "./CartFilter.scss";
 
 const CartFilter = ({ filter, isCart }) => {
   const dispatch = useDispatch();
 
-  const orderCartValues = ["all", "time-up", "time-down", "top-sale"];
+  const orderCartValues = ["time-up", "time-down", "a-z", "z-a", "top-sale"];
 
-  const orderCartDisplay = ["All", "Increasing", "Descending", "Flash sale"];
+  const orderCartDisplay = ["", "", "a-z", "z-a", "Flash sale"];
 
   const handleSetOrder = (orderValue) => {
     console.log("CLICK SET FILTER", orderValue);
     console.log(filter);
-    
-      dispatch(
-        setFilterAction(isCart ? addedFilter : purchasedFilter, {
-          Offset: filter.Offset,
-          Limit: filter.Limit,
-          SearchText: filter.SearchText,
-          Keys: [orderValue],
-        })
-      );
+
+    dispatch(
+      setFilterAction(isCart ? addedFilter : purchasedFilter, {
+        Offset: filter.Offset,
+        Limit: filter.Limit,
+        SearchText: filter.SearchText,
+        Keys: [orderValue],
+      })
+    );
   };
 
   return (
@@ -34,17 +34,22 @@ const CartFilter = ({ filter, isCart }) => {
             <button
               key={index}
               className={
-                 (filter && orderCartValue === filter.Keys[0]) ? "filter-time-selected" : ""
+                filter && filter.Keys[0] === orderCartValue
+                  ? "filter-time-selected"
+                  : ""
               }
               onClick={() => handleSetOrder(orderCartValue)}
             >
               {orderCartDisplay[index]}
-              {index === 1 ? (
+              {index === 0 ? (
                 <i class="fa-solid fa-arrow-up" />
-              ) : index === 2 ? (
+              ) : index === 1 ? (
                 <i class="fa-solid fa-arrow-down" />
               ) : (
                 ""
+              )}
+              {orderCartValue === "top-sale" && (
+                <i class="fa-solid fa-bolt-lightning" />
               )}{" "}
             </button>
           ))}

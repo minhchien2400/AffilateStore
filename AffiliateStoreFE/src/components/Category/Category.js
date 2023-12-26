@@ -6,51 +6,19 @@ import Error from "../Error/Error";
 import Loader from "../Loader/Loader";
 import { setFilterAction } from "../../store/filterSlice";
 import { useDispatch } from "react-redux";
-import { SET_CATEGORY_FILTER } from "../../utils/const";
+import { SET_CATEGORY_FILTER as filterType } from "../../utils/const";
+import CategoryFilter from "../Filter/CategoryFilter";
 const Category = ({ data, status }) => {
   const dispatch = useDispatch();
 
   const showButton = data.totalCount > 1 ? true : false;
-  const type = SET_CATEGORY_FILTER;
-
-  // switch filter status "a-z" -> "z-a" -> "all"
-  const handleClickFilter = () => {
-    if (data.filter.keys[0] === "a-z") {
-      dispatch(
-        setFilterAction(type, {
-          Offset: data.filter.offset,
-          Limit: data.filter.limit,
-          SearchText: data.filter.searchText,
-          Keys: ["z-a"],
-        })
-      );
-    } else if (data.filter.keys[0] === "z-a") {
-      dispatch(
-        setFilterAction(type, {
-          Offset: data.filter.offset,
-          Limit: data.filter.limit,
-          SearchText: "",
-          Keys: ["all"],
-        })
-      );
-    } else {
-      dispatch(
-        setFilterAction(type, {
-          Offset: data.filter.offset,
-          Limit: data.filter.limit,
-          SearchText: "",
-          Keys: ["a-z"],
-        })
-      );
-    }
-  };
 
   // select limit items page
   const handleLimitChange = (event) => {
     const selectedValue = event.target.value;
 
     dispatch(
-      setFilterAction({
+      setFilterAction(filterType, {
         Offset: 1,
         Limit: selectedValue,
         SearchText: data.filter.searchText,
@@ -64,7 +32,7 @@ const Category = ({ data, status }) => {
     // Xử lý khi người dùng nhấn vào nút "Previous Page"
     if (data.filter.offset > 1) {
       dispatch(
-        setFilterAction({
+        setFilterAction(filterType, {
           Offset: data.filter.offset - 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -73,7 +41,7 @@ const Category = ({ data, status }) => {
       );
     } else {
       dispatch(
-        setFilterAction({
+        setFilterAction(filterType, {
           Offset: data.totalCount,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -87,7 +55,7 @@ const Category = ({ data, status }) => {
     // Xử lý khi người dùng nhấn vào nút "Next Page"
     if (data.filter.offset < data.totalCount) {
       dispatch(
-        setFilterAction({
+        setFilterAction(filterType, {
           Offset: data.filter.offset + 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -96,7 +64,7 @@ const Category = ({ data, status }) => {
       );
     } else {
       dispatch(
-        setFilterAction({
+        setFilterAction(filterType, {
           Offset: 1,
           Limit: data.filter.limit,
           SearchText: data.filter.searchText,
@@ -121,14 +89,7 @@ const Category = ({ data, status }) => {
             <h3 className="text-uppercase fw-7 text-regal-blue ls-1">
               Category
             </h3>
-            <button
-              className={
-                data.filter.keys[0] !== "all" ? "text-uppercase-buttom" : ""
-              }
-              onClick={() => handleClickFilter()}
-            >
-              {data.filter.keys[0]}
-            </button>
+            <CategoryFilter filter={data.filter}/>
             <select
               className="limit-items"
               name="selectedNumber"

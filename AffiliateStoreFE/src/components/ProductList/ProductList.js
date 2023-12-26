@@ -37,7 +37,7 @@ const ProductList = ({
           </div>
         </div>
       </div>
-      <Pagination type={SET_PRODUCTS_FILTER} filter={data.filter} totalCount={data.totalCount} />
+      <Pagination type={SET_PRODUCTS_FILTER} filter={data.filter} totalCount={data.totalCount} limitValues={[10, 20, 30]}/>
     </section>
   );
 };
