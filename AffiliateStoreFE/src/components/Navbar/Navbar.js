@@ -98,7 +98,6 @@ const Navbar = () => {
             <button
               onClick={() => {
                 localStorage.removeItem("jwtToken");
-                console.log("log out");
               }}
             >
               LogOut

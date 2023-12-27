@@ -45,11 +45,9 @@ const filterSlice = createSlice({
           state.CategoryFilter = action.payload.value;
           return;
         case CART_ADDED_FILTER:
-          console.log("setFilters CART_ADDED_FILTER", action.payload.value);
           state.CartAddedFilter = action.payload.value;
           return;
         case CART_PURCHASED_FILTER:
-          console.log("setFilters CART_PURCHASED_FILTER", action.payload.value);
           state.CartPurchasedFilter = action.payload.value;
           return;
       }
@@ -62,7 +60,6 @@ export default filterSlice.reducer;
 
 export const setFilterAction = (type, filter) => {
   return async function setFilterThunk(dispatch) {
-    console.log("setFilterThunk", filter);
     dispatch(setFilters({type: type, value: filter}));
   };
 };

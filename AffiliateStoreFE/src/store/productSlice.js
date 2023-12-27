@@ -95,9 +95,7 @@ export const fetchProduct = (id) => {
     dispatch(setProductStatus(STATUS.LOADING));
 
     try {
-      console.log("accc", id);
       const data = await fetchData(`${BASE_URL}getproductbyid/${id}`);
-      console.log("data fetchProduct: ", data);
       if (data.hasError) {
         dispatch(setProduct(STATUS.ERROR));
       }

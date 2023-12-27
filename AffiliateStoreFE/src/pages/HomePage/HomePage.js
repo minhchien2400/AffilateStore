@@ -31,11 +31,12 @@ const HomePage = () => {
   // check login
 
 
-  useEffect(async () => {
+  useEffect(() => {
     //checklogin
     // if(isLoggedIn)
     // {
-    dispatch(fetchRefreshToken());
+    const fetchDataHomePage = async () => {
+      dispatch(fetchRefreshToken());
     dispatch(setPageState({
       IsHomePage: true,
     }));
@@ -45,6 +46,8 @@ const HomePage = () => {
       SearchText: "",
       Keys: ["all", "all"],
     }))
+    }
+    fetchDataHomePage()
   }, [])
 
   useEffect(() => {

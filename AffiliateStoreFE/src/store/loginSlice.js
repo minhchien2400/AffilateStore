@@ -18,7 +18,6 @@ export const { setLoggedIn } = loginSlice.actions;
 export default loginSlice.reducer;
 
 export const setLoggedInStatus = (loginStatus) => {
-  console.log("dispath: loginStatus", loginStatus);
   return async function setUserInfoThunk(dispatch) {
     dispatch(setLoggedIn(loginStatus))
   };

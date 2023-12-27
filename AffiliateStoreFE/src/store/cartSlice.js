@@ -36,7 +36,6 @@ const cartSlice = createSlice({
           return;
         case SET_TOTAL_ADDED:
           state.ProductsAdded.totalProducts = action.payload.value;
-          console.log("SET_TOTAL_ADDED", action.payload.value);
           return;
         case SET_MARK_PURCHASED:
           state.ProductsPurchased.products.push(action.payload.value);
@@ -75,7 +74,6 @@ export const fetchCartProducts = (dataSend, method) => {
       );
       if (data.hasError) {
       }
-      console.log("fetchCartProducts", data);
       dispatch(
         setCartProducts({
           type: isAdded ? SET_ADD_PRODUCTS : SET_PURCHASED_PRODUCTS,
@@ -94,7 +92,6 @@ export const fetchTotalAdded = () => {
         localStorage.getItem("jwtToken"),
         "POST"
       );
-      console.log("fetchTotalAdded", data);
       dispatch(setCartProducts({ type: SET_TOTAL_ADDED, value: data }));
     } catch (error) {}
   };

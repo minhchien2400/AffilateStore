@@ -12,8 +12,6 @@ const CartFilter = ({ filter, isCart }) => {
   const orderCartDisplay = ["", "", "a-z", "z-a", "Flash sale"];
 
   const handleSetOrder = (orderValue) => {
-    console.log("CLICK SET FILTER", orderValue);
-    console.log(filter);
 
     dispatch(
       setFilterAction(isCart ? addedFilter : purchasedFilter, {

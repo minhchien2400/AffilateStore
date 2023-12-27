@@ -31,7 +31,6 @@ export const setPageState = (page) => {
       acc[key] = key === Object.keys(page)[0] ? updatedPage[key] : false;
       return acc;
     }, {});
-    console.log("updatedData la: ", updatedData);
 
     dispatch(setPage(updatedData));
   };

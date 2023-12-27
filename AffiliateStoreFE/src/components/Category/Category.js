@@ -75,7 +75,6 @@ const Category = ({ data, status }) => {
   };
 
   const handleClickCategory = (id) => {
-    console.log("handleClickCategory");
   }
 
   if (status === STATUS.ERROR) return <Error />;

@@ -13,7 +13,6 @@ const Filter = ({ data }) => {
   const orderStarsDisplay = ["All", "Over 3 stars", "Over 4 stars"];
 
   const handleSetOrder = (type, orderValue) => {
-    console.log("CLICK SET FILTER", orderValue);
     if (type === 0) {
       dispatch(
         setFilterAction(filterType, {
