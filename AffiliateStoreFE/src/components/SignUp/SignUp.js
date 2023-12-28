@@ -17,7 +17,8 @@ const SignUp = () => {
   const [selectedBirthYear, setSelectedBirthYear] = useState(null);
   const years = listYearsSelect(startYear, endYear);
   const handleChangeBirthYear = (selectedOption) => {
-    setSelectedBirthYear(selectedOption);
+    setDataSignUp({ ...dataSignUp, BirthYear: selectedOption });
+    console.log(dataSignUp.BirthYear);
   };
 
   // select country
@@ -40,14 +41,15 @@ const SignUp = () => {
     Country: "",
     Password: "",
     RePassword: "",
+    Role: "Admin"
   });
   const handleSubmit = async (e) => {
-    console.log("click sigin");
+    console.log("dataSignUp",dataSignUp);
     // bo default get data tu url
     e.preventDefault();
 
     // fetch api login
-    const data = await fetchDataBody(`${BASE_URL}signin`, dataSignUp, "POST");
+    const data = await fetchDataBody(`${BASE_URL}signup`, dataSignUp, "POST");
     console.log("datalogin", dataSignUp);
 
     // luu jwt token va refresh token vao localstorage
@@ -91,8 +93,8 @@ const SignUp = () => {
           <h5>Year of birth</h5>
           <Select
             value={dataSignUp.BirthYear}
-            onChange={(event) =>
-              setDataSignUp({ ...dataSignUp, BirthYear: event.target.value })
+            onChange={(e) =>
+              setDataSignUp((prevData) => ({ ...prevData, BirthYear: e.value }))
             }
             options={years}
             placeholder="Chon nam sinh"
@@ -100,8 +102,8 @@ const SignUp = () => {
           <h5>Gender</h5>
           <Select
             value={dataSignUp.Gender}
-            onChange={(event) =>
-              setDataSignUp({ ...dataSignUp, Gender: event.target.value })
+            onChange={(e) =>
+              setDataSignUp((prevData) => ({ ...prevData, Gender: e.value }))
             }
             options={genders}
             placeholder="Chon gioi tinh"
@@ -109,8 +111,8 @@ const SignUp = () => {
           <h5>Country</h5>
           <Select
             value={dataSignUp.Country}
-            onChange={(event) =>
-              setDataSignUp({ ...dataSignUp, Country: event.target.value })
+            onChange={(e) =>
+              setDataSignUp((prevData) => ({ ...prevData, Country: e }))
             }
             options={countries}
             placeholder="Chọn quốc gia"
@@ -139,16 +141,12 @@ const SignUp = () => {
             }
             type="password"
           />
-          <button
-            onClick={handleSubmit}
-            type="submit"
-            className="signin_btn"
-          >
+          <button onClick={handleSubmit} type="submit" className="signin_btn">
             Sign-Up
           </button>
         </form>
         <p>Bạn đã có tài khoản rồi ?</p>
-        <button onClick={''} className="register_btn">
+        <button onClick={""} className="register_btn">
           Sign-In
         </button>
       </div>

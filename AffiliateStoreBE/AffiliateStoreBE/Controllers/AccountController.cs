@@ -126,8 +126,8 @@ namespace AffiliateStoreBE.Controllers
                 {
                     Email = signUp.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
-                    UserName = signUp.UserName,
-                    Age = signUp.Age,
+                    UserName = signUp.Username,
+                    Age = signUp.BirthYear,
                     Gender = signUp.Gender,
                     Country = signUp.Country
                 };
@@ -389,10 +389,11 @@ namespace AffiliateStoreBE.Controllers
         }
         public class SignUpModel
         {
-            public string UserName { get; set; }
+            public string Username { get; set; }
             public string Email { get; set; }
             public string Password { get; set; }
-            public int Age { get; set; }
+            public string RePassword { get; set; }
+            public int BirthYear { get; set; }
             public Gender Gender { get; set; }
             public string Country { get; set; }
             public string Role { get; set; }

@@ -58,13 +58,13 @@ const SignIn = () => {
         <form>
           <h5>User nam or E-Mail</h5>
           <input
-            value={email}
+            value={dataSignIn.UsernameOrEmail}
             onChange={(event) => setDataSignIn({...dataSignIn, UsernameOrEmail: event.target.value})}
             type="text"
           />
           <h5>Password</h5>
           <input
-               value={password}
+               value={dataSignIn.Password}
                onChange={(event) => setDataSignIn({...dataSignIn, Password: event.target.value})}
             type="password"
           />

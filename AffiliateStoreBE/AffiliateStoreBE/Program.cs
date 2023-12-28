@@ -80,7 +80,12 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
-}) ;
+})
+.AddCookie(options =>
+{
+    options.Cookie.Name = "AffiliateStore"; // Đặt tên duy nhất cho cookie của bạn
+    options.ExpireTimeSpan = TimeSpan.FromHours(1); // Thiết lập thời gian hết hạn cho cookie
+});
 
 builder.Services.AddCors(options =>
 {
