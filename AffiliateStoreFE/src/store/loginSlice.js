@@ -6,20 +6,35 @@ const loginSlice = createSlice({
   name: "login",
   initialState: {
     IsLoggedIn: false,
+    DataSignIn: {},
+    DataSignUp: {},
+    DataForgetPassword: {},
+    DataChangePassword: {},
   },
   reducers: {
-    setLoggedIn(state, action) {
-      state.IsLoggedIn = action.payload;
+    setDataLogin(state, action) {
+      switch (action.payload.type) {
+        case "SET_LOGIN_STATUS":
+          state.IsLoggedIn = action.payload.value;
+        case "SET_DATA_SIGNIN":
+          state.DataSignIn = action.payload.value;
+        case "SET_DATA_SIGNUP":
+          state.DataSignUp = action.payload.value;
+        case "SET_FORGET_PASSWORD":
+          state.DataForgetPassword = action.payload.value;
+        case "SET_CHANGE_PASSWORD":
+          state.DataChangePassword = action.payload.value;
+      }
     },
   },
 });
 
-export const { setLoggedIn } = loginSlice.actions;
+export const { setDataLogin } = loginSlice.actions;
 export default loginSlice.reducer;
 
-export const setLoggedInStatus = (loginStatus) => {
+export const setInitDataLogin = (type, value) => {
   return async function setUserInfoThunk(dispatch) {
-    dispatch(setLoggedIn(loginStatus))
+    dispatch(setDataLogin({type: type, value: value}));
   };
 };
 
@@ -34,7 +49,7 @@ export const fetchRefreshToken = async () => {
   );
   localStorage.setItem("jwtToken", token.jwtToken);
   localStorage.setItem("refreshToken", token.refreshToken);
-  return async function fetchRefreshTokenThunk(dispatch, token){
-    dispatch(setLoggedIn(true));
-  }
+  return async function fetchRefreshTokenThunk(dispatch, token) {
+    //dispatch(setLoggedIn(true));
+  };
 };
