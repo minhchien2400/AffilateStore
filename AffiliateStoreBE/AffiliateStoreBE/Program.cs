@@ -2,7 +2,7 @@
 using AffiliateStoreBE.Service;
 using AffiliateStoreBE.Service.IService;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+  using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AffiliateStoreBE.Models;
 using Microsoft.IdentityModel.Tokens;

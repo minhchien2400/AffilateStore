@@ -156,6 +156,14 @@ namespace AffiliateStoreBE.Controllers
                             Message = "Tao tai khoan thanh cong",
                         });
                     }
+                    else
+                    {
+                        return Ok(new
+                        {
+                            Result = false,
+                            Message = result.Errors.Select(e => e.Description).FirstOrDefault(),
+                        });
+                    }
 
 
                 }

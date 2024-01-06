@@ -60,7 +60,7 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      {/* <Slider /> */}
+      <Slider />
       {categoriesData.result && (
         <Category data={categoriesData} status={categoryStatus} />
       )}

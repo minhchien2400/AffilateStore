@@ -15,23 +15,9 @@ const SignUp = () => {
   const startYear = 2020;
   const endYear = 2120;
   const [selectedBirthYear, setSelectedBirthYear] = useState(null);
-  const years = listYearsSelect(startYear, endYear);
-  const handleChangeBirthYear = (selectedOption) => {
-    setDataSignUp({ ...dataSignUp, BirthYear: selectedOption });
-    console.log(dataSignUp.BirthYear);
-  };
-
-  // select country
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const handleChangeCountry = (selectedOption) => {
-    setSelectedCountry(selectedOption);
-  };
-
-  //select gender
   const [selectedGender, setSelectedGender] = useState(null);
-  const handleChangeGender = (selectedOption) => {
-    setSelectedGender(selectedOption);
-  };
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const years = listYearsSelect(startYear, endYear);
 
   const [dataSignUp, setDataSignUp] = useState({
     Username: "",
@@ -43,29 +29,37 @@ const SignUp = () => {
     RePassword: "",
     Role: "Admin"
   });
+
+  const handleChangeBirthYear = (selectedOption) => {
+    setSelectedBirthYear(selectedOption);
+    setDataSignUp((prevData) => ({ ...prevData, BirthYear: selectedOption.value }));
+  };
+
+  const handleChangeGender = (selectedOption) => {
+    setSelectedGender(selectedOption);
+    setDataSignUp((prevData) => ({ ...prevData, Gender: selectedOption.value }));
+  };
+
+  const handleChangeCountry = (selectedOption) => {
+    setSelectedCountry(selectedOption);
+    setDataSignUp((prevData) => ({ ...prevData, Country: selectedOption.value }));
+  };
+
   const handleSubmit = async (e) => {
-    console.log("dataSignUp",dataSignUp);
-    // bo default get data tu url
     e.preventDefault();
 
     // fetch api login
     const data = await fetchDataBody(`${BASE_URL}signup`, dataSignUp, "POST");
-    console.log("datalogin", dataSignUp);
 
     // luu jwt token va refresh token vao localstorage
     if (data.token) {
       const expires = new Date();
-      expires.setDate(expires.getDate() + 7); // Số ngày cookie tồn tại
-      console.log("data.token", data.token);
+      expires.setDate(expires.getDate() + 7);
       dispatch(setInitDataLogin(true));
       localStorage.setItem("jwtToken", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
-      document.cookie = `myCookie=${encodeURIComponent(
-        data.token
-      )}; expires=${expires.toUTCString()}; path=/`;
-      const cartData = fetchDataBody(
-        `${BASE_URL}getcartproducts/${data.token}`
-      );
+      document.cookie = `myCookie=${encodeURIComponent(data.token)}; expires=${expires.toUTCString()}; path=/`;
+      const cartData = fetchDataBody(`${BASE_URL}getcartproducts/${data.token}`);
       localStorage.setItem("cart", cartData);
     }
   };
@@ -92,28 +86,22 @@ const SignUp = () => {
           />
           <h5>Year of birth</h5>
           <Select
-            value={dataSignUp.BirthYear}
-            onChange={(e) =>
-              setDataSignUp((prevData) => ({ ...prevData, BirthYear: e.value }))
-            }
+            value={selectedBirthYear}
+            onChange={handleChangeBirthYear}
             options={years}
             placeholder="Chon nam sinh"
           />
           <h5>Gender</h5>
           <Select
-            value={dataSignUp.Gender}
-            onChange={(e) =>
-              setDataSignUp((prevData) => ({ ...prevData, Gender: e.value }))
-            }
+            value={selectedGender}
+            onChange={handleChangeGender}
             options={genders}
             placeholder="Chon gioi tinh"
           />
           <h5>Country</h5>
           <Select
-            value={dataSignUp.Country}
-            onChange={(e) =>
-              setDataSignUp((prevData) => ({ ...prevData, Country: e }))
-            }
+            value={selectedCountry}
+            onChange={handleChangeCountry}
             options={countries}
             placeholder="Chọn quốc gia"
           />
@@ -154,3 +142,4 @@ const SignUp = () => {
   );
 };
 export default SignUp;
+  
