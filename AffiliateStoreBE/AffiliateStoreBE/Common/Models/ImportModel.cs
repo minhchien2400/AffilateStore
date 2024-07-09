@@ -42,8 +42,8 @@ namespace AffiliateStoreBE.Common.Models
             public int Stars { get; set; }
             [ExcelColumn("Affiliate link")]
             public string AffLink { get; set; }
-            [ExcelColumn("Total sales")]
-            public int TotalSales { get; set; }
+            //[ExcelColumn("Total sales")]
+            //public int TotalSales { get; set; }
         }
 
         public class ImageSheetModel
